@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<title>Generador de laberints - P5</title>
+<style>
+  body {
+    font-family: sans-serif;
+    padding: 20px;
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  canvas { border: 2px solid #000; display: block; }
+  button {
+    margin: 4px 4px 4px 0;
+    padding: 8px 14px;
+    font-size: 15px;
+    cursor: pointer;
+    border: 1px solid #888;
+    border-radius: 6px;
+    background: #f4f4f4;
+  }
+  button:hover { background: #e4e4e4; }
+  button.actiu {
+    background: #2a6df4;
+    color: #fff;
+    border-color: #2a6df4;
+  }
+  .info { max-width: 280px; }
+  .info h1 { margin-top: 0; }
+  .info p { line-height: 1.4; }
+  .nivells { margin: 12px 0; }
+  .guanyat { color: green; font-weight: bold; }
+  .stats { font-size: 14px; color: #444; }
+</style>
+</head>
+<body>
+
+<div>
+  <div class="nivells">
+    <button data-nivell="facil"     class="actiu">Fàcil</button>
+    <button data-nivell="normal">Normal</button>
+    <button data-nivell="complicat">Complicat</button>
+    <button data-nivell="molt">Molt complicat</button>
+  </div>
+  <button onclick="genera()">🔄 Genera un laberint nou</button>
+  <canvas id="maze"></canvas>
+</div>
+
+<div class="info">
+  <p><strong>Selecciona l'eina FLETXA.</strong><br>
+  Fent fletxes busca la solució al LABERINT.</p>
+  <p>Utilitza les <strong>fletxes del teclat</strong> (↑ ↓ ← →) per moure't des de l'entrada fins a la sortida.</p>
+  <p class="stats" id="stats"></p>
+  <p id="estat"></p>
+</div>
+
+<script>
+// ---------- CONFIGURACIÓ DELS NIVELLS ----------
+const NIVELLS = {
+  facil: {
+    nom: 'Fàcil',
+    cols: 8,
+    rows: 8,
+    cell: 60,
+    marge: 50
+  },
+  normal: {
+    nom: 'Normal',
+    cols: 15,
+    rows: 15,
+    cell: 34,
+    marge: 44
+  },
+  complicat: {
+    nom: 'Complicat',
+    cols: 25,
+    rows: 25,
+    cell: 22,
+    marge: 34
+  },
+  molt: {
+    nom: 'Molt complicat',
+    cols: 40,
+    rows: 40,
+    cell: 15,
+    marge: 28
+  }
+};
+
+let nivellActual = 'facil';
+
+// Variables que es fixaran segons el nivell
+let COLS, ROWS, CELL, MARGE, OFFSET_X, OFFSET_Y;
+
+const canvas = document.getElementById('maze');
+const ctx = canvas.getContext('2d');
+const estatEl = document.getElementById('estat');
+const statsEl = document.getElementById('stats');
+
+let grid;
+let jugador = { x: 0, y: 0 };
+let guanyat = false;
+let moviments = 0;
+
+// ---------- BOTONS DE NIVELL ----------
+document.querySelectorAll('[data-nivell]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-nivell]').forEach(b => b.classList.remove('actiu'));
+    btn.classList.add('actiu');
+    nivellActual = btn.dataset.nivell;
+    aplicaNivell();
+    genera();
+  });
+});
+
+// ---------- APLICAR CONFIGURACIÓ DEL NIVELL ----------
+function aplicaNivell() {
+  const cfg = NIVELLS[nivellActual];
+  COLS = cfg.cols;
+  ROWS = cfg.rows;
+  CELL = cfg.cell;
+  MARGE = cfg.marge;
+  OFFSET_X = MARGE;
+  OFFSET_Y = MARGE;
+
+  // Mida fixa del canvas (es calcula UNA sola vegada per nivell)
+  canvas.width  = COLS * CELL + MARGE * 2;
+  canvas.height = ROWS * CELL + MARGE * 2;
+
+  statsEl.textContent = `${cfg.nom}: ${COLS} × ${ROWS} caselles`;
+}
+
+// ---------- GENERACIÓ ----------
+function initGrid() {
+  grid = [];
+  for (let y = 0; y < ROWS; y++) {
+    const row = [];
+    for (let x = 0; x < COLS; x++) {
+      row.push({ n: true, e: true, s: true, w: true, visitat: false });
+    }
+    grid.push(row);
+  }
+}
+
+function genera() {
+  initGrid();
+  const stack = [];
+  let actual = grid[0][0];
+  actual.visitat = true;
+  let visitats = 1;
+
+  while (visitats < ROWS * COLS) {
+    const veins = veinsNoVisitats(actual);
+    if (veins.length > 0) {
+      const { cell, dir } = veins[Math.floor(Math.random() * veins.length)];
+      stack.push(actual);
+      if (dir === 'n') { actual.n = false; cell.s = false; }
+      if (dir === 's') { actual.s = false; cell.n = false; }
+      if (dir === 'e') { actual.e = false; cell.w = false; }
+      if (dir === 'w') { actual.w = false; cell.e = false; }
+      actual = cell;
+      actual.visitat = true;
+      visitats++;
+    } else {
+      actual = stack.pop();
+    }
+  }
+
+  grid[0][0].n = false;                     // entrada per dalt
+  grid[ROWS-1][COLS-1].e = false;           // sortida per la dreta
+
+  jugador = { x: 0, y: 0 };
+  guanyat = false;
+  moviments = 0;
+  estatEl.textContent = '';
+  estatEl.className = '';
+  dibuixa();
+}
+
+function veinsNoVisitats(cell) {
+  let cx, cy;
+  for (let y = 0; y < ROWS; y++)
+    for (let x = 0; x < COLS; x++)
+      if (grid[y][x] === cell) { cx = x; cy = y; }
+
+  const resultat = [];
+  if (cy > 0 && !grid[cy-1][cx].visitat)       resultat.push({ cell: grid[cy-1][cx], dir: 'n' });
+  if (cy < ROWS-1 && !grid[cy+1][cx].visitat)  resultat.push({ cell: grid[cy+1][cx], dir: 's' });
+  if (cx < COLS-1 && !grid[cy][cx+1].visitat)  resultat.push({ cell: grid[cy][cx+1], dir: 'e' });
+  if (cx > 0 && !grid[cy][cx-1].visitat)       resultat.push({ cell: grid[cy][cx-1], dir: 'w' });
+  return resultat;
+}
+
+// ---------- DIBUIX ----------
+function dibuixa() {
+  // Neteja (sense canviar la mida!)
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = Math.max(1, Math.floor(CELL / 20));
+
+  // Parets interiors
+  for (let y = 0; y < ROWS; y++) {
+    for (let x = 0; x < COLS; x++) {
+      const c = grid[y][x];
+      const px = OFFSET_X + x * CELL;
+      const py = OFFSET_Y + y * CELL;
+      if (c.n) { ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + CELL, py); ctx.stroke(); }
+      if (c.s) { ctx.beginPath(); ctx.moveTo(px, py + CELL); ctx.lineTo(px + CELL, py + CELL); ctx.stroke(); }
+      if (c.w) { ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py + CELL); ctx.stroke(); }
+      if (c.e) { ctx.beginPath(); ctx.moveTo(px + CELL, py); ctx.lineTo(px + CELL, py + CELL); ctx.stroke(); }
+    }
+  }
+
+  // Marc exterior continu
+  ctx.lineWidth = Math.max(2, Math.floor(CELL / 12));
+  ctx.strokeRect(OFFSET_X, OFFSET_Y, CELL * COLS, CELL * ROWS);
+
+  // Obrir l'entrada (dalt de la casella 0,0)
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = Math.max(3, Math.floor(CELL / 8));
+  ctx.beginPath();
+  ctx.moveTo(OFFSET_X + 2, OFFSET_Y);
+  ctx.lineTo(OFFSET_X + CELL - 2, OFFSET_Y);
+  ctx.stroke();
+
+  // Obrir la sortida (dreta de l'última casella)
+  const sortidaY = OFFSET_Y + (ROWS - 1) * CELL;
+  ctx.beginPath();
+  ctx.moveTo(OFFSET_X + CELL * COLS, sortidaY + 2);
+  ctx.lineTo(OFFSET_X + CELL * COLS, sortidaY + CELL - 2);
+  ctx.stroke();
+
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = Math.max(1, Math.floor(CELL / 20));
+
+  // Fletxa d'entrada ↑
+  const midaFletxa = Math.max(8, Math.floor(MARGE * 0.55));
+  dibuixaFletxaAmunt(OFFSET_X + CELL / 2, OFFSET_Y - midaFletxa - 4, midaFletxa);
+
+  // Fletxa de sortida ←
+  dibuixaFletxaEsquerra(OFFSET_X + CELL * COLS + midaFletxa + 4,
+                        sortidaY + CELL / 2, midaFletxa);
+
+  // Destacar la sortida
+  ctx.fillStyle = 'rgba(0,200,0,0.20)';
+  ctx.fillRect(OFFSET_X + (COLS-1) * CELL, OFFSET_Y + (ROWS-1) * CELL, CELL, CELL);
+
+  // Jugador (cercle vermell)
+  const jx = OFFSET_X + jugador.x * CELL + CELL / 2;
+  const jy = OFFSET_Y + jugador.y * CELL + CELL / 2;
+  ctx.fillStyle = '#d33';
+  ctx.beginPath();
+  ctx.arc(jx, jy, CELL / 3, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function dibuixaFletxaAmunt(cx, cy, m) {
+  // m = mida base; escalem proporcionalment
+  const w = m, h = m * 1.2;
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - h);
+  ctx.lineTo(cx - w * 0.8, cy + h * 0.2);
+  ctx.lineTo(cx - w * 0.3, cy + h * 0.2);
+  ctx.lineTo(cx - w * 0.3, cy + h);
+  ctx.lineTo(cx + w * 0.3, cy + h);
+  ctx.lineTo(cx + w * 0.3, cy + h * 0.2);
+  ctx.lineTo(cx + w * 0.8, cy + h * 0.2);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function dibuixaFletxaEsquerra(cx, cy, m) {
+  const w = m, h = m * 1.2;
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.moveTo(cx - w, cy);
+  ctx.lineTo(cx + w * 0.2, cy - h * 0.8);
+  ctx.lineTo(cx + w * 0.2, cy - h * 0.3);
+  ctx.lineTo(cx + w, cy - h * 0.3);
+  ctx.lineTo(cx + w, cy + h * 0.3);
+  ctx.lineTo(cx + w * 0.2, cy + h * 0.3);
+  ctx.lineTo(cx + w * 0.2, cy + h * 0.8);
+  ctx.closePath();
+  ctx.fill();
+}
+
+// ---------- MOVIMENT ----------
+function mou(direccio) {
+  if (guanyat) return;
+  const c = grid[jugador.y][jugador.x];
+  let nx = jugador.x, ny = jugador.y;
+
+  if (direccio === 'n' && !c.n) ny--;
+  else if (direccio === 's' && !c.s) ny++;
+  else if (direccio === 'e' && !c.e) nx++;
+  else if (direccio === 'w' && !c.w) nx--;
+  else return;
+
+  jugador.x = nx;
+  jugador.y = ny;
+  moviments++;
+
+  if (jugador.x === COLS-1 && jugador.y === ROWS-1) {
+    guanyat = true;
+    estatEl.textContent = `🎉 Has arribat a la sortida en ${moviments} moviments!`;
+    estatEl.className = 'guanyat';
+  }
+
+  dibuixa();
+}
+
+document.addEventListener('keydown', (e) => {
+  switch (e.key) {
+    case 'ArrowUp':    e.preventDefault(); mou('n'); break;
+    case 'ArrowDown':  e.preventDefault(); mou('s'); break;
+    case 'ArrowLeft':  e.preventDefault(); mou('w'); break;
+    case 'ArrowRight': e.preventDefault(); mou('e'); break;
+  }
+});
+
+// ---------- INICIALITZACIÓ ----------
+aplicaNivell();
+genera();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<title>Redacció - Escena 1</title>
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #eef1f5;
+    margin: 0;
+    padding: 30px 20px;
+    color: #222;
+  }
+
+  .full {
+    max-width: 850px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 35px 40px 45px;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  }
+
+  .escena-titol {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 25px;
+    color: #1a3d6d;
+  }
+
+  .imatge {
+    display: block;
+    width: 100%;
+    max-width: 620px;
+    margin: 0 auto 30px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+
+  .camps {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 14px 18px;
+    align-items: start;
+  }
+
+  .camps label {
+    font-weight: 600;
+    padding-top: 8px;
+    color: #1a3d6d;
+  }
+
+  .camps input[type="text"] {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 16px;
+    font-family: inherit;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    background: #fafbfc;
+  }
+
+  .camps input[type="text"]:focus {
+    outline: none;
+    border-color: #2a6df4;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(42,109,244,0.15);
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 240px;
+    padding: 12px 14px;
+    font-size: 16px;
+    font-family: inherit;
+    line-height: 1.55;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    background: #fafbfc;
+    resize: vertical;
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: #2a6df4;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(42,109,244,0.15);
+  }
+
+  .comptador {
+    grid-column: 2;
+    font-size: 13px;
+    color: #666;
+    text-align: right;
+    margin-top: -6px;
+  }
+
+  .accions {
+    margin-top: 25px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  .accions button {
+    padding: 10px 18px;
+    font-size: 15px;
+    font-family: inherit;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #2a6df4;
+    color: #fff;
+    transition: background 0.15s;
+  }
+
+  .accions button:hover { background: #1a55cc; }
+
+  .accions button.secundari {
+    background: #e6e9ee;
+    color: #333;
+  }
+  .accions button.secundari:hover { background: #d5d9e0; }
+
+  @media (max-width: 600px) {
+    .camps { grid-template-columns: 1fr; }
+    .comptador { grid-column: 1; text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<div class="full">
+
+  <h2 class="escena-titol">Escena 1: redacta el que veus</h2>
+
+  <!-- Substitueix aquesta imatge pel fitxer de la teva escena -->
+  <img class="imatge" src="redaccio_01.jpg" alt="Escena 1">
+
+  <div class="camps">
+    <label for="titol">Títol</label>
+    <input type="text" id="titol" placeholder="Escriu un títol per a la teva redacció">
+
+    <label for="redaccio">Redacta aquí</label>
+    <textarea id="redaccio" placeholder="Descriu el que veus a la imatge..."></textarea>
+    <div class="comptador"><span id="comptador">0</span> paraules</div>
+  </div>
+
+  <div class="accions">
+    <button class="secundari" onclick="esborra()">Esborra</button>
+    <button onclick="descarrega()">Descarrega</button>
+  </div>
+
+</div>
+
+<script>
+  const titolEl   = document.getElementById('titol');
+  const redaccioEl = document.getElementById('redaccio');
+  const comptEl   = document.getElementById('comptador');
+
+  // Comptador de paraules en temps real
+  redaccioEl.addEventListener('input', () => {
+    const text = redaccioEl.value.trim();
+    const paraules = text === '' ? 0 : text.split(/\s+/).length;
+    comptEl.textContent = paraules;
+  });
+
+  // Esborrar
+  function esborra() {
+    if (!confirm('Segur que vols esborrar el títol i la redacció?')) return;
+    titolEl.value = '';
+    redaccioEl.value = '';
+    comptEl.textContent = '0';
+    titolEl.focus();
+  }
+
+  // Descarregar com a fitxer .txt
+  function descarrega() {
+    const titol = titolEl.value.trim() || 'Redacció sense títol';
+    const text  = redaccioEl.value.trim();
+    const contingut =
+      'Títol: ' + titol + '\n\n' +
+      'Redacció:\n' + text + '\n';
+
+    const blob = new Blob([contingut], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = titol.replace(/[^\w\-]+/g, '_') + '.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // Guardar automàticament al navegador (opcional)
+  function guardaLocal() {
+    localStorage.setItem('redaccio_titol', titolEl.value);
+    localStorage.setItem('redaccio_text', redaccioEl.value);
+  }
+  function carregaLocal() {
+    titolEl.value = localStorage.getItem('redaccio_titol') || '';
+    redaccioEl.value = localStorage.getItem('redaccio_text') || '';
+    redaccioEl.dispatchEvent(new Event('input'));
+  }
+
+  titolEl.addEventListener('input', guardaLocal);
+  redaccioEl.addEventListener('input', guardaLocal);
+  carregaLocal();
+</script>
+
+</body>
+</html>
