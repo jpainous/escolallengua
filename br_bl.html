@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📚 14 Activitats de BR i BL</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Comic Sans MS', 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+    min-height: 100vh; padding: 15px; color: #333;
+    display: flex; flex-direction: column;
+  }
+  header {
+    background: white; border-radius: 20px; padding: 15px 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2); margin-bottom: 20px; text-align: center;
+  }
+  h1 { color: #185a9d; font-size: 1.4em; margin-bottom: 10px; }
+  .marcador-zona {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    align-items: center; margin-bottom: 8px;
+  }
+  .marcador {
+    display: inline-block; background: #ffd93d; padding: 6px 18px;
+    border-radius: 30px; font-weight: bold; font-size: 1.1em;
+  }
+  .nivell-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, #185a9d, #43cea2);
+    color: white; padding: 6px 16px; border-radius: 30px;
+    font-weight: bold; font-size: 1em;
+    box-shadow: 0 4px 12px rgba(24,90,157,0.4);
+  }
+  .barra-progres {
+    width: 100%; max-width: 400px; height: 14px; background: #e0f5ee;
+    border-radius: 10px; overflow: hidden; margin: 8px auto;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .barra-progres-inner {
+    height: 100%; background: linear-gradient(90deg, #6bcf7f, #ffd93d, #43cea2);
+    width: 0%; transition: width 0.5s ease; border-radius: 10px;
+  }
+  .progres-text { text-align: center; font-size: 0.85em; color: #666; margin-bottom: 10px; }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; margin-top: 12px; }
+  .controls label { font-weight: bold; color: #185a9d; font-size: 0.9em; }
+  select {
+    padding: 10px 14px; font-size: 0.95em; font-family: inherit;
+    border: 3px solid #43cea2; border-radius: 12px; background: white;
+    color: #333; font-weight: bold; cursor: pointer; max-width: 100%;
+  }
+  main {
+    background: white; border-radius: 20px; padding: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2); min-height: 550px;
+    flex: 1;
+  }
+  .joc { display: none; }
+  .joc.actiu { display: block; animation: fadeIn 0.4s; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; transform: translateY(0);} }
+  h2 { color: #185a9d; margin-bottom: 10px; text-align: center; font-size: 1.3em; }
+  .subtitol { text-align: center; margin-bottom: 18px; color: #666; font-size: 0.95em; }
+  .feedback { text-align: center; font-size: 1.1em; font-weight: bold; margin-top: 15px; min-height: 1.5em; }
+  .feedback.bo { color: #2a8f4a; }
+  .feedback.dolent { color: #cc2a2a; }
+
+  .btn {
+    padding: 10px 22px; font-size: 1em; font-weight: bold;
+    background: #43cea2; color: white; border: none;
+    border-radius: 25px; cursor: pointer; font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: #185a9d; transform: translateY(-2px); }
+  .btn.verd { background: #6bcf7f; }
+  .btn.verd:hover { background: #5ab86e; }
+  .btn.groc { background: #ffd93d; color: #333; }
+  .btn.groc:hover { background: #f0c520; }
+  .btn.blau { background: #185a9d; }
+  .btn.blau:hover { background: #0f4278; }
+  .fila-botons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
+
+  /* BR o BL */
+  .brbl-area { max-width: 640px; margin: 0 auto; text-align: center; }
+  .brbl-paraula {
+    font-size: 2em; font-weight: bold; color: #185a9d;
+    margin: 20px 0; letter-spacing: 2px;
+    padding: 15px; background: #e0f5ee; border-radius: 15px;
+    transition: opacity 0.5s, transform 0.5s;
+    min-height: 80px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brbl-paraula.encertada {
+    background: #d4f5d4;
+    color: #2a8f4a;
+    animation: brillar 0.6s;
+  }
+  .brbl-paraula.desapareixent {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  .brbl-paraula.error {
+    background: #ffd4d4;
+    color: #cc2a2a;
+    animation: sacsejar 0.4s;
+  }
+  @keyframes brillar {
+    0% { transform: scale(1); box-shadow: 0 0 0 rgba(107,207,127,0); }
+    50% { transform: scale(1.1); box-shadow: 0 0 30px rgba(107,207,127,0.8); }
+    100% { transform: scale(1); box-shadow: 0 0 0 rgba(107,207,127,0); }
+  }
+  @keyframes sacsejar {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+  .brbl-botons {
+    display: flex; gap: 20px; justify-content: center; margin: 25px 0;
+  }
+  .brbl-botons button {
+    padding: 20px 40px; font-size: 1.5em; font-weight: bold;
+    border: 4px solid #43cea2; background: white; color: #185a9d;
+    border-radius: 15px; cursor: pointer; font-family: inherit;
+    transition: all 0.2s; min-width: 120px;
+  }
+  .brbl-botons button:hover:not(:disabled) { background: #43cea2; color: white; transform: scale(1.05); }
+  .brbl-botons button.correcte { background: #6bcf7f; border-color: #6bcf7f; color: white; }
+  .brbl-botons button.incorrecte { background: #ff6b6b; border-color: #ff6b6b; color: white; }
+  .brbl-botons button:disabled { cursor: not-allowed; opacity: 0.7; }
+
+  /* MEMORY */
+  .graella-memory {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 10px; max-width: 720px; margin: 0 auto;
+  }
+  .carta {
+    aspect-ratio: 1.2; background: #43cea2; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: bold; font-size: 0.85em;
+    cursor: pointer; padding: 5px; text-align: center;
+    transition: all 0.3s; user-select: none; word-break: break-word;
+    overflow: hidden;
+  }
+  .carta.girada { background: #ffd93d; color: #333; }
+  .carta.encertada { background: #6bcf7f; color: white; cursor: default; }
+  .carta:hover:not(.girada):not(.encertada) { transform: scale(1.05); }
+  .carta.emoji { font-size: 2.5em; line-height: 1; }
+  .carta.text { font-size: 0.85em; }
+
+  /* QUIZ */
+  .pregunta { font-size: 1.25em; text-align: center; margin: 20px 0; line-height: 1.5; }
+  .pregunta strong { color: #43cea2; }
+  .opcions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 620px; margin: 0 auto; }
+  .opcions button {
+    padding: 16px; font-size: 1em; font-weight: bold;
+    border: 3px solid #43cea2; background: white; color: #185a9d;
+    border-radius: 12px; cursor: pointer; font-family: inherit;
+    word-break: break-word; transition: all 0.2s;
+    text-align: left;
+  }
+  .opcions button:hover { background: #43cea2; color: white; }
+  .opcions button.correcte { background: #6bcf7f; border-color: #6bcf7f; color: white; }
+  .opcions button.incorrecte { background: #ff6b6b; border-color: #ff6b6b; color: white; }
+
+  /* DRAG */
+  .drag-contenidor { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 780px; margin: 0 auto; }
+  .columna { display: flex; flex-direction: column; gap: 8px; }
+  .columna h3 { text-align: center; color: #185a9d; margin-bottom: 8px; font-size: 1em; }
+  .item {
+    padding: 12px; background: #e0f5ee; border: 2px dashed #43cea2;
+    border-radius: 10px; text-align: center; font-weight: bold;
+    cursor: grab; user-select: none; word-break: break-word;
+    font-size: 0.9em;
+  }
+  .item.arrossegable { background: #ffd93d; border-style: solid; }
+  .item.destí { background: #f5f5f5; min-height: 45px; }
+  .item.destí.omplert { background: #6bcf7f; color: white; border-color: #6bcf7f; }
+  .item.destí.error { background: #ff6b6b; color: white; border-color: #ff6b6b; }
+
+  /* FLASHCARDS */
+  .flashcard { width: 340px; height: 240px; margin: 20px auto; perspective: 1000px; cursor: pointer; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.girada .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-cara {
+    position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+    border-radius: 20px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 20px;
+    text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    overflow: auto;
+  }
+  .flashcard-davant { background: linear-gradient(135deg, #43cea2, #185a9d); color: white; }
+  .flashcard-darrere { background: linear-gradient(135deg, #ffd93d, #ff9a3d); color: #333; transform: rotateY(180deg); }
+  .flashcard-cara .paraula { font-size: 1.5em; font-weight: bold; margin-bottom: 8px; word-break: break-word; }
+  .flashcard-cara .petit { font-size: 0.9em; opacity: 0.9; margin-top: 4px; }
+
+  /* SOPA */
+  .sopa-info { text-align: center; margin-bottom: 12px; font-weight: bold; color: #185a9d; }
+  .sopa-graella { display: grid; gap: 3px; max-width: 520px; margin: 0 auto; background: #e0f5ee; padding: 8px; border-radius: 12px; user-select: none; }
+  .sopa-cella {
+    aspect-ratio: 1; background: white; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 0.8em; cursor: pointer;
+    transition: all 0.15s; color: #333;
+  }
+  .sopa-cella:hover { background: #ffd93d; }
+  .sopa-cella.seleccionada { background: #ff9a3d; color: white; }
+  .sopa-cella.trobada { background: #6bcf7f; color: white; }
+  .sopa-llista { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 15px; }
+  .sopa-objectiu { padding: 6px 14px; background: #e0f5ee; border-radius: 20px; font-weight: bold; font-size: 0.85em; color: #185a9d; }
+  .sopa-objectiu.trobat { background: #6bcf7f; color: white; text-decoration: line-through; }
+
+  /* CLASSIFICACIÓ */
+  .class-caixes { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; }
+  .class-caixa {
+    background: #e0f5ee; border: 3px dashed #43cea2; border-radius: 15px;
+    padding: 12px; min-width: 140px; min-height: 100px; flex: 1;
+    max-width: 220px; text-align: center;
+  }
+  .class-caixa h4 { color: #185a9d; margin-bottom: 8px; font-size: 0.95em; }
+  .class-caixa.hover { background: #ffd93d; }
+  .class-paraula {
+    display: inline-block; padding: 6px 10px; margin: 3px;
+    background: #ffd93d; border-radius: 20px; font-weight: bold;
+    cursor: grab; user-select: none; font-size: 0.8em;
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  .class-paraula.col·locada { background: #6bcf7f; color: white; }
+
+  /* ORDENA */
+  .ordre-paraules { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 20px auto; max-width: 600px; min-height: 50px; padding: 15px; background: #f5f5f5; border-radius: 12px; border: 2px dashed #ccc; }
+  .ordre-paraula {
+    padding: 10px 16px; background: #43cea2; color: white;
+    border-radius: 20px; font-weight: bold; cursor: pointer;
+    font-size: 0.95em; transition: all 0.2s;
+  }
+  .ordre-paraula:hover { transform: scale(1.05); }
+  .ordre-paraula.usada { opacity: 0.3; pointer-events: none; }
+  .ordre-resultat {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    margin: 15px auto; max-width: 600px; min-height: 50px; padding: 15px;
+    background: #e0f5ee; border-radius: 12px; border: 3px solid #43cea2;
+  }
+  .ordre-resultat .ordre-paraula { background: #6bcf7f; }
+
+  /* PENJAT */
+  .penjat-paraula { display: flex; gap: 6px; justify-content: center; margin: 25px 0; flex-wrap: wrap; }
+  .penjat-lletra { font-size: 1.6em; font-weight: bold; border-bottom: 4px solid #43cea2; min-width: 28px; text-align: center; padding: 5px; }
+  .penjat-lletra.encertada { color: #6bcf7f; }
+  .penjat-lletra.espai { border-bottom: none; }
+  .penjat-teclat { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; max-width: 520px; margin: 0 auto; }
+  .penjat-teclat button {
+    padding: 10px 0; font-weight: bold; font-size: 0.95em;
+    border: 2px solid #43cea2; background: white; color: #185a9d;
+    border-radius: 8px; cursor: pointer; font-family: inherit;
+  }
+  .penjat-teclat button:hover:not(:disabled) { background: #43cea2; color: white; }
+  .penjat-teclat button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .penjat-info { text-align: center; font-weight: bold; margin: 10px 0; color: #185a9d; }
+
+  /* BINGO */
+  .bingo-cartro { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 480px; margin: 0 auto; }
+  .bingo-cella {
+    aspect-ratio: 1.2; background: #e0f5ee; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 0.72em; cursor: pointer;
+    padding: 5px; text-align: center; word-break: break-word;
+    transition: all 0.2s; border: 2px solid transparent; overflow: hidden;
+  }
+  .bingo-cella:hover { background: #ffd93d; }
+  .bingo-cella.marcada { background: #6bcf7f; color: white; border-color: #5ab86e; }
+  .bingo-cella.guanyadora { background: #ff6b6b; color: white; animation: pulse 0.6s infinite alternate; }
+  @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.05); } }
+  .bingo-anunci {
+    text-align: center; margin: 15px auto; padding: 12px 20px;
+    background: #ffd93d; border-radius: 12px; font-weight: bold;
+    font-size: 1.05em; max-width: 480px;
+  }
+
+  /* COMPLETA */
+  .opcions-completa { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 20px 0; }
+  .opcions-completa button {
+    padding: 14px 22px; font-size: 1.1em; font-weight: bold;
+    border: 3px solid #43cea2; background: white; color: #185a9d;
+    border-radius: 12px; cursor: pointer; font-family: inherit;
+    transition: all 0.2s; min-width: 80px;
+  }
+  .opcions-completa button:hover { background: #43cea2; color: white; }
+  .opcions-completa button.correcte { background: #6bcf7f; border-color: #6bcf7f; color: white; }
+  .opcions-completa button.incorrecte { background: #ff6b6b; border-color: #ff6b6b; color: white; }
+
+  /* COMPLETA SÍL·LABA */
+  .acabament-area { max-width: 640px; margin: 0 auto; }
+  .acabament-paraula {
+    text-align: center; font-size: 2em; font-weight: bold;
+    color: #185a9d; margin: 15px 0 25px;
+    padding: 15px; background: #e0f5ee; border-radius: 15px;
+    letter-spacing: 2px;
+  }
+  .acabament-fila {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px; margin: 10px 0; background: #f9f9f9;
+    border-radius: 12px; border: 2px solid #ffd93d;
+    flex-wrap: wrap;
+  }
+  .acabament-etiqueta { font-weight: bold; min-width: 130px; color: #185a9d; font-size: 0.95em; }
+  .acabament-input-grup { display: flex; align-items: center; gap: 5px; flex: 1; min-width: 200px; }
+  .acabament-input {
+    flex: 1; padding: 10px; font-size: 1.1em;
+    border: 2px solid #43cea2; border-radius: 8px;
+    font-family: inherit; font-weight: bold; text-transform: uppercase;
+    min-width: 100px;
+  }
+  .acabament-input.correcte { background: #d4f5d4; border-color: #6bcf7f; color: #2a8f4a; }
+  .acabament-input.incorrecte { background: #ffd4d4; border-color: #ff6b6b; color: #cc2a2a; }
+  .acabament-resultat { font-weight: bold; min-width: 100px; font-family: monospace; font-size: 0.95em; color: #666; }
+
+  /* Modal */
+  .modal-fons {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); display: none;
+    justify-content: center; align-items: center; z-index: 1000;
+  }
+  .modal-fons.actiu { display: flex; }
+  .modal {
+    background: white; border-radius: 20px; padding: 25px;
+    max-width: 420px; width: 90%; text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: fadeIn 0.3s;
+  }
+  .modal h3 { color: #185a9d; margin-bottom: 12px; }
+  .modal p { margin-bottom: 15px; color: #555; }
+
+  .nivell-popup {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-200px);
+    background: linear-gradient(135deg, #6bcf7f, #4caf50);
+    color: white; padding: 20px 30px; border-radius: 20px;
+    font-weight: bold; font-size: 1.2em; z-index: 2000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    transition: transform 0.5s ease; text-align: center;
+  }
+  .nivell-popup.actiu { transform: translateX(-50%) translateY(0); }
+
+  .autoguardat {
+    position: fixed; bottom: 10px; right: 10px;
+    background: rgba(107,207,127,0.95); color: white;
+    padding: 6px 14px; border-radius: 20px; font-size: 0.8em;
+    font-weight: bold; opacity: 0; transition: opacity 0.5s;
+    z-index: 100;
+  }
+  .autoguardat.visible { opacity: 1; }
+
+  footer {
+    margin-top: 20px; padding: 15px;
+    background: rgba(255,255,255,0.9); border-radius: 20px;
+    text-align: center; color: #555; font-size: 0.85em;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+  footer strong { color: #185a9d; }
+
+  @media (max-width: 520px) {
+    .graella-memory { grid-template-columns: repeat(3, 1fr); }
+    .opcions, .drag-contenidor { grid-template-columns: 1fr; }
+    .carta.text { font-size: 0.7em; }
+    .carta.emoji { font-size: 2em; }
+    .flashcard { width: 90%; }
+    .penjat-teclat { grid-template-columns: repeat(6, 1fr); }
+    .acabament-etiqueta { min-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📚 14 Activitats de BR i BL</h1>
+  <div class="marcador-zona">
+    <div class="marcador">⭐ Punts: <span id="punts">0</span></div>
+    <div class="nivell-badge" id="nivell-badge">🌱 <span id="nivell-nom">Aprenent</span></div>
+  </div>
+  <div class="barra-progres"><div class="barra-progres-inner" id="barra-inner"></div></div>
+  <div class="progres-text" id="progres-text">Proper nivell: 50 punts</div>
+
+  <div class="controls">
+    <label for="selector-joc">Activitat:</label>
+    <select id="selector-joc">
+      <option value="brbl">1. 🅱️ BR o BL?</option>
+      <option value="memory">2. 🧠 Memory</option>
+      <option value="quiz">3. ❓ Quiz paraula</option>
+      <option value="drag">4. 🖱️ Arrossega categoria</option>
+      <option value="flash">5. 🃏 Targetes</option>
+      <option value="sopa">6. 🔍 Sopa de lletres</option>
+      <option value="classificacio">7. 🗂️ Classifica BR/BL</option>
+      <option value="quinTipus">8. 🎯 Quina paraula és?</option>
+      <option value="intrus">9. 🕵️ Intrús</option>
+      <option value="ordena">10. 🎬 Ordena les lletres</option>
+      <option value="penjat">11. 🪢 Penjat</option>
+      <option value="bingo">12. 🎰 Bingo</option>
+      <option value="completa">13. 🔤 Completa el mot</option>
+      <option value="acabament">14. ✏️ Completa síl·laba</option>
+    </select>
+    <button class="btn groc" onclick="obrirGuardar()">💾 Guardar</button>
+    <button class="btn groc" onclick="obrirRestaurar()">📂 Restaurar</button>
+    <button class="btn blau" onclick="reiniciarPunts()">🔄 Reiniciar</button>
+  </div>
+</header>
+
+<main>
+
+<section id="joc-brbl" class="joc actiu">
+  <h2>1. 🅱️ BR o BL?</h2>
+  <p class="subtitol">Llegeix la paraula i tria el grup correcte</p>
+  <div class="brbl-area">
+    <div class="brbl-paraula" id="brbl-paraula">Carregant...</div>
+    <div class="brbl-botons" id="brbl-botons">
+      <button id="btn-br" onclick="respondreBrBl('BR', this)">BR</button>
+      <button id="btn-bl" onclick="respondreBrBl('BL', this)">BL</button>
+    </div>
+  </div>
+  <p class="feedback" id="feedback-brbl"></p>
+  <div class="fila-botons">
+    <button class="btn blau" id="btn-seguent-brbl" onclick="novaPreguntaBrBl()">⏭️ Saltar paraula</button>
+  </div>
+</section>
+
+<section id="joc-memory" class="joc">
+  <h2>2. 🧠 Memory de paraules</h2>
+  <p class="subtitol">Empareja cada paraula amb la seva imatge/emoji</p>
+  <div class="graella-memory" id="graella-memory"></div>
+  <p class="feedback" id="feedback-memory"></p>
+  <div class="fila-botons"><button class="btn" onclick="iniciarMemory()">🔄 Nova partida</button></div>
+</section>
+
+<section id="joc-quiz" class="joc">
+  <h2>3. ❓ Quiz: Quina paraula és?</h2>
+  <p class="subtitol">Donada una definició, tria la paraula correcta</p>
+  <p class="pregunta" id="pregunta-quiz">Carregant...</p>
+  <div class="opcions" id="opcions-quiz"></div>
+  <p class="feedback" id="feedback-quiz"></p>
+  <div class="fila-botons"><button class="btn blau" id="btn-seguent-quiz" style="display:none;" onclick="novaPreguntaQuiz()">➡️ Següent</button></div>
+</section>
+
+<section id="joc-drag" class="joc">
+  <h2>4. 🖱️ Arrossega la paraula a la categoria</h2>
+  <p class="subtitol">Classifica cada paraula segons si té BR o BL</p>
+  <div class="drag-contenidor">
+    <div class="columna"><h3>Paraules</h3><div id="drag-paraules"></div></div>
+    <div class="columna"><h3>Categoria</h3><div id="drag-categories"></div></div>
+  </div>
+  <p class="feedback" id="feedback-drag"></p>
+  <div class="fila-botons"><button class="btn" onclick="iniciarDrag()">🔄 Nova partida</button></div>
+</section>
+
+<section id="joc-flash" class="joc">
+  <h2>5. 🃏 Targetes d'estudi</h2>
+  <p class="subtitol">Clica la targeta per girar-la</p>
+  <div class="flashcard" id="flashcard" onclick="girarFlash()">
+    <div class="flashcard-inner">
+      <div class="flashcard-cara flashcard-davant">
+        <div class="paraula" id="flash-davant">ABRIC</div>
+        <div class="petit">Clica per girar 🔄</div>
+      </div>
+      <div class="flashcard-cara flashcard-darrere">
+        <div class="paraula" id="flash-darrere"></div>
+      </div>
+    </div>
+  </div>
+  <div class="fila-botons">
+    <button class="btn" onclick="flashAnterior()">⬅️</button>
+    <button class="btn" onclick="flashSeguent()">➡️</button>
+  </div>
+  <p class="feedback" id="feedback-flash"></p>
+</section>
+
+<section id="joc-sopa" class="joc">
+  <h2>6. 🔍 Sopa de lletres</h2>
+  <p class="subtitol">Clica les lletres per formar les paraules amagades</p>
+  <div class="sopa-info" id="sopa-info">Troba les paraules!</div>
+  <div class="sopa-graella" id="sopa-graella"></div>
+  <div class="sopa-llista" id="sopa-llista"></div>
+  <p class="feedback" id="feedback-sopa"></p>
+  <div class="fila-botons"><button class="btn" onclick="iniciarSopa()">🔄 Nova sopa</button></div>
+</section>
+
+<section id="joc-classificacio" class="joc">
+  <h2>7. 🗂️ Classifica BR/BL</h2>
+  <p class="subtitol">Arrossega cada paraula a la caixa correcta</p>
+  <div id="class-pool" style="text-align:center; min-height:60px; padding:10px; background:#f9f9ff; border-radius:12px; margin-bottom:15px;"></div>
+  <div class="class-caixes" id="class-caixes"></div>
+  <p class="feedback" id="feedback-classificacio"></p>
+  <div class="fila-botons"><button class="btn" onclick="iniciarClassificacio()">🔄 Nova partida</button></div>
+</section>
+
+<section id="joc-quinTipus" class="joc">
+  <h2>8. 🎯 Quina paraula és?</h2>
+  <p class="subtitol">Donada una pista, tria la paraula correcta</p>
+  <p class="pregunta" id="pregunta-animal">Carregant...</p>
+  <div class="opcions" id="opcions-animal"></div>
+  <p class="feedback" id="feedback-animal"></p>
+  <div class="fila-botons"><button class="btn blau" id="btn-seguent-animal" style="display:none;" onclick="novaPreguntaAnimal()">➡️ Següent</button></div>
+</section>
+
+<section id="joc-intrus" class="joc">
+  <h2>9. 🕵️ Troba l'intrús</h2>
+  <p class="subtitol" id="pista-intrus">Quina paraula NO té el mateix grup consonàntic?</p>
+  <div class="opcions" id="opcions-intrus"></div>
+  <p class="feedback" id="feedback-intrus"></p>
+  <div class="fila-botons"><button class="btn blau" id="btn-seguent-intrus" style="display:none;" onclick="novaIntrus()">➡️ Següent</button></div>
+</section>
+
+<section id="joc-ordena" class="joc">
+  <h2>10. 🎬 Ordena les lletres</h2>
+  <p class="subtitol" id="ordre-pista">Reconstrueix la paraula clicant les lletres en ordre</p>
+  <div class="ordre-resultat" id="ordre-resultat"></div>
+  <div class="ordre-paraules" id="ordre-paraules"></div>
+  <p class="feedback" id="feedback-ordre"></p>
+  <div class="fila-botons">
+    <button class="btn" onclick="iniciarOrdre()">🔄 Nova paraula</button>
+    <button class="btn groc" onclick="esborrarOrdre()">↩️ Esborrar</button>
+  </div>
+</section>
+
+<section id="joc-penjat" class="joc">
+  <h2>11. 🪢 Penjat de paraules</h2>
+  <p class="subtitol">Endevina la paraula lletra a lletra</p>
+  <div class="penjat-info" id="penjat-info">Carregant...</div>
+  <div class="penjat-paraula" id="penjat-paraula"></div>
+  <div class="penjat-teclat" id="penjat-teclat"></div>
+  <p class="feedback" id="feedback-penjat"></p>
+  <div class="fila-botons"><button class="btn" onclick="iniciarPenjat()">🔄 Nova paraula</button></div>
+</section>
+
+<section id="joc-bingo" class="joc">
+  <h2>12. 🎰 Bingo de paraules</h2>
+  <p class="subtitol">Quan sentis una definició, marca la paraula al cartró</p>
+  <div class="bingo-anunci" id="bingo-anunci">Clica "Cantar" per començar</div>
+  <div class="bingo-cartro" id="bingo-cartro"></div>
+  <p class="feedback" id="feedback-bingo"></p>
+  <div class="fila-botons">
+    <button class="btn" onclick="cantarBingo()">📢 Cantar definició</button>
+    <button class="btn blau" onclick="iniciarBingo()">🔄 Nova partida</button>
+  </div>
+</section>
+
+<section id="joc-completa" class="joc">
+  <h2>13. 🔤 Completa el mot</h2>
+  <p class="subtitol">Falta una lletra! Tria la correcta</p>
+  <p class="pregunta" id="pregunta-completa">Carregant...</p>
+  <div class="opcions" id="opcions-completa"></div>
+  <p class="feedback" id="feedback-completa"></p>
+  <div class="fila-botons"><button class="btn blau" id="btn-seguent-completa" style="display:none;" onclick="novaPreguntaCompleta()">➡️ Següent</button></div>
+</section>
+
+<section id="joc-acabament" class="joc">
+  <h2>14. ✏️ Completa la síl·laba</h2>
+  <p class="subtitol">Escriu les lletres que falten (BR o BL) a cada paraula</p>
+  <div class="acabament-area">
+    <div class="acabament-paraula" id="acabament-paraula">Carregant...</div>
+
+    <div class="acabament-fila">
+      <span class="acabament-etiqueta">Grup consonàntic:</span>
+      <div class="acabament-input-grup">
+        <input type="text" class="acabament-input" id="acabament-grup" placeholder="Escriu BR o BL" maxlength="2" autocomplete="off">
+      </div>
+      <span class="acabament-resultat" id="acabament-resultat-grup"></span>
+    </div>
+
+    <div class="acabament-fila">
+      <span class="acabament-etiqueta">Paraula completa:</span>
+      <div class="acabament-input-grup">
+        <input type="text" class="acabament-input" id="acabament-paraula-sencera" placeholder="Escriu la paraula sencera" autocomplete="off">
+      </div>
+      <span class="acabament-resultat" id="acabament-resultat-sencera"></span>
+    </div>
+
+    <p class="feedback" id="feedback-acabament"></p>
+
+    <div class="fila-botons">
+      <button class="btn verd" onclick="comprovarAcabament()">✅ Comprovar</button>
+      <button class="btn blau" onclick="iniciarAcabament()">➡️ Següent paraula</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div class="modal-fons" id="modal-guardar">
+  <div class="modal">
+    <h3>💾 Vols guardar la sessió?</h3>
+    <p>Es descarregarà un fitxer JSON amb els teus punts, nivell i estadístiques.</p>
+    <div class="fila-botons">
+      <button class="btn verd" onclick="guardarJSON()">Sí, guardar</button>
+      <button class="btn" onclick="tancarModal('modal-guardar')">No, gràcies</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-fons" id="modal-restaurar">
+  <div class="modal">
+    <h3>📂 Restaurar sessió</h3>
+    <p>Selecciona un fitxer JSON guardat prèviament.</p>
+    <input type="file" id="input-fitxer" accept=".json" style="margin-bottom:15px;">
+    <div class="fila-botons">
+      <button class="btn verd" onclick="restaurarJSON()">Restaurar</button>
+      <button class="btn" onclick="tancarModal('modal-restaurar')">Cancel·lar</button>
+    </div>
+  </div>
+</div>
+
+<div class="nivell-popup" id="nivell-popup"></div>
+<div class="autoguardat" id="autoguardat">💾 Autoguardat</div>
+
+<footer>
+  <p>🎓 <strong>14 Activitats de BR i BL</strong> — Eina educativa per a 8-12 anys</p>
+  <p style="margin-top:6px;">Arxiu HTML generat amb la plataforma <strong>DeepSeek</strong> 🤖</p>
+  <p style="margin-top:6px; font-size:0.8em; color:#999;">Les dades s'autoguarden cada 30 segons al navegador</p>
+</footer>
+
+<script>
+/* ============================================================
+   DADES — 50 paraules amb BR o BL (25 + 25)
+   ============================================================ */
+const MOTS = [
+  // ==================== BR (25) ====================
+  { base:"ABRIC",       grup:"BR", cat:"objecte",   emoji:"🧥", def:"Peça de roba per abrigar-se" },
+  { base:"BRUIXA",      grup:"BR", cat:"persona",   emoji:"🧙‍♀️", def:"Dona amb poders màgics" },
+  { base:"CAMBRER",     grup:"BR", cat:"ofici",     emoji:"🍽️", def:"Persona que serveix en un bar o restaurant" },
+  { base:"COBRAR",      grup:"BR", cat:"acció",     emoji:"💰", def:"Rebre diners" },
+  { base:"CABRA",       grup:"BR", cat:"animal",    emoji:"🐐", def:"Animal que fa llet i salta per les muntanyes" },
+  { base:"ESCOMBRA",    grup:"BR", cat:"objecte",   emoji:"🧹", def:"Eina per escombrar" },
+  { base:"LLIBRETA",    grup:"BR", cat:"objecte",   emoji:"📓", def:"Conjunt de fulls per escriure" },
+  { base:"SEMBRAR",     grup:"BR", cat:"acció",     emoji:"🌱", def:"Posar llavors a la terra" },
+  { base:"ZEBRA",       grup:"BR", cat:"animal",    emoji:"🦓", def:"Animal blanc i negre amb ratlles" },
+  { base:"ARBRE",       grup:"BR", cat:"natura",    emoji:"🌳", def:"Planta gran amb tronc i branques" },
+  { base:"PEBROT",      grup:"BR", cat:"menjar",    emoji:"🌶️", def:"Verdura allargada, sovint vermella" },
+  { base:"OBRIR",       grup:"BR", cat:"acció",     emoji:"🔓", def:"Desfer un tancament" },
+  { base:"LLIBRE",      grup:"BR", cat:"objecte",   emoji:"📖", def:"Conjunt de fulls amb text" },
+  { base:"SOBRE",       grup:"BR", cat:"objecte",   emoji:"✉️", def:"Embolcall per posar una carta" },
+  { base:"COBRE",       grup:"BR", cat:"objecte",   emoji:"🥘", def:"Metall rogenc per fer estris" },
+  { base:"FEBRE",       grup:"BR", cat:"malaltia",  emoji:"🤒", def:"Temperatura corporal alta" },
+  { base:"TIMBRE",      grup:"BR", cat:"objecte",   emoji:"🔔", def:"Dispositiu que sona" },
+  { base:"BRAMA",       grup:"BR", cat:"natura",    emoji:"🌊", def:"Soroll fort del mar o del vent" },
+  { base:"BRANCA",      grup:"BR", cat:"natura",    emoji:"🌿", def:"Part de l'arbre que surt del tronc" },
+  { base:"BRASA",       grup:"BR", cat:"natura",    emoji:"🔥", def:"Caliu o tros de carbó encès" },
+  { base:"BREGA",       grup:"BR", cat:"acció",     emoji:"💪", def:"Treball dur o baralla" },
+  { base:"BRINCAR",     grup:"BR", cat:"acció",     emoji:"🤸", def:"Saltar" },
+  { base:"BROMA",       grup:"BR", cat:"abstracte", emoji:"😄", def:"Acudit o cosa poc seriosa" },
+  { base:"BROT",        grup:"BR", cat:"natura",    emoji:"🌱", def:"Primera tija d'una planta" },
+  { base:"BRUT",        grup:"BR", cat:"adjectiu",  emoji:"🧹", def:"Que no està net" },
+
+  // ==================== BL (25) ====================
+  { base:"DOBLEGAR",    grup:"BL", cat:"acció",     emoji:"📐", def:"Plegar una cosa" },
+  { base:"BLAT",        grup:"BL", cat:"natura",    emoji:"🌾", def:"Cereal per fer farina i pa" },
+  { base:"BLAU",        grup:"BL", cat:"color",     emoji:"🔵", def:"Color del cel" },
+  { base:"BIBLIOTECA",  grup:"BL", cat:"lloc",      emoji:"📚", def:"Lloc on hi ha molts llibres" },
+  { base:"PROBLEMES",   grup:"BL", cat:"abstracte", emoji:"❓", def:"Dificultats a resoldre" },
+  { base:"MOBLE",       grup:"BL", cat:"objecte",   emoji:"🪑", def:"Peça de mobiliari" },
+  { base:"POBLE",       grup:"BL", cat:"lloc",      emoji:"🏘️", def:"Població petita" },
+  { base:"DOBLE",       grup:"BL", cat:"adjectiu",  emoji:"✌️", def:"Que és dues vegades" },
+  { base:"IMPERMEABLE", grup:"BL", cat:"objecte",   emoji:"🧥", def:"Roba que no deixa passar l'aigua" },
+  { base:"BLEDA",       grup:"BL", cat:"menjar",    emoji:"🥬", def:"Verdura de fulla verda" },
+  { base:"BLOC",        grup:"BL", cat:"objecte",   emoji:"📔", def:"Conjunt de fulls units" },
+  { base:"BLOG",        grup:"BL", cat:"abstracte", emoji:"💻", def:"Diari digital" },
+  { base:"BLUSA",       grup:"BL", cat:"roba",      emoji:"👚", def:"Peça de roba femenina" },
+  { base:"BLINDAT",     grup:"BL", cat:"adjectiu",  emoji:"🛡️", def:"Protegit amb blindatge" },
+  { base:"BLASÓ",       grup:"BL", cat:"objecte",   emoji:"🛡️", def:"Escut o emblema" },
+  { base:"BLASFÈMIA",   grup:"BL", cat:"abstracte", emoji:"😱", def:"Paraula ofensiva contra Déu" },
+  { base:"BLAVET",      grup:"BL", cat:"color",     emoji:"🔹", def:"Que tira a blau" },
+  { base:"BLOCAR",      grup:"BL", cat:"acció",     emoji:"🚫", def:"Impedir el pas" },
+  { base:"BLOQUEJAR",   grup:"BL", cat:"acció",     emoji:"🔒", def:"Tancar o impedir" },
+  { base:"BLAND",       grup:"BL", cat:"adjectiu",  emoji:"🍮", def:"Tou, suau" },
+  { base:"BLE",         grup:"BL", cat:"natura",    emoji:"🌾", def:"Planta herbàcia" },
+  { base:"BLES",        grup:"BL", cat:"natura",    emoji:"🌿", def:"Plantes herbàcies" },
+  { base:"BLOQUEIG",    grup:"BL", cat:"abstracte", emoji:"🚧", def:"Acció de bloquejar" },
+  { base:"BLOCAIRE",    grup:"BL", cat:"persona",   emoji:"🧱", def:"Persona que posa blocs" },
+  { base:"BLASONAR",    grup:"BL", cat:"acció",     emoji:"🎨", def:"Descriure un blasó" }
+];
+
+/* ============================================================
+   NIVELLS
+   ============================================================ */
+const NIVELLS = [
+  { nom: 'Aprenent',   emoji: '🌱', min: 0,    max: 50 },
+  { nom: 'Explorador', emoji: '🧭', min: 50,   max: 150 },
+  { nom: 'Aventurer',  emoji: '🗺️', min: 150,  max: 300 },
+  { nom: 'Expert',     emoji: '🎓', min: 300,  max: 500 },
+  { nom: 'Mestre',     emoji: '🏆', min: 500,  max: 800 },
+  { nom: 'Llegenda',   emoji: '👑', min: 800,  max: Infinity }
+];
+function obtenirNivell(p) {
+  for (const n of NIVELLS) if (p >= n.min && p < n.max) return n;
+  return NIVELLS[NIVELLS.length - 1];
+}
+
+/* ============================================================
+   ESTAT
+   ============================================================ */
+let punts = 0;
+let nivellActual = NIVELLS[0];
+let estadistiques = { encerts: 0, errors: 0, motsEncertats: [], motsFallats: [] };
+let jocActual = 'brbl';
+let canviPendent = null;
+let popupTimeout = null;
+
+const CLAU_STORAGE = 'br_bl_sessio';
+
+/* ============================================================
+   UTILITATS
+   ============================================================ */
+function mesclar(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function agafarAleatoris(arr, n) { return mesclar(arr).slice(0, n); }
+function normalitzar(s) {
+  return s.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+}
+function esEmoji(text) {
+  return !/[A-Za-zÀ-ÿ]/.test(text);
+}
+function setFeedback(id, msg, tipus) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.classList.remove('bo', 'dolent');
+  if (tipus === 'bo') el.classList.add('bo');
+  if (tipus === 'dolent') el.classList.add('dolent');
+}
+function actualitzarMarcador() {
+  document.getElementById('punts').textContent = punts;
+  const nouNivell = obtenirNivell(punts);
+  if (nouNivell.nom !== nivellActual.nom) {
+    nivellActual = nouNivell;
+    mostrarPopupNivell(nouNivell);
+  }
+  document.getElementById('nivell-nom').textContent = nivellActual.nom;
+  document.querySelector('.nivell-badge').firstChild.textContent = nivellActual.emoji + ' ';
+  const next = NIVELLS.find(n => n.min > punts);
+  const barra = document.getElementById('barra-inner');
+  const text = document.getElementById('progres-text');
+  if (next) {
+    const inici = nivellActual.min, fi = next.min;
+    const pct = Math.min(100, Math.max(0, ((punts - inici) / (fi - inici)) * 100));
+    barra.style.width = pct + '%';
+    text.textContent = `Proper nivell: ${next.nom} ${next.emoji} a ${next.min} punts (falten ${next.min - punts})`;
+  } else {
+    barra.style.width = '100%';
+    text.textContent = '👑 Has arribat al nivell MÀXIM: Llegenda!';
+  }
+}
+function sumarPunts(n, mot) {
+  punts += n;
+  estadistiques.encerts++;
+  if (mot && !estadistiques.motsEncertats.includes(mot)) estadistiques.motsEncertats.push(mot);
+  actualitzarMarcador();
+  autoguardar();
+}
+function restarPunts(n, mot) {
+  punts = Math.max(0, punts - n);
+  estadistiques.errors++;
+  if (mot && !estadistiques.motsFallats.includes(mot)) estadistiques.motsFallats.push(mot);
+  actualitzarMarcador();
+  autoguardar();
+}
+function mostrarPopupNivell(n) {
+  const popup = document.getElementById('nivell-popup');
+  popup.textContent = `${n.emoji} Has pujat al nivell: ${n.nom}! ${n.emoji}`;
+  popup.classList.add('actiu');
+  if (popupTimeout) clearTimeout(popupTimeout);
+  popupTimeout = setTimeout(() => {
+    popup.classList.remove('actiu');
+    popupTimeout = null;
+  }, 3000);
+}
+
+/* ============================================================
+   AUTOGUARDAT
+   ============================================================ */
+function autoguardar() {
+  try {
+    const dades = {
+      versio: '1.0',
+      data: new Date().toISOString(),
+      punts: punts,
+      nivell: nivellActual.nom,
+      estadistiques: estadistiques,
+      sessio: { activitatActual: jocActual }
+    };
+    localStorage.setItem(CLAU_STORAGE, JSON.stringify(dades));
+    const ind = document.getElementById('autoguardat');
+    ind.classList.add('visible');
+    setTimeout(() => ind.classList.remove('visible'), 1200);
+  } catch(e) {}
+}
+function carregarAutoguardat() {
+  try {
+    const raw = localStorage.getItem(CLAU_STORAGE);
+    if (!raw) return false;
+    const dades = JSON.parse(raw);
+    if (typeof dades.punts !== 'number') return false;
+    punts = dades.punts;
+    estadistiques = dades.estadistiques || estadistiques;
+    jocActual = (dades.sessio && dades.sessio.activitatActual) || 'brbl';
+    nivellActual = obtenirNivell(punts);
+    return true;
+  } catch(e) { return false; }
+}
+
+/* ============================================================
+   NAVEGACIÓ
+   ============================================================ */
+const selectorJoc = document.getElementById('selector-joc');
+selectorJoc.addEventListener('change', () => {
+  const nouJoc = selectorJoc.value;
+  if (nouJoc === jocActual) return;
+  canviPendent = () => {
+    document.querySelectorAll('.joc').forEach(j => j.classList.remove('actiu'));
+    document.getElementById('joc-' + nouJoc).classList.add('actiu');
+    jocActual = nouJoc;
+    iniciarJoc(nouJoc);
+    autoguardar();
+  };
+  obrirGuardar();
+});
+
+function iniciarJoc(nom) {
+  memoryPrimera = null; memoryBloquejat = false; memoryEncerts = 0;
+  quizRespost = false;
+  brblRespost = false;
+  animalRespost = false;
+  completaRespost = false;
+  acabamentComprovat = false;
+  flashGirada = false;
+
+  if (nom === 'brbl') novaPreguntaBrBl();
+  if (nom === 'memory') iniciarMemory();
+  if (nom === 'quiz') novaPreguntaQuiz();
+  if (nom === 'drag') iniciarDrag();
+  if (nom === 'flash') { flashIndex = 0; mostrarFlash(); }
+  if (nom === 'sopa') iniciarSopa();
+  if (nom === 'classificacio') iniciarClassificacio();
+  if (nom === 'quinTipus') novaPreguntaAnimal();
+  if (nom === 'intrus') novaIntrus();
+  if (nom === 'ordena') iniciarOrdre();
+  if (nom === 'penjat') iniciarPenjat();
+  if (nom === 'bingo') iniciarBingo();
+  if (nom === 'completa') novaPreguntaCompleta();
+  if (nom === 'acabament') iniciarAcabament();
+}
+
+/* ============================================================
+   1. BR o BL?
+   ============================================================ */
+let brblActual = null, brblRespost = false;
+let brblTimeout = null;
+
+function novaPreguntaBrBl() {
+  brblRespost = false;
+  if (brblTimeout) { clearTimeout(brblTimeout); brblTimeout = null; }
+  setFeedback('feedback-brbl', '');
+
+  brblActual = MOTS[Math.floor(Math.random() * MOTS.length)];
+  const paraulaEl = document.getElementById('brbl-paraula');
+
+  paraulaEl.classList.remove('encertada', 'error', 'desapareixent');
+  paraulaEl.textContent = brblActual.base;
+  paraulaEl.style.opacity = '1';
+  paraulaEl.style.transform = 'scale(1)';
+
+  const btnBR = document.getElementById('btn-br');
+  const btnBL = document.getElementById('btn-bl');
+  [btnBR, btnBL].forEach(b => {
+    b.classList.remove('correcte', 'incorrecte');
+    b.disabled = false;
+  });
+}
+
+function respondreBrBl(grup, boto) {
+  if (brblRespost) return;
+  brblRespost = true;
+
+  const paraulaEl = document.getElementById('brbl-paraula');
+  const correcte = grup === brblActual.grup;
+
+  if (correcte) {
+    boto.classList.add('correcte');
+    paraulaEl.classList.add('encertada');
+    sumarPunts(10, brblActual.base);
+    setFeedback('feedback-brbl', `✅ Correcte! "${brblActual.base}" té ${brblActual.grup}. +10 punts`, 'bo');
+
+    document.getElementById('btn-br').disabled = true;
+    document.getElementById('btn-bl').disabled = true;
+
+    brblTimeout = setTimeout(() => {
+      paraulaEl.classList.add('desapareixent');
+      setTimeout(() => {
+        novaPreguntaBrBl();
+      }, 600);
+    }, 1000);
+  } else {
+    boto.classList.add('incorrecte');
+    paraulaEl.classList.add('error');
+    const btnBR = document.getElementById('btn-br');
+    const btnBL = document.getElementById('btn-bl');
+    [btnBR, btnBL].forEach(b => {
+      if (b.textContent === brblActual.grup) b.classList.add('correcte');
+    });
+    restarPunts(3, brblActual.base);
+    setFeedback('feedback-brbl', `❌ Era ${brblActual.grup}. -3 punts`, 'dolent');
+
+    document.getElementById('btn-br').disabled = true;
+    document.getElementById('btn-bl').disabled = true;
+
+    brblTimeout = setTimeout(() => {
+      paraulaEl.classList.remove('error');
+      const btnBR2 = document.getElementById('btn-br');
+      const btnBL2 = document.getElementById('btn-bl');
+      [btnBR2, btnBL2].forEach(b => {
+        b.classList.remove('correcte', 'incorrecte');
+        b.disabled = false;
+      });
+      brblRespost = false;
+      setFeedback('feedback-brbl', '↩️ Torna-ho a provar!', 'dolent');
+    }, 1500);
+  }
+}
+
+/* ============================================================
+   2. MEMORY
+   ============================================================ */
+let memoryPrimera = null, memoryBloquejat = false, memoryEncerts = 0, memoryTotal = 0;
+function iniciarMemory() {
+  const graella = document.getElementById('graella-memory');
+  graella.innerHTML = '';
+  memoryPrimera = null; memoryBloquejat = false; memoryEncerts = 0;
+  const parelles = agafarAleatoris(MOTS, 6);
+  memoryTotal = parelles.length;
+  const cartes = [];
+  parelles.forEach((p, idx) => {
+    cartes.push({ text: p.base, parella: idx, tipus: 'paraula' });
+    cartes.push({ text: p.emoji, parella: idx, tipus: 'emoji' });
+  });
+  mesclar(cartes).forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'carta';
+    div.dataset.parella = c.parella;
+    div.dataset.tipus = c.tipus;
+    div.dataset.text = c.text;
+    div.textContent = '?';
+    div.onclick = () => girarCartaMemory(div);
+    graella.appendChild(div);
+  });
+  setFeedback('feedback-memory', '');
+}
+function girarCartaMemory(div) {
+  if (memoryBloquejat || div.classList.contains('girada') || div.classList.contains('encertada')) return;
+  div.classList.add('girada');
+  div.textContent = div.dataset.text;
+  if (esEmoji(div.dataset.text)) {
+    div.classList.add('emoji');
+  } else {
+    div.classList.add('text');
+  }
+  if (!memoryPrimera) { memoryPrimera = div; return; }
+  const a = memoryPrimera.dataset.tipus, b = div.dataset.tipus;
+  const complementaris = (a==='paraula'&&b==='emoji')||(a==='emoji'&&b==='paraula');
+  if (memoryPrimera.dataset.parella === div.dataset.parella && complementaris) {
+    memoryPrimera.classList.add('encertada'); div.classList.add('encertada');
+    const mot = memoryPrimera.dataset.tipus === 'paraula' ? memoryPrimera.dataset.text : div.dataset.text;
+    memoryPrimera = null; memoryEncerts++;
+    sumarPunts(10, mot);
+    setFeedback('feedback-memory', '✅ +10 punts', 'bo');
+    if (memoryEncerts === memoryTotal) setFeedback('feedback-memory', '🎉 Completat!', 'bo');
+  } else {
+    memoryBloquejat = true;
+    const primera = memoryPrimera;
+    restarPunts(3);
+    setFeedback('feedback-memory', '❌ -3 punts', 'dolent');
+    setTimeout(() => {
+      primera.classList.remove('girada', 'emoji', 'text'); primera.textContent = '?';
+      div.classList.remove('girada', 'emoji', 'text'); div.textContent = '?';
+      memoryPrimera = null; memoryBloquejat = false;
+    }, 1000);
+  }
+}
+
+/* ============================================================
+   3. QUIZ
+   ============================================================ */
+let quizRespost = false;
+function novaPreguntaQuiz() {
+  quizRespost = false;
+  document.getElementById('btn-seguent-quiz').style.display = 'none';
+  setFeedback('feedback-quiz', '');
+  const d = MOTS[Math.floor(Math.random() * MOTS.length)];
+  const distractors = agafarAleatoris(MOTS.filter(x => x.base !== d.base), 3).map(x => x.base);
+  const opcions = mesclar([d.base, ...distractors]);
+  document.getElementById('pregunta-quiz').innerHTML = `Quina paraula correspon a: <strong>"${d.def}"</strong>?`;
+  const cont = document.getElementById('opcions-quiz');
+  cont.innerHTML = '';
+  opcions.forEach(op => {
+    const b = document.createElement('button');
+    b.textContent = op;
+    b.onclick = () => {
+      if (quizRespost) return;
+      quizRespost = true;
+      if (op === d.base) {
+        b.classList.add('correcte'); sumarPunts(15, d.base);
+        setFeedback('feedback-quiz', '✅ +15 punts', 'bo');
+      } else {
+        b.classList.add('incorrecte');
+        document.querySelectorAll('#opcions-quiz button').forEach(x => { if (x.textContent === d.base) x.classList.add('correcte'); });
+        restarPunts(5, d.base);
+        setFeedback('feedback-quiz', `❌ -5 punts. Era: ${d.base}`, 'dolent');
+      }
+      document.getElementById('btn-seguent-quiz').style.display = 'block';
+    };
+    cont.appendChild(b);
+  });
+}
+
+/* ============================================================
+   4. DRAG — Amb desaparició
+   ============================================================ */
+function iniciarDrag() {
+  const parelles = agafarAleatoris(MOTS, 6);
+  setFeedback('feedback-drag', '');
+  const contP = document.getElementById('drag-paraules');
+  const contC = document.getElementById('drag-categories');
+  contP.innerHTML = ''; contC.innerHTML = '';
+  ['BR', 'BL'].forEach(grup => {
+    const div = document.createElement('div');
+    div.className = 'item destí';
+    div.dataset.grup = grup;
+    div.textContent = `${grup}?`;
+    div.style.minHeight = '80px';
+    div.ondragover = e => e.preventDefault();
+    div.ondrop = e => {
+      e.preventDefault();
+      const text = e.dataTransfer.getData('text');
+      const mot = MOTS.find(m => m.base === text);
+      if (!mot) return;
+      if (mot.grup === grup) {
+        const span = document.querySelector(`.item.arrossegable[data-base="${text}"]`);
+        if (span) {
+          const temporal = document.createElement('div');
+          temporal.className = 'item arrossegable';
+          temporal.textContent = text;
+          temporal.style.background = '#6bcf7f';
+          temporal.style.color = 'white';
+          temporal.style.borderColor = '#6bcf7f';
+          div.appendChild(temporal);
+          span.remove();
+          setTimeout(() => {
+            temporal.style.transition = 'opacity 0.4s, transform 0.4s';
+            temporal.style.opacity = '0';
+            temporal.style.transform = 'scale(0.5)';
+            setTimeout(() => temporal.remove(), 400);
+          }, 1000);
+        }
+        sumarPunts(10, mot.base);
+        setFeedback('feedback-drag', '✅ +10 punts', 'bo');
+      } else {
+        div.classList.add('error');
+        restarPunts(3, mot.base);
+        setFeedback('feedback-drag', '❌ -3 punts. Torna-ho a provar', 'dolent');
+        setTimeout(() => div.classList.remove('error'), 700);
+      }
+    };
+    contC.appendChild(div);
+  });
+  mesclar(parelles).forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'item arrossegable';
+    div.draggable = true;
+    div.textContent = p.base;
+    div.dataset.base = p.base;
+    div.ondragstart = e => e.dataTransfer.setData('text', p.base);
+    contP.appendChild(div);
+  });
+}
+
+/* ============================================================
+   5. FLASHCARDS
+   ============================================================ */
+let flashIndex = 0, flashGirada = false;
+function mostrarFlash() {
+  flashGirada = false;
+  document.getElementById('flashcard').classList.remove('girada');
+  const d = MOTS[flashIndex];
+  document.getElementById('flash-davant').textContent = d.base;
+  document.getElementById('flash-darrere').innerHTML =
+    `${d.emoji} <strong>${d.cat.toUpperCase()}</strong><br>` +
+    `<span style="font-size:0.9em;">${d.def}</span><br>` +
+    `<span style="color:#185a9d;font-weight:bold;">Grup: ${d.grup}</span>`;
+  setFeedback('feedback-flash', `${flashIndex + 1} / ${MOTS.length}`);
+}
+function girarFlash() {
+  document.getElementById('flashcard').classList.toggle('girada');
+  if (!flashGirada) { sumarPunts(2, MOTS[flashIndex].base); flashGirada = true; }
+}
+function flashSeguent() { flashIndex = (flashIndex + 1) % MOTS.length; mostrarFlash(); }
+function flashAnterior() { flashIndex = (flashIndex - 1 + MOTS.length) % MOTS.length; mostrarFlash(); }
+
+/* ============================================================
+   6. SOPA DE LLETRES
+   ============================================================ */
+let sopaParaules = [];
+let sopaSeleccio = [];
+function iniciarSopa() {
+  const MIDA = 12;
+  const candidates = MOTS.filter(m => m.base.length <= 10 && m.base.length >= 4);
+  let triades = agafarAleatoris(candidates, 3);
+
+  let intents = 0;
+  do {
+    sopaParaules = triades.map(d => ({ base: d.base, paraula: d.base, trobat: false }));
+    sopaSeleccio = [];
+    const graella = [];
+    for (let i = 0; i < MIDA; i++) graella.push(Array(MIDA).fill(''));
+    const files = mesclar([...Array(MIDA).keys()]);
+    const col·locades = [];
+    sopaParaules.forEach((p) => {
+      const paraula = p.paraula.toUpperCase().replace(/[^A-ZÀÈÉÍÏÒÓÚÜÇ]/g, '');
+      if (paraula.length > MIDA) return;
+      let col·locada = false;
+      for (let intent = 0; intent < 30 && !col·locada; intent++) {
+        const fila = files.pop() || Math.floor(Math.random() * MIDA);
+        const colInici = Math.floor(Math.random() * (MIDA - paraula.length + 1));
+        let ok = true;
+        for (let j = 0; j < paraula.length; j++) {
+          const c = graella[fila][colInici + j];
+          if (c !== '' && c !== paraula[j]) { ok = false; break; }
+        }
+        if (ok) {
+          for (let j = 0; j < paraula.length; j++) graella[fila][colInici + j] = paraula[j];
+          col·locades.push({ ...p, paraula, fila, colInici });
+          col·locada = true;
+        }
+      }
+    });
+    if (col·locades.length >= 2) {
+      sopaParaules = col·locades;
+      const alfabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      for (let i = 0; i < MIDA; i++) for (let j = 0; j < MIDA; j++) if (graella[i][j] === '') graella[i][j] = alfabet[Math.floor(Math.random() * 26)];
+      const cont = document.getElementById('sopa-graella');
+      cont.style.gridTemplateColumns = `repeat(${MIDA}, 1fr)`;
+      cont.innerHTML = '';
+      for (let i = 0; i < MIDA; i++) for (let j = 0; j < MIDA; j++) {
+        const c = document.createElement('div');
+        c.className = 'sopa-cella';
+        c.textContent = graella[i][j];
+        c.onclick = () => clicarCellaSopa(c);
+        cont.appendChild(c);
+      }
+      const llista = document.getElementById('sopa-llista');
+      llista.innerHTML = '';
+      sopaParaules.forEach((p, idx) => {
+        const t = document.createElement('div');
+        t.className = 'sopa-objectiu';
+        t.dataset.idx = idx;
+        t.textContent = p.base;
+        llista.appendChild(t);
+      });
+      setFeedback('feedback-sopa', '');
+      return;
+    }
+    intents++;
+  } while (intents < 5);
+
+  setFeedback('feedback-sopa', '⚠️ No s\'ha pogut generar. Torna-ho a provar.', 'dolent');
+}
+function clicarCellaSopa(cella) {
+  if (cella.classList.contains('trobada')) return;
+  if (cella.classList.contains('seleccionada')) {
+    cella.classList.remove('seleccionada');
+    sopaSeleccio = sopaSeleccio.filter(c => c !== cella);
+  } else {
+    cella.classList.add('seleccionada');
+    sopaSeleccio.push(cella);
+  }
+  const text = sopaSeleccio.map(c => c.textContent).join('');
+  const trobada = sopaParaules.find(p => p.paraula === text && !p.trobat);
+  if (trobada) {
+    trobada.trobat = true;
+    sopaSeleccio.forEach(c => { c.classList.remove('seleccionada'); c.classList.add('trobada'); });
+    sopaSeleccio = [];
+    sumarPunts(20, trobada.base);
+    setFeedback('feedback-sopa', `✅ +20 punts! Has trobat "${trobada.paraula}"`, 'bo');
+    const obj = document.querySelector(`.sopa-objectiu[data-idx="${sopaParaules.indexOf(trobada)}"]`);
+    if (obj) obj.classList.add('trobat');
+  } else if (text.length >= 3) {
+    const algunaPotencial = sopaParaules.some(p => !p.trobat && p.paraula.startsWith(text));
+    if (!algunaPotencial) {
+      sopaSeleccio.forEach(c => c.classList.remove('seleccionada'));
+      sopaSeleccio = [];
+      restarPunts(2);
+      setFeedback('feedback-sopa', '❌ -2 punts', 'dolent');
+    }
+  }
+}
+
+/* ============================================================
+   7. CLASSIFICACIÓ — Amb desaparició
+   ============================================================ */
+function iniciarClassificacio() {
+  setFeedback('feedback-classificacio', '');
+  const pool = document.getElementById('class-pool');
+  pool.innerHTML = '';
+  const caixes = document.getElementById('class-caixes');
+  caixes.innerHTML = '';
+  ['BR', 'BL'].forEach(grup => {
+    const caixa = document.createElement('div');
+    caixa.className = 'class-caixa destí';
+    caixa.dataset.grup = grup;
+    caixa.innerHTML = `<h4>${grup}</h4>`;
+    caixa.ondragover = e => { e.preventDefault(); caixa.classList.add('hover'); };
+    caixa.ondragleave = () => caixa.classList.remove('hover');
+    caixa.ondrop = e => dropClassificacio(e, caixa);
+    caixes.appendChild(caixa);
+  });
+  const items = [];
+  ['BR','BL'].forEach(grup => {
+    agafarAleatoris(MOTS.filter(m => m.grup === grup), 4).forEach(m => {
+      items.push({ text: m.base, grup: m.grup });
+    });
+  });
+  mesclar(items).forEach(it => {
+    const span = document.createElement('span');
+    span.className = 'class-paraula';
+    span.draggable = true;
+    span.textContent = it.text;
+    span.dataset.grup = it.grup;
+    span.dataset.text = it.text;
+    span.ondragstart = e => e.dataTransfer.setData('text', it.grup + '||' + it.text);
+    pool.appendChild(span);
+  });
+}
+function dropClassificacio(e, caixa) {
+  e.preventDefault();
+  caixa.classList.remove('hover');
+  const dades = e.dataTransfer.getData('text').split('||');
+  const grup = dades[0], text = dades[1];
+  const span = document.querySelector(`.class-paraula[data-text="${text}"]`);
+  if (!span) return;
+  if (grup === caixa.dataset.grup) {
+    const temporal = document.createElement('span');
+    temporal.className = 'class-paraula col·locada';
+    temporal.textContent = text;
+    caixa.appendChild(temporal);
+    span.remove();
+    setTimeout(() => {
+      temporal.style.transition = 'opacity 0.4s, transform 0.4s';
+      temporal.style.opacity = '0';
+      temporal.style.transform = 'scale(0.5)';
+      setTimeout(() => temporal.remove(), 400);
+    }, 1000);
+    sumarPunts(8, text);
+    setFeedback('feedback-classificacio', '✅ +8 punts', 'bo');
+  } else {
+    span.style.background = '#ff6b6b';
+    setTimeout(() => span.style.background = '', 500);
+    restarPunts(3, text);
+    setFeedback('feedback-classificacio', '❌ -3 punts. No és aquest grup', 'dolent');
+  }
+}
+
+/* ============================================================
+   8. QUINA PARAULA ÉS?
+   ============================================================ */
+let animalRespost = false;
+function novaPreguntaAnimal() {
+  animalRespost = false;
+  document.getElementById('btn-seguent-animal').style.display = 'none';
+  setFeedback('feedback-animal', '');
+  const d = MOTS[Math.floor(Math.random() * MOTS.length)];
+  const distractors = agafarAleatoris(MOTS.filter(x => x.base !== d.base), 3).map(x => x.base);
+  const opcions = mesclar([d.base, ...distractors]);
+  document.getElementById('pregunta-animal').innerHTML = `Quina paraula comença per <strong>${d.grup}</strong> i significa "${d.def}"?`;
+  const cont = document.getElementById('opcions-animal');
+  cont.innerHTML = '';
+  opcions.forEach(op => {
+    const b = document.createElement('button');
+    b.textContent = op;
+    b.onclick = () => {
+      if (animalRespost) return;
+      animalRespost = true;
+      if (op === d.base) {
+        b.classList.add('correcte'); sumarPunts(15, d.base);
+        setFeedback('feedback-animal', '✅ +15 punts', 'bo');
+      } else {
+        b.classList.add('incorrecte');
+        document.querySelectorAll('#opcions-animal button').forEach(x => { if (x.textContent === d.base) x.classList.add('correcte'); });
+        restarPunts(5, d.base);
+        setFeedback('feedback-animal', `❌ -5 punts. Era: ${d.base}`, 'dolent');
+      }
+      document.getElementById('btn-seguent-animal').style.display = 'block';
+    };
+    cont.appendChild(b);
+  });
+}
+
+/* ============================================================
+   9. INTRÚS
+   ============================================================ */
+function novaIntrus() {
+  document.getElementById('btn-seguent-intrus').style.display = 'none';
+  setFeedback('feedback-intrus', '');
+  const grupTriat = Math.random() < 0.5 ? 'BR' : 'BL';
+  const grupIntrus = grupTriat === 'BR' ? 'BL' : 'BR';
+  const bons = agafarAleatoris(MOTS.filter(m => m.grup === grupTriat), 3);
+  const intrusa = agafarAleatoris(MOTS.filter(m => m.grup === grupIntrus), 1)[0];
+  if (bons.length < 3 || !intrusa) { novaIntrus(); return; }
+  const opcions = mesclar([...bons.map(b => ({ text: b.base, intrus: false })), { text: intrusa.base, intrus: true }]);
+  document.getElementById('pista-intrus').textContent = `Quina paraula NO té el grup "${grupTriat}"?`;
+  const cont = document.getElementById('opcions-intrus');
+  cont.innerHTML = '';
+  opcions.forEach(op => {
+    const b = document.createElement('button');
+    b.textContent = op.text;
+    b.onclick = () => {
+      if (op.intrus) {
+        b.classList.add('correcte'); sumarPunts(20, intrusa.base);
+        setFeedback('feedback-intrus', '✅ +20 punts', 'bo');
+        document.getElementById('btn-seguent-intrus').style.display = 'block';
+      } else {
+        b.classList.add('incorrecte');
+        restarPunts(6, op.text);
+        setFeedback('feedback-intrus', '❌ -6 punts. Aquesta sí que hi pertany', 'dolent');
+      }
+    };
+    cont.appendChild(b);
+  });
+}
+
+/* ============================================================
+   10. ORDENA LES LLETRES
+   ============================================================ */
+let ordreObjectiu = null, ordreSeleccio = [];
+function iniciarOrdre() {
+  setFeedback('feedback-ordre', '');
+  ordreSeleccio = [];
+  const m = MOTS[Math.floor(Math.random() * MOTS.length)];
+  ordreObjectiu = { text: m.base, base: m.base, def: m.def };
+  document.getElementById('ordre-pista').textContent = `Quina paraula és? (${m.def})`;
+  const lletres = ordreObjectiu.text.split('');
+  const baralla = mesclar(lletres.map((l, i) => ({ lletra: l, idx: i })));
+  const cont = document.getElementById('ordre-paraules');
+  cont.innerHTML = '';
+  baralla.forEach((l, idx) => {
+    const span = document.createElement('span');
+    span.className = 'ordre-paraula';
+    span.textContent = l.lletra;
+    span.dataset.idx = idx;
+    span.onclick = () => clicarOrdre(span);
+    cont.appendChild(span);
+  });
+  document.getElementById('ordre-resultat').innerHTML = '';
+}
+function clicarOrdre(span) {
+  if (span.classList.contains('usada')) return;
+  span.classList.add('usada');
+  ordreSeleccio.push(span.textContent);
+  const resultat = document.getElementById('ordre-resultat');
+  const nova = document.createElement('span');
+  nova.className = 'ordre-paraula';
+  nova.textContent = span.textContent;
+  resultat.appendChild(nova);
+  comprovarOrdre();
+}
+function esborrarOrdre() {
+  ordreSeleccio = [];
+  document.getElementById('ordre-resultat').innerHTML = '';
+  document.querySelectorAll('#ordre-paraules .ordre-paraula').forEach(s => s.classList.remove('usada'));
+  setFeedback('feedback-ordre', '');
+}
+function comprovarOrdre() {
+  const objectiu = ordreObjectiu.text.split('');
+  if (ordreSeleccio.length !== objectiu.length) return;
+  if (ordreSeleccio.join('') === ordreObjectiu.text) {
+    sumarPunts(20, ordreObjectiu.base);
+    setFeedback('feedback-ordre', `✅ +20 punts! Paraula: "${ordreObjectiu.text}"`, 'bo');
+    document.querySelectorAll('#ordre-resultat .ordre-paraula').forEach(s => s.style.background = '#6bcf7f');
+  } else {
+    restarPunts(3, ordreObjectiu.base);
+    setFeedback('feedback-ordre', '❌ -3 punts. Torna-ho a provar', 'dolent');
+    setTimeout(() => esborrarOrdre(), 800);
+  }
+}
+
+/* ============================================================
+   11. PENJAT
+   ============================================================ */
+let penjatActual = null, penjatLletres = [], penjatErrors = 0;
+const MAX_ERRORS = 6;
+function iniciarPenjat() {
+  const m = MOTS[Math.floor(Math.random() * MOTS.length)];
+  penjatActual = { text: normalitzar(m.base), base: m.base, def: m.def, grup: m.grup };
+  penjatLletres = [];
+  penjatErrors = 0;
+  setFeedback('feedback-penjat', '');
+  document.getElementById('penjat-info').textContent = `Pista: ${m.def} (grup ${m.grup})`;
+  renderitzarPenjat();
+  renderitzarTeclatPenjat();
+}
+function renderitzarPenjat() {
+  const paraula = penjatActual.text;
+  const cont = document.getElementById('penjat-paraula');
+  cont.innerHTML = '';
+  for (const lletra of paraula) {
+    const d = document.createElement('div');
+    d.className = 'penjat-lletra';
+    if (lletra === ' ' || lletra === '-') { d.textContent = lletra; d.classList.add('espai'); }
+    else if (penjatLletres.includes(lletra)) { d.textContent = lletra; d.classList.add('encertada'); }
+    else d.textContent = '_';
+    cont.appendChild(d);
+  }
+}
+function renderitzarTeclatPenjat() {
+  const cont = document.getElementById('penjat-teclat');
+  cont.innerHTML = '';
+  const alfabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for (const lletra of alfabet) {
+    const b = document.createElement('button');
+    b.textContent = lletra;
+    b.disabled = penjatLletres.includes(lletra);
+    b.onclick = () => clicarLletraPenjat(lletra);
+    cont.appendChild(b);
+  }
+}
+function clicarLletraPenjat(lletra) {
+  if (penjatLletres.includes(lletra)) return;
+  penjatLletres.push(lletra);
+  if (!penjatActual.text.includes(lletra)) {
+    penjatErrors++;
+    restarPunts(1);
+    setFeedback('feedback-penjat', `❌ -1 punt (${penjatErrors}/${MAX_ERRORS})`, 'dolent');
+  }
+  renderitzarPenjat();
+  renderitzarTeclatPenjat();
+  if (penjatErrors >= MAX_ERRORS) {
+    setFeedback('feedback-penjat', `💀 -5 punts. Era: ${penjatActual.base}`, 'dolent');
+    restarPunts(5, penjatActual.base);
+    document.getElementById('penjat-teclat').querySelectorAll('button').forEach(b => b.disabled = true);
+    return;
+  }
+  const objectiu = [...penjatActual.text].filter(l => l !== ' ' && l !== '-');
+  if (objectiu.every(l => penjatLletres.includes(l))) {
+    sumarPunts(20, penjatActual.base);
+    setFeedback('feedback-penjat', '✅ +20 punts!', 'bo');
+  }
+}
+
+/* ============================================================
+   12. BINGO
+   ============================================================ */
+let bingoCartro = [], bingoCantades = [], bingoAcabat = false;
+function iniciarBingo() {
+  bingoAcabat = false;
+  bingoCantades = [];
+  const triades = agafarAleatoris(MOTS, 9);
+  bingoCartro = triades.map(m => ({ base: m.base, def: m.def, marcada: false }));
+  document.getElementById('bingo-anunci').textContent = 'Clica "Cantar definició" per començar';
+  setFeedback('feedback-bingo', '');
+  const cont = document.getElementById('bingo-cartro');
+  cont.innerHTML = '';
+  bingoCartro.forEach((c, idx) => {
+    const d = document.createElement('div');
+    d.className = 'bingo-cella';
+    d.textContent = c.base;
+    d.dataset.idx = idx;
+    d.onclick = () => marcarBingo(d, idx);
+    cont.appendChild(d);
+  });
+}
+function cantarBingo() {
+  if (bingoAcabat) return;
+  const disponibles = bingoCartro.filter(c => !bingoCantades.includes(c.base));
+  if (disponibles.length === 0) { document.getElementById('bingo-anunci').textContent = '🎉 Tots cantats!'; return; }
+  const triada = disponibles[Math.floor(Math.random() * disponibles.length)];
+  bingoCantades.push(triada.base);
+  document.getElementById('bingo-anunci').textContent = `📢 Definició: "${triada.def}"`;
+}
+function marcarBingo(cella, idx) {
+  if (bingoAcabat) return;
+  const c = bingoCartro[idx];
+  if (c.marcada) return;
+  const ultima = bingoCantades[bingoCantades.length - 1];
+  if (ultima === c.base) {
+    c.marcada = true;
+    cella.classList.add('marcada');
+    sumarPunts(5, c.base);
+    setFeedback('feedback-bingo', '✅ +5 punts', 'bo');
+    comprovarBingo();
+  } else {
+    cella.style.background = '#ff6b6b';
+    setTimeout(() => cella.style.background = '', 500);
+    restarPunts(2);
+    setFeedback('feedback-bingo', '❌ -2 punts', 'dolent');
+  }
+}
+function comprovarBingo() {
+  const m = bingoCartro.map(c => c.marcada);
+  const linies = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  for (const linia of linies) {
+    if (linia.every(i => m[i])) {
+      bingoAcabat = true;
+      linia.forEach(i => {
+        const c = document.querySelector(`.bingo-cella[data-idx="${i}"]`);
+        if (c) c.classList.add('guanyadora');
+      });
+      setFeedback('feedback-bingo', '🎉 BINGO! +30 punts!', 'bo');
+      sumarPunts(30);
+      return;
+    }
+  }
+}
+
+/* ============================================================
+   13. COMPLETA EL MOT
+   ============================================================ */
+let completaRespost = false;
+function novaPreguntaCompleta() {
+  completaRespost = false;
+  document.getElementById('btn-seguent-completa').style.display = 'none';
+  setFeedback('feedback-completa', '');
+  const m = MOTS[Math.floor(Math.random() * MOTS.length)];
+  const paraula = m.base;
+  const idx = Math.floor(Math.random() * paraula.length);
+  const correcta = paraula[idx];
+  const mostrada = paraula.split('').map((l, i) => i === idx ? '_' : l).join('');
+  const lletres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const distractors = [];
+  let intents = 0;
+  while (distractors.length < 3 && intents < 50) {
+    const l = lletres[Math.floor(Math.random()*26)];
+    if (l !== correcta && !distractors.includes(l)) distractors.push(l);
+    intents++;
+  }
+  const opcions = mesclar([correcta, ...distractors]);
+  document.getElementById('pregunta-completa').innerHTML = `Completa: <strong>${mostrada}</strong><br><small style="color:#666;">${m.def}</small>`;
+  const cont = document.getElementById('opcions-completa');
+  cont.innerHTML = '';
+  opcions.forEach(op => {
+    const b = document.createElement('button');
+    b.textContent = op;
+    b.onclick = () => {
+      if (completaRespost) return;
+      completaRespost = true;
+      if (op === correcta) {
+        b.classList.add('correcte'); sumarPunts(12, m.base);
+        setFeedback('feedback-completa', '✅ +12 punts', 'bo');
+      } else {
+        b.classList.add('incorrecte');
+        document.querySelectorAll('#opcions-completa button').forEach(x => { if (x.textContent === correcta) x.classList.add('correcte'); });
+        restarPunts(4, m.base);
+        setFeedback('feedback-completa', `❌ -4 punts. Era: ${correcta}`, 'dolent');
+      }
+      document.getElementById('btn-seguent-completa').style.display = 'block';
+    };
+    cont.appendChild(b);
+  });
+}
+
+/* ============================================================
+   14. COMPLETA LA SÍL·LABA
+   ============================================================ */
+let acabamentActual = null;
+let acabamentComprovat = false;
+
+function iniciarAcabament() {
+  acabamentComprovat = false;
+  acabamentActual = MOTS[Math.floor(Math.random() * MOTS.length)];
+  const paraula = acabamentActual.base;
+  const grup = acabamentActual.grup;
+  const paraulaAmagada = paraula.replace(grup, '___');
+  document.getElementById('acabament-paraula').innerHTML =
+    `${paraulaAmagada} <span style="font-size:0.6em;color:#666;display:block;margin-top:8px;">${acabamentActual.emoji} ${acabamentActual.def}</span>`;
+
+  ['grup', 'paraula-sencera'].forEach(t => {
+    const input = document.getElementById('acabament-' + t);
+    input.value = '';
+    input.placeholder = '';
+    input.classList.remove('correcte','incorrecte');
+    input.disabled = false;
+    document.getElementById('acabament-resultat-' + t).textContent = '';
+  });
+  setFeedback('feedback-acabament', '');
+  document.getElementById('acabament-grup').focus();
+}
+function comprovarAcabament() {
+  if (acabamentComprovat) return;
+  acabamentComprovat = true;
+  const grupResposta = normalitzar(document.getElementById('acabament-grup').value);
+  const senceraResposta = normalitzar(document.getElementById('acabament-paraula-sencera').value);
+  const grupCorrecte = normalitzar(acabamentActual.grup);
+  const senceraCorrecte = normalitzar(acabamentActual.base);
+  const okGrup = grupResposta === grupCorrecte;
+  const okSencera = senceraResposta === senceraCorrecte;
+
+  const inputGrup = document.getElementById('acabament-grup');
+  const inputSencera = document.getElementById('acabament-paraula-sencera');
+  inputGrup.classList.add(okGrup ? 'correcte' : 'incorrecte');
+  inputSencera.classList.add(okSencera ? 'correcte' : 'incorrecte');
+  inputGrup.disabled = true;
+  inputSencera.disabled = true;
+
+  document.getElementById('acabament-resultat-grup').textContent = okGrup ? `✅ ${acabamentActual.grup}` : `❌ ${acabamentActual.grup}`;
+  document.getElementById('acabament-resultat-sencera').textContent = okSencera ? `✅ ${acabamentActual.base}` : `❌ ${acabamentActual.base}`;
+
+  if (okGrup && okSencera) {
+    sumarPunts(15, acabamentActual.base);
+    setFeedback('feedback-acabament', '🎉 Perfecte! +15 punts', 'bo');
+  } else if (okGrup || okSencera) {
+    sumarPunts(5, acabamentActual.base);
+    restarPunts(2, acabamentActual.base);
+    setFeedback('feedback-acabament', '⚠️ Has encertat una part. +5, -2 punts', 'dolent');
+  } else {
+    restarPunts(6, acabamentActual.base);
+    setFeedback('feedback-acabament', '❌ Cap correcte. -6 punts. Torna-ho a provar!', 'dolent');
+  }
+}
+
+/* ============================================================
+   GUARDAT / RESTAURAR
+   ============================================================ */
+function obrirGuardar() { document.getElementById('modal-guardar').classList.add('actiu'); }
+function tancarModal(id) {
+  document.getElementById(id).classList.remove('actiu');
+  if (id === 'modal-guardar' && canviPendent) {
+    canviPendent(); canviPendent = null;
+    selectorJoc.value = jocActual;
+  }
+}
+function guardarJSON() {
+  const dades = {
+    versio: '1.0',
+    data: new Date().toISOString(),
+    punts: punts,
+    nivell: nivellActual.nom,
+    estadistiques: estadistiques,
+    sessio: { activitatActual: jocActual }
+  };
+  const blob = new Blob([JSON.stringify(dades, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `br_bl_${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  tancarModal('modal-guardar');
+  if (canviPendent) { canviPendent(); canviPendent = null; }
+}
+function obrirRestaurar() { document.getElementById('modal-restaurar').classList.add('actiu'); }
+function restaurarJSON() {
+  const input = document.getElementById('input-fitxer');
+  if (!input.files || input.files.length === 0) { alert('Selecciona un fitxer JSON.'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const d = JSON.parse(e.target.result);
+      if (typeof d.punts !== 'number') throw new Error('Format incorrecte');
+      punts = d.punts;
+      estadistiques = d.estadistiques || estadistiques;
+      if (d.sessio && d.sessio.activitatActual) {
+        jocActual = d.sessio.activitatActual;
+        selectorJoc.value = jocActual;
+      }
+      nivellActual = obtenirNivell(punts);
+      actualitzarMarcador();
+      document.querySelectorAll('.joc').forEach(j => j.classList.remove('actiu'));
+      document.getElementById('joc-' + jocActual).classList.add('actiu');
+      iniciarJoc(jocActual);
+      tancarModal('modal-restaurar');
+      autoguardar();
+    } catch (err) { alert('Fitxer JSON no vàlid: ' + err.message); }
+  };
+  reader.readAsText(input.files[0]);
+}
+function reiniciarPunts() {
+  if (!confirm('Segur que vols reiniciar tots els punts i estadístiques?')) return;
+  punts = 0;
+  estadistiques = { encerts: 0, errors: 0, motsEncertats: [], motsFallats: [] };
+  nivellActual = NIVELLS[0];
+  actualitzarMarcador();
+  autoguardar();
+}
+
+/* ============================================================
+   INICIALITZACIÓ
+   ============================================================ */
+carregarAutoguardat();
+selectorJoc.value = jocActual;
+document.querySelectorAll('.joc').forEach(j => j.classList.remove('actiu'));
+document.getElementById('joc-' + jocActual).classList.add('actiu');
+actualitzarMarcador();
+iniciarJoc(jocActual);
+
+setInterval(autoguardar, 30000);
+</script>
+</body>
+</html>

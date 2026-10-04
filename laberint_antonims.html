@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌀 Laberint d'Antònims CAT/ENG</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Comic Sans MS', 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    min-height: 100vh; padding: 15px; color: #fff;
+    display: flex; flex-direction: column;
+  }
+  header {
+    background: rgba(255,255,255,0.08); border-radius: 20px; padding: 15px 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3); margin-bottom: 20px; text-align: center;
+    backdrop-filter: blur(10px);
+  }
+  h1 { color: #ffd93d; font-size: 1.4em; margin-bottom: 10px; }
+  .marcador-zona {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    align-items: center; margin-bottom: 8px;
+  }
+  .marcador {
+    display: inline-block; background: #ffd93d; color: #1a1a2e;
+    padding: 6px 18px; border-radius: 30px; font-weight: bold; font-size: 1.1em;
+  }
+  .nivell-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white; padding: 6px 16px; border-radius: 30px;
+    font-weight: bold; font-size: 1em;
+    box-shadow: 0 4px 12px rgba(102,126,234,0.5);
+  }
+  .barra-progres {
+    width: 100%; max-width: 400px; height: 14px; background: rgba(255,255,255,0.15);
+    border-radius: 10px; overflow: hidden; margin: 8px auto;
+  }
+  .barra-progres-inner {
+    height: 100%; background: linear-gradient(90deg, #6bcf7f, #ffd93d, #ff6b6b);
+    width: 0%; transition: width 0.5s ease; border-radius: 10px;
+  }
+  .progres-text { text-align: center; font-size: 0.85em; color: #ccc; margin-bottom: 10px; }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; margin-top: 12px; }
+  .controls label { font-weight: bold; color: #ffd93d; font-size: 0.9em; }
+  select {
+    padding: 10px 14px; font-size: 0.95em; font-family: inherit;
+    border: 3px solid #ffd93d; border-radius: 12px; background: #1a1a2e;
+    color: #ffd93d; font-weight: bold; cursor: pointer;
+  }
+  main {
+    background: rgba(255,255,255,0.08); border-radius: 20px; padding: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3); min-height: 550px;
+    flex: 1; backdrop-filter: blur(10px);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  h2 { color: #ffd93d; margin-bottom: 10px; text-align: center; font-size: 1.3em; }
+  .subtitol { text-align: center; margin-bottom: 18px; color: #ccc; font-size: 0.95em; }
+
+  /* LABERINT */
+  .laberint-wrapper {
+    display: flex; flex-direction: column; align-items: center;
+    margin: 10px 0;
+  }
+  #laberint {
+    display: grid; gap: 2px;
+    background: #0f0f1e; padding: 8px; border-radius: 12px;
+    box-shadow: 0 0 30px rgba(255,217,61,0.2);
+    transition: all 0.3s;
+  }
+  .cella {
+    width: 26px; height: 26px; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75em; font-weight: bold;
+    transition: background 0.2s;
+  }
+  .paret { background: #2c2c54; }
+  .terra { background: #f0f0f0; }
+  .terra.visitada { background: #d8e8d8; }
+  .jugador { background: #ffd93d; box-shadow: 0 0 12px #ffd93d; }
+  .sortida { background: #6bcf7f; box-shadow: 0 0 12px #6bcf7f; }
+  .pregunta { background: #667eea; color: white; }
+  .pregunta.resolta { background: #6bcf7f; color: white; }
+  .pregunta.fallada { background: #ff6b6b; color: white; }
+
+  .feedback {
+    text-align: center; font-size: 1.1em; font-weight: bold;
+    margin-top: 15px; min-height: 1.5em; color: #ffd93d;
+  }
+  .feedback.bo { color: #6bcf7f; }
+  .feedback.dolent { color: #ff6b6b; }
+
+  .info-laberint {
+    display: flex; gap: 20px; justify-content: center; margin: 10px 0;
+    font-size: 0.9em; color: #ccc; flex-wrap: wrap;
+  }
+  .info-laberint span { display: inline-flex; align-items: center; gap: 5px; }
+  .info-laberint .punt { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+
+  /* MODAL PREGUNTA */
+  .modal-fons {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); display: none;
+    justify-content: center; align-items: center; z-index: 1000;
+  }
+  .modal-fons.actiu { display: flex; }
+  .modal {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 3px solid #ffd93d; border-radius: 20px; padding: 25px;
+    max-width: 520px; width: 90%; text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: zoomIn 0.3s;
+  }
+  @keyframes zoomIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal h3 { color: #ffd93d; margin-bottom: 15px; font-size: 1.3em; }
+  .modal .pregunta-text {
+    font-size: 1.2em; margin: 15px 0; color: #fff;
+  }
+  .modal .pregunta-text strong { color: #ffd93d; font-size: 1.3em; }
+  .opcions {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;
+  }
+  .opcions button {
+    padding: 14px; font-size: 1em; font-weight: bold;
+    border: 2px solid #ffd93d; background: transparent; color: #ffd93d;
+    border-radius: 12px; cursor: pointer; font-family: inherit;
+    transition: all 0.2s;
+  }
+  .opcions button:hover { background: #ffd93d; color: #1a1a2e; }
+  .opcions button.correcte { background: #6bcf7f; border-color: #6bcf7f; color: #fff; }
+  .opcions button.incorrecte { background: #ff6b6b; border-color: #ff6b6b; color: #fff; }
+  .modal .missatge-modal { margin-top: 15px; font-weight: bold; min-height: 1.5em; }
+
+  /* MODAL GUARDAR */
+  .modal-guardar {
+    background: white; color: #333;
+    border: none; border-radius: 20px; padding: 25px;
+    max-width: 420px; width: 90%; text-align: center;
+  }
+  .modal-guardar h3 { color: #764ba2; margin-bottom: 12px; }
+  .modal-guardar p { margin-bottom: 15px; color: #555; }
+
+  .btn {
+    padding: 10px 22px; font-size: 1em; font-weight: bold;
+    background: #667eea; color: white; border: none;
+    border-radius: 25px; cursor: pointer; font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: #764ba2; transform: translateY(-2px); }
+  .btn.verd { background: #6bcf7f; }
+  .btn.verd:hover { background: #5ab86e; }
+  .btn.groc { background: #ffd93d; color: #1a1a2e; }
+  .btn.groc:hover { background: #f0c520; }
+  .btn.blau { background: #667eea; }
+  .btn.roig { background: #ff6b6b; }
+  .btn.roig:hover { background: #ee5a5a; }
+  .fila-botons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
+
+  /* Popup nivell */
+  .nivell-popup {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-200px);
+    background: linear-gradient(135deg, #6bcf7f, #4caf50);
+    color: white; padding: 20px 30px; border-radius: 20px;
+    font-weight: bold; font-size: 1.2em; z-index: 2000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    transition: transform 0.5s ease; text-align: center;
+  }
+  .nivell-popup.actiu { transform: translateX(-50%) translateY(0); }
+
+  .autoguardat {
+    position: fixed; bottom: 10px; right: 10px;
+    background: rgba(107,207,127,0.95); color: white;
+    padding: 6px 14px; border-radius: 20px; font-size: 0.8em;
+    font-weight: bold; opacity: 0; transition: opacity 0.5s;
+    z-index: 100;
+  }
+  .autoguardat.visible { opacity: 1; }
+
+  footer {
+    margin-top: 20px; padding: 15px;
+    background: rgba(255,255,255,0.08); border-radius: 20px;
+    text-align: center; color: #ccc; font-size: 0.85em;
+    backdrop-filter: blur(10px);
+  }
+  footer strong { color: #ffd93d; }
+
+  @media (max-width: 620px) {
+    .cella { width: 20px; height: 20px; font-size: 0.65em; }
+    .opcions { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 420px) {
+    .cella { width: 16px; height: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🌀 Laberint d'Antònims CAT/ENG</h1>
+  <div class="marcador-zona">
+    <div class="marcador">⭐ Punts: <span id="punts">0</span></div>
+    <div class="nivell-badge" id="nivell-badge">🌱 <span id="nivell-nom">Aprenent</span></div>
+  </div>
+  <div class="barra-progres"><div class="barra-progres-inner" id="barra-inner"></div></div>
+  <div class="progres-text" id="progres-text">Proper nivell: 50 punts</div>
+
+  <div class="controls">
+    <label for="selector-idioma">Idioma:</label>
+    <select id="selector-idioma">
+      <option value="cat">Català</option>
+      <option value="eng">English</option>
+      <option value="mix">Mixt CAT↔ENG</option>
+    </select>
+    <button class="btn groc" onclick="obrirGuardar()">💾 Guardar</button>
+    <button class="btn groc" onclick="obrirRestaurar()">📂 Restaurar</button>
+    <button class="btn roig" onclick="reiniciarPunts()">🔄 Reiniciar</button>
+  </div>
+</header>
+
+<main>
+  <h2>🌀 Troba la sortida responent les preguntes</h2>
+  <p class="subtitol">Mou-te amb les fletxes ⬆️⬇️⬅️➡️ · Respon les caselles ❓ per poder passar</p>
+
+  <div class="info-laberint">
+    <span><span class="punt" style="background:#ffd93d;"></span> Tu</span>
+    <span><span class="punt" style="background:#6bcf7f;"></span> Sortida</span>
+    <span><span class="punt" style="background:#667eea;"></span> Pregunta pendent</span>
+    <span><span class="punt" style="background:#6bcf7f;"></span> Pregunta resolta</span>
+    <span><span class="punt" style="background:#2c2c54;"></span> Paret</span>
+  </div>
+
+  <div class="laberint-wrapper">
+    <div id="laberint"></div>
+  </div>
+
+  <p class="feedback" id="feedback"></p>
+  <div class="fila-botons">
+    <button class="btn blau" onclick="generarLaberint()">🌀 Nou laberint</button>
+  </div>
+</main>
+
+<!-- MODAL PREGUNTA -->
+<div class="modal-fons" id="modal-pregunta">
+  <div class="modal">
+    <h3>❓ Pregunta d'antònim</h3>
+    <div class="pregunta-text" id="pregunta-text">Carregant...</div>
+    <div class="opcions" id="opcions-pregunta"></div>
+    <div class="missatge-modal" id="missatge-modal"></div>
+  </div>
+</div>
+
+<!-- MODAL GUARDAR -->
+<div class="modal-fons" id="modal-guardar">
+  <div class="modal-guardar">
+    <h3>💾 Vols guardar la sessió?</h3>
+    <p>Es descarregarà un fitxer JSON amb els teus punts, nivell i estadístiques.</p>
+    <div class="fila-botons">
+      <button class="btn verd" onclick="guardarJSON()">Sí, guardar</button>
+      <button class="btn roig" onclick="tancarModalGuardar()">No, gràcies</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RESTAURAR -->
+<div class="modal-fons" id="modal-restaurar">
+  <div class="modal-guardar">
+    <h3>📂 Restaurar sessió</h3>
+    <p>Selecciona un fitxer JSON guardat prèviament.</p>
+    <input type="file" id="input-fitxer" accept=".json" style="margin-bottom:15px;">
+    <div class="fila-botons">
+      <button class="btn verd" onclick="restaurarJSON()">Restaurar</button>
+      <button class="btn roig" onclick="tancarModalRestaurar()">Cancel·lar</button>
+    </div>
+  </div>
+</div>
+
+<div class="nivell-popup" id="nivell-popup"></div>
+<div class="autoguardat" id="autoguardat">💾 Autoguardat</div>
+
+<footer>
+  <p>🎓 <strong>Laberint d'Antònims CAT/ENG</strong> — Eina educativa per a 8-12 anys</p>
+  <p style="margin-top:6px;">Arxiu HTML generat amb la plataforma <strong>DeepSeek</strong> 🤖</p>
+  <p style="margin-top:6px; font-size:0.8em; color:#888;">Laberint generat automàticament cada partida</p>
+</footer>
+
+<script>
+/* ============================================================
+   DADES — Antònims CAT/ENG
+   ============================================================ */
+const DADES = [
+  { cat:"RUGÓS", ant:"LLIS", eng:"ROUGH", engAnt:"SMOOTH" },
+  { cat:"ASSEQUIBLE", ant:"INACCESSIBLE", eng:"AFFORDABLE", engAnt:"UNAFFORDABLE" },
+  { cat:"AMPLE", ant:"ESTRET", eng:"WIDE", engAnt:"NARROW" },
+  { cat:"TANCAT", ant:"OBERT", eng:"CLOSED", engAnt:"OPEN" },
+  { cat:"TRAÏDOR", ant:"LLEIAL", eng:"TREACHEROUS", engAnt:"LOYAL" },
+  { cat:"BRUT", ant:"NET", eng:"DIRTY", engAnt:"CLEAN" },
+  { cat:"CERT", ant:"FALS", eng:"TRUE", engAnt:"FALSE" },
+  { cat:"CRIDANER", ant:"DISCRET", eng:"FLASHY", engAnt:"SUBTLE" },
+  { cat:"CARNÍVOR", ant:"HERBÍVOR", eng:"CARNIVORE", engAnt:"HERBIVORE" },
+  { cat:"DESPIETAT", ant:"COMPASSIU", eng:"RUTHLESS", engAnt:"COMPASSIONATE" },
+  { cat:"BONDADÓS", ant:"MALVAT", eng:"KIND", engAnt:"EVIL" },
+  { cat:"ENORME", ant:"PETIT", eng:"HUGE", engAnt:"TINY" },
+  { cat:"COMBUSTIBLE", ant:"INCOMBUSTIBLE", eng:"COMBUSTIBLE", engAnt:"INCOMBUSTIBLE" },
+  { cat:"ÀCID", ant:"DOLÇ", eng:"SOUR", engAnt:"SWEET" },
+  { cat:"BLANC", ant:"NEGRE", eng:"WHITE", engAnt:"BLACK" },
+  { cat:"FATIGAT", ant:"DESCANSAT", eng:"TIRED", engAnt:"RESTED" },
+  { cat:"RURAL", ant:"URBÀ", eng:"RURAL", engAnt:"URBAN" },
+  { cat:"ASSOLIBLE", ant:"INASSOLIBLE", eng:"ATTAINABLE", engAnt:"UNATTAINABLE" },
+  { cat:"CENTRAL", ant:"PERIFÈRIC", eng:"CENTRAL", engAnt:"PERIPHERAL" },
+  { cat:"COMPLET", ant:"INCOMPLET", eng:"COMPLETE", engAnt:"INCOMPLETE" },
+  { cat:"PLE", ant:"BUIT", eng:"FULL", engAnt:"EMPTY" },
+  { cat:"ARTIFICIAL", ant:"NATURAL", eng:"ARTIFICIAL", engAnt:"NATURAL" },
+  { cat:"INQUIET", ant:"TRANQUIL", eng:"RESTLESS", engAnt:"CALM" },
+  { cat:"CRUEL", ant:"BO", eng:"CRUEL", engAnt:"KIND" },
+  { cat:"CAR", ant:"BARAT", eng:"EXPENSIVE", engAnt:"CHEAP" },
+  { cat:"FURIÓS", ant:"PLÀCID", eng:"FURIOUS", engAnt:"PLACID" },
+  { cat:"CALLAT", ant:"XERRAIRE", eng:"QUIET", engAnt:"TALKATIVE" },
+  { cat:"ACOMODAT", ant:"POBRE", eng:"WEALTHY", engAnt:"POOR" },
+  { cat:"AFORTUNAT", ant:"DESGRACIAT", eng:"LUCKY", engAnt:"UNLUCKY" },
+  { cat:"VALENT", ant:"COVARD", eng:"BRAVE", engAnt:"COWARDLY" },
+  { cat:"CAPTIU", ant:"LLIURE", eng:"CAPTIVE", engAnt:"FREE" },
+  { cat:"COMPETENT", ant:"INEPTE", eng:"COMPETENT", engAnt:"INEPT" },
+  { cat:"MESQUÍ", ant:"GENERÓS", eng:"STINGY", engAnt:"GENEROUS" },
+  { cat:"TREBALLADOR", ant:"GANDUL", eng:"HARDWORKING", engAnt:"LAZY" },
+  { cat:"CURT", ant:"LLARG", eng:"SHORT", engAnt:"LONG" },
+  { cat:"SOLELLÓS", ant:"OMBRÍVOL", eng:"SUNNY", engAnt:"SHADY" },
+  { cat:"COMPLICAT", ant:"SENZILL", eng:"COMPLICATED", engAnt:"SIMPLE" },
+  { cat:"PRESENT", ant:"ABSENT", eng:"PRESENT", engAnt:"ABSENT" },
+  { cat:"FOSC", ant:"CLAR", eng:"DARK", engAnt:"LIGHT" },
+  { cat:"FRED", ant:"CALENT", eng:"COLD", engAnt:"HOT" },
+  { cat:"DUR", ant:"TOU", eng:"HARD", engAnt:"SOFT" },
+  { cat:"RÀPID", ant:"LENT", eng:"FAST", engAnt:"SLOW" },
+  { cat:"ALT", ant:"BAIX", eng:"TALL", engAnt:"SHORT" },
+  { cat:"NOU", ant:"VELL", eng:"NEW", engAnt:"OLD" },
+  { cat:"FORT", ant:"FEBLE", eng:"STRONG", engAnt:"WEAK" },
+  { cat:"SEC", ant:"HUMIT", eng:"DRY", engAnt:"WET" },
+  { cat:"PESAT", ant:"LLEUGER", eng:"HEAVY", engAnt:"LIGHT" },
+  { cat:"ACTIU", ant:"PASSIU", eng:"ACTIVE", engAnt:"PASSIVE" },
+  { cat:"AMABLE", ant:"DESAGRADABLE", eng:"FRIENDLY", engAnt:"UNFRIENDLY" },
+  { cat:"PACIENT", ant:"IMPACIENT", eng:"PATIENT", engAnt:"IMPATIENT" },
+  { cat:"FELIÇ", ant:"TRIST", eng:"HAPPY", engAnt:"SAD" },
+  { cat:"DIVERTIT", ant:"AVORRIT", eng:"FUNNY", engAnt:"BORING" },
+  { cat:"MODERN", ant:"ANTIC", eng:"MODERN", engAnt:"ANCIENT" },
+  { cat:"ORDENAT", ant:"DESORDENAT", eng:"TIDY", engAnt:"MESSY" },
+  { cat:"HONEST", ant:"MENTIDER", eng:"HONEST", engAnt:"DISHONEST" },
+  { cat:"OPTIMISTA", ant:"PESSIMISTA", eng:"OPTIMISTIC", engAnt:"PESSIMISTIC" },
+  { cat:"LLEST", ant:"BADOC", eng:"SMART", engAnt:"FOOLISH" },
+  { cat:"FAMÓS", ant:"DESCONEGUT", eng:"FAMOUS", engAnt:"UNKNOWN" },
+  { cat:"ELEGANT", ant:"GROLLER", eng:"ELEGANT", engAnt:"RUDE" }
+];
+
+/* ============================================================
+   NIVELLS
+   ============================================================ */
+const NIVELLS = [
+  { nom: 'Aprenent',   emoji: '🌱', min: 0,    max: 50 },
+  { nom: 'Explorador', emoji: '🧭', min: 50,   max: 150 },
+  { nom: 'Aventurer',  emoji: '🗺️', min: 150,  max: 300 },
+  { nom: 'Expert',     emoji: '🎓', min: 300,  max: 500 },
+  { nom: 'Mestre',     emoji: '🏆', min: 500,  max: 800 },
+  { nom: 'Llegenda',   emoji: '👑', min: 800,  max: Infinity }
+];
+function obtenirNivell(p) {
+  for (const n of NIVELLS) if (p >= n.min && p < n.max) return n;
+  return NIVELLS[NIVELLS.length - 1];
+}
+
+/* ============================================================
+   ESTAT
+   ============================================================ */
+let punts = 0;
+let nivellActual = NIVELLS[0];
+let estadistiques = { encerts: 0, errors: 0, laberintsCompletats: 0 };
+const CLAU_STORAGE = 'laberint_antonims_sessio';
+
+/* ============================================================
+   UTILITATS
+   ============================================================ */
+function mesclar(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function agafarAleatoris(arr, n) { return mesclar(arr).slice(0, n); }
+
+function setFeedback(msg, tipus) {
+  const el = document.getElementById('feedback');
+  el.textContent = msg;
+  el.classList.remove('bo', 'dolent');
+  if (tipus === 'bo') el.classList.add('bo');
+  if (tipus === 'dolent') el.classList.add('dolent');
+}
+
+function actualitzarMarcador() {
+  document.getElementById('punts').textContent = punts;
+  const nouNivell = obtenirNivell(punts);
+  if (nouNivell.nom !== nivellActual.nom) {
+    nivellActual = nouNivell;
+    mostrarPopupNivell(nouNivell);
+  }
+  document.getElementById('nivell-nom').textContent = nivellActual.nom;
+  document.querySelector('.nivell-badge').firstChild.textContent = nivellActual.emoji + ' ';
+  const next = NIVELLS.find(n => n.min > punts);
+  const barra = document.getElementById('barra-inner');
+  const text = document.getElementById('progres-text');
+  if (next) {
+    const inici = nivellActual.min, fi = next.min;
+    const pct = Math.min(100, Math.max(0, ((punts - inici) / (fi - inici)) * 100));
+    barra.style.width = pct + '%';
+    text.textContent = `Proper nivell: ${next.nom} ${next.emoji} a ${next.min} punts (falten ${next.min - punts})`;
+  } else {
+    barra.style.width = '100%';
+    text.textContent = '👑 Has arribat al nivell MÀXIM: Llegenda!';
+  }
+}
+function sumarPunts(n) {
+  punts += n;
+  estadistiques.encerts++;
+  actualitzarMarcador();
+  autoguardar();
+}
+function restarPunts(n) {
+  punts = Math.max(0, punts - n);
+  estadistiques.errors++;
+  actualitzarMarcador();
+  autoguardar();
+}
+function mostrarPopupNivell(n) {
+  const popup = document.getElementById('nivell-popup');
+  popup.textContent = `${n.emoji} Has pujat al nivell: ${n.nom}! ${n.emoji}`;
+  popup.classList.add('actiu');
+  setTimeout(() => popup.classList.remove('actiu'), 3000);
+}
+
+/* ============================================================
+   AUTOGUARDAT
+   ============================================================ */
+function autoguardar() {
+  try {
+    const dades = {
+      versio: '1.0',
+      data: new Date().toISOString(),
+      punts: punts,
+      nivell: nivellActual.nom,
+      estadistiques: estadistiques
+    };
+    localStorage.setItem(CLAU_STORAGE, JSON.stringify(dades));
+    const ind = document.getElementById('autoguardat');
+    ind.classList.add('visible');
+    setTimeout(() => ind.classList.remove('visible'), 1200);
+  } catch(e) {}
+}
+function carregarAutoguardat() {
+  try {
+    const raw = localStorage.getItem(CLAU_STORAGE);
+    if (!raw) return false;
+    const d = JSON.parse(raw);
+    if (typeof d.punts !== 'number') return false;
+    punts = d.punts;
+    estadistiques = d.estadistiques || estadistiques;
+    nivellActual = obtenirNivell(punts);
+    return true;
+  } catch(e) { return false; }
+}
+
+/* ============================================================
+   GENERACIÓ DEL LABERINT (DFS)
+   ============================================================ */
+const MIDA = 11; // ha de ser senar perquè les parets quedin bé
+let laberint = []; // 1 = paret, 0 = terra, 2 = sortida, 3 = pregunta pendent, 4 = pregunta resolta
+
+function generarLaberint() {
+  // Inicialitzem tot com a parets
+  laberint = [];
+  for (let i = 0; i < MIDA; i++) {
+    laberint.push(Array(MIDA).fill(1));
+  }
+
+  // DFS des del punt (1,1)
+  const pila = [[1, 1]];
+  laberint[1][1] = 0;
+  const direccions = [[-2,0],[2,0],[0,-2],[0,2]];
+
+  while (pila.length > 0) {
+    const [f, c] = pila[pila.length - 1];
+    const veins = [];
+    for (const [df, dc] of direccions) {
+      const nf = f + df, nc = c + dc;
+      if (nf > 0 && nf < MIDA - 1 && nc > 0 && nc < MIDA - 1 && laberint[nf][nc] === 1) {
+        veins.push([nf, nc, f + df/2, c + dc/2]);
+      }
+    }
+    if (veins.length === 0) {
+      pila.pop();
+      continue;
+    }
+    const [nf, nc, mf, mc] = veins[Math.floor(Math.random() * veins.length)];
+    laberint[mf][mc] = 0;
+    laberint[nf][nc] = 0;
+    pila.push([nf, nc]);
+  }
+
+  // Sortida a baix a la dreta
+  laberint[MIDA - 2][MIDA - 2] = 2;
+
+  // Col·loquem preguntes en caselles de terra (no la inicial ni la final)
+  const casellesTerra = [];
+  for (let i = 1; i < MIDA - 1; i++) {
+    for (let j = 1; j < MIDA - 1; j++) {
+      if (laberint[i][j] === 0 && !(i === 1 && j === 1) && !(i === MIDA-2 && j === MIDA-2)) {
+        casellesTerra.push([i, j]);
+      }
+    }
+  }
+  const numPreguntes = Math.min(8, Math.floor(casellesTerra.length / 4));
+  const triades = agafarAleatoris(casellesTerra, numPreguntes);
+  triades.forEach(([i, j]) => {
+    laberint[i][j] = 3; // pregunta pendent
+  });
+
+  // Reiniciem posició del jugador
+  jugador = { fila: 1, col: 1 };
+  dibuixarLaberint();
+  setFeedback('Mou-te amb les fletxes! Respon les ❓ per poder passar.', 'bo');
+}
+
+/* ============================================================
+   DIBUIX
+   ============================================================ */
+let jugador = { fila: 1, col: 1 };
+
+function dibuixarLaberint() {
+  const cont = document.getElementById('laberint');
+  cont.style.gridTemplateColumns = `repeat(${MIDA}, 1fr)`;
+  cont.innerHTML = '';
+  for (let i = 0; i < MIDA; i++) {
+    for (let j = 0; j < MIDA; j++) {
+      const c = document.createElement('div');
+      c.className = 'cella';
+      const v = laberint[i][j];
+      if (v === 1) c.classList.add('paret');
+      else if (v === 0) c.classList.add('terra');
+      else if (v === 2) { c.classList.add('sortida'); c.textContent = '🏁'; }
+      else if (v === 3) { c.classList.add('pregunta'); c.textContent = '❓'; }
+      else if (v === 4) { c.classList.add('pregunta', 'resolta'); c.textContent = '✓'; }
+      else if (v === 5) { c.classList.add('pregunta', 'fallada'); c.textContent = '❌'; }
+
+      if (i === jugador.fila && j === jugador.col) {
+        c.classList.add('jugador');
+        c.textContent = '🐱';
+      }
+      cont.appendChild(c);
+    }
+  }
+}
+
+/* ============================================================
+   MOVIMENT
+   ============================================================ */
+function mou(dr, dc) {
+  const nf = jugador.fila + dr;
+  const nc = jugador.col + dc;
+  if (nf < 0 || nf >= MIDA || nc < 0 || nc >= MIDA) return;
+  const v = laberint[nf][nc];
+  if (v === 1) return; // paret
+
+  // Si és una pregunta pendent, obrim el modal
+  if (v === 3) {
+    obrirPregunta(nf, nc);
+    return;
+  }
+
+  // Moviment normal
+  jugador.fila = nf;
+  jugador.col = nc;
+  dibuixarLaberint();
+
+  if (v === 2) {
+    estadistiques.laberintsCompletats++;
+    sumarPunts(50);
+    setFeedback('🎉 Has arribat a la sortida! +50 punts. Generant nou laberint...', 'bo');
+    setTimeout(() => generarLaberint(), 1500);
+  }
+}
+
+document.addEventListener('keydown', e => {
+  // Evitem scroll amb fletxes
+  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
+    e.preventDefault();
+  }
+  // Si el modal de pregunta està obert, no movem
+  if (document.getElementById('modal-pregunta').classList.contains('actiu')) return;
+
+  if (e.key === 'ArrowUp') mou(-1, 0);
+  if (e.key === 'ArrowDown') mou(1, 0);
+  if (e.key === 'ArrowLeft') mou(0, -1);
+  if (e.key === 'ArrowRight') mou(0, 1);
+});
+
+/* ============================================================
+   PREGUNTES
+   ============================================================ */
+let preguntaActual = null;
+let posicioPregunta = null;
+
+function obrirPregunta(fila, col) {
+  posicioPregunta = { fila, col };
+  const d = DADES[Math.floor(Math.random() * DADES.length)];
+  const idioma = document.getElementById('selector-idioma').value;
+
+  let pregunta, correcta, distractors;
+  if (idioma === 'eng') {
+    pregunta = `What is the opposite of "${d.eng}"?`;
+    correcta = d.engAnt;
+    distractors = agafarAleatoris(DADES.filter(x => x.engAnt !== d.engAnt), 3).map(x => x.engAnt);
+  } else if (idioma === 'mix') {
+    pregunta = `Quin és l'antònim en anglès de "${d.cat}"?`;
+    correcta = d.engAnt;
+    distractors = agafarAleatoris(DADES.filter(x => x.engAnt !== d.engAnt), 3).map(x => x.engAnt);
+  } else {
+    pregunta = `Quin és l'antònim de "${d.cat}"?`;
+    correcta = d.ant;
+    distractors = agafarAleatoris(DADES.filter(x => x.ant !== d.ant), 3).map(x => x.ant);
+  }
+
+  preguntaActual = { correcta, dades: d };
+  document.getElementById('pregunta-text').innerHTML = pregunta;
+  document.getElementById('missatge-modal').textContent = '';
+
+  const cont = document.getElementById('opcions-pregunta');
+  cont.innerHTML = '';
+  const opcions = mesclar([correcta, ...distractors]);
+  opcions.forEach(op => {
+    const b = document.createElement('button');
+    b.textContent = op;
+    b.onclick = () => respondrePregunta(b, op === correcta);
+    cont.appendChild(b);
+  });
+
+  document.getElementById('modal-pregunta').classList.add('actiu');
+}
+
+function respondrePregunta(btn, correcte) {
+  if (correcte) {
+    btn.classList.add('correcte');
+    // Marcar casella com a resolta
+    laberint[posicioPregunta.fila][posicioPregunta.col] = 4;
+    // Moure el jugador a la casella
+    jugador.fila = posicioPregunta.fila;
+    jugador.col = posicioPregunta.col;
+    sumarPunts(15);
+    document.getElementById('missatge-modal').textContent = '✅ Correcte! +15 punts';
+    document.getElementById('missatge-modal').style.color = '#6bcf7f';
+    setTimeout(() => {
+      tancarPregunta();
+      dibuixarLaberint();
+    }, 900);
+  } else {
+    btn.classList.add('incorrecte');
+    document.querySelectorAll('#opcions-pregunta button').forEach(b => {
+      if (b.textContent === preguntaActual.correcta) b.classList.add('correcte');
+    });
+    restarPunts(5);
+    document.getElementById('missatge-modal').textContent = `❌ -5 punts. Era: ${preguntaActual.correcta}`;
+    document.getElementById('missatge-modal').style.color = '#ff6b6b';
+    // La casella queda com a pendent (es pot tornar a intentar)
+    setTimeout(() => {
+      tancarPregunta();
+      setFeedback('Torna-ho a intentar! La casella segueix pendent', 'dolent');
+    }, 1500);
+  }
+}
+
+function tancarPregunta() {
+  document.getElementById('modal-pregunta').classList.remove('actiu');
+  preguntaActual = null;
+  posicioPregunta = null;
+}
+
+/* ============================================================
+   GUARDAT / RESTAURAR
+   ============================================================ */
+function obrirGuardar() { document.getElementById('modal-guardar').classList.add('actiu'); }
+function tancarModalGuardar() { document.getElementById('modal-guardar').classList.remove('actiu'); }
+function guardarJSON() {
+  const dades = {
+    versio: '1.0',
+    data: new Date().toISOString(),
+    punts: punts,
+    nivell: nivellActual.nom,
+    estadistiques: estadistiques
+  };
+  const blob = new Blob([JSON.stringify(dades, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `laberint_antonims_${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  tancarModalGuardar();
+}
+function obrirRestaurar() { document.getElementById('modal-restaurar').classList.add('actiu'); }
+function tancarModalRestaurar() { document.getElementById('modal-restaurar').classList.remove('actiu'); }
+function restaurarJSON() {
+  const input = document.getElementById('input-fitxer');
+  if (!input.files || input.files.length === 0) { alert('Selecciona un fitxer JSON.'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const d = JSON.parse(e.target.result);
+      if (typeof d.punts !== 'number') throw new Error('Format incorrecte');
+      punts = d.punts;
+      estadistiques = d.estadistiques || estadistiques;
+      nivellActual = obtenirNivell(punts);
+      actualitzarMarcador();
+      tancarModalRestaurar();
+      autoguardar();
+    } catch (err) { alert('Fitxer JSON no vàlid: ' + err.message); }
+  };
+  reader.readAsText(input.files[0]);
+}
+function reiniciarPunts() {
+  if (!confirm('Segur que vols reiniciar tots els punts i estadístiques?')) return;
+  punts = 0;
+  estadistiques = { encerts: 0, errors: 0, laberintsCompletats: 0 };
+  nivellActual = NIVELLS[0];
+  actualitzarMarcador();
+  autoguardar();
+}
+
+/* ============================================================
+   INICIALITZACIÓ
+   ============================================================ */
+carregarAutoguardat();
+actualitzarMarcador();
+generarLaberint();
+setInterval(autoguardar, 30000);
+</script>
+</body>
+</html>
