@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧩 Memòri dels Contraris</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: 'Comic Sans MS', 'Trebuchet MS', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #fff;
+  }
+  
+  h1 {
+    text-align: center;
+    font-size: 2.5em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    margin-bottom: 10px;
+  }
+  
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  
+  button {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1em;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+  }
+  
+  button:hover { transform: scale(1.05); }
+  button.active { background: #4ecdc4; }
+  
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    flex-wrap: wrap;
+  }
+  
+  .stat-box {
+    background: rgba(255,255,255,0.2);
+    padding: 8px 18px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+  }
+  
+  #board {
+    display: grid;
+    gap: 10px;
+    max-width: 900px;
+    margin: 0 auto;
+    perspective: 1000px;
+  }
+  
+  .card {
+    aspect-ratio: 1;
+    position: relative;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+  }
+  
+  .card.flipped { transform: rotateY(180deg); }
+  .card.matched { animation: pulse 0.6s; }
+  
+  @keyframes pulse {
+    0%, 100% { transform: rotateY(180deg) scale(1); }
+    50% { transform: rotateY(180deg) scale(1.15); }
+  }
+  
+  .card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    text-align: center;
+    padding: 5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  }
+  
+  .card-front {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    font-size: 2em;
+    transform: rotateY(180deg);
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+  }
+  
+  .card-back {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    font-size: 2.5em;
+  }
+  
+  .card.matched .card-front {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  }
+  
+  /* Modal de victòria */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+  }
+  
+  .modal.show { display: flex; }
+  
+  .modal-content {
+    background: white;
+    color: #333;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 90%;
+    animation: bounce 0.5s;
+  }
+  
+  @keyframes bounce {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  
+  .modal h2 { font-size: 2.5em; color: #ff6b6b; }
+  .modal p { font-size: 1.3em; margin: 15px 0; }
+  
+  /* Responsive */
+  @media (max-width: 600px) {
+    h1 { font-size: 1.8em; }
+    .card-front { font-size: 0.9em; }
+    .card-back { font-size: 1.8em; }
+    button { padding: 10px 15px; font-size: 0.9em; }
+  }
+</style>
+</head>
+<body>
+
+<h1>🧩 Memòri dels Contraris</h1>
+
+<div class="controls">
+  <button id="btnEasy" class="active">🌱 Fàcil (CAT-CAT)</button>
+  <button id="btnMedium">🌿 Mitjà (ENG-ENG)</button>
+  <button id="btnHard">🌳 Expert (CAT-ENG)</button>
+  <button id="btnRestart">🔄 Reiniciar</button>
+</div>
+
+<div class="stats">
+  <div class="stat-box">⏱️ <span id="timer">0</span>s</div>
+  <div class="stat-box">🎯 Moviments: <span id="moves">0</span></div>
+  <div class="stat-box">✅ Parelles: <span id="pairs">0</span>/<span id="totalPairs">0</span></div>
+</div>
+
+<div id="board"></div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h2>🎉 ENHORABONA! 🎉</h2>
+    <p id="modalText">Has guanyat!</p>
+    <button onclick="closeModal()">Juga una altra vegada</button>
+  </div>
+</div>
+
+<script>
+// ============================================
+// LLISTA DE PARAULES (modifica aquí si vols!)
+// ============================================
+const llistaParaules = [
+  { cat: "RUGÓS", catAnt: "LLIS", eng: "ROUGH", engAnt: "SMOOTH" },
+  { cat: "ASSEQUIBLE", catAnt: "INACCESSIBLE", eng: "AFFORDABLE", engAnt: "UNAFFORDABLE" },
+  { cat: "AMPLE", catAnt: "ESTRET", eng: "WIDE", engAnt: "NARROW" },
+  { cat: "TANCAT", catAnt: "OBERT", eng: "CLOSED", engAnt: "OPEN" },
+  { cat: "TRAÏDOR", catAnt: "LLEIAL", eng: "TREACHEROUS", engAnt: "LOYAL" },
+  { cat: "BRUT", catAnt: "NET", eng: "DIRTY", engAnt: "CLEAN" },
+  { cat: "CERT", catAnt: "FALS", eng: "TRUE", engAnt: "FALSE" },
+  { cat: "CRIDANER", catAnt: "DISCRET", eng: "FLASHY", engAnt: "SUBTLE" },
+  { cat: "CARNÍVOR", catAnt: "HERBÍVOR", eng: "CARNIVORE", engAnt: "HERBIVORE" },
+  { cat: "DESPIETAT", catAnt: "COMPASSIU", eng: "RUTHLESS", engAnt: "COMPASSIONATE" },
+  { cat: "BONDADÓS", catAnt: "MALVAT", eng: "KIND", engAnt: "EVIL" },
+  { cat: "ENORME", catAnt: "PETIT", eng: "HUGE", engAnt: "TINY" },
+  { cat: "ÀCID", catAnt: "DOLÇ", eng: "SOUR", engAnt: "SWEET" },
+  { cat: "BLANC", catAnt: "NEGRE", eng: "WHITE", engAnt: "BLACK" },
+  { cat: "FATIGAT", catAnt: "DESCANSAT", eng: "TIRED", engAnt: "RESTED" },
+  { cat: "RURAL", catAnt: "URBÀ", eng: "RURAL", engAnt: "URBAN" },
+  { cat: "PLE", catAnt: "BUIT", eng: "FULL", engAnt: "EMPTY" },
+  { cat: "INQUIET", catAnt: "TRANQUIL", eng: "RESTLESS", engAnt: "CALM" },
+  { cat: "CAR", catAnt: "BARAT", eng: "EXPENSIVE", engAnt: "CHEAP" },
+  { cat: "FURIÓS", catAnt: "PLÀCID", eng: "FURIOUS", engAnt: "PLACID" },
+  { cat: "VALENT", catAnt: "COVARD", eng: "BRAVE", engAnt: "COWARDLY" },
+  { cat: "TREBALLADOR", catAnt: "GANDUL", eng: "HARDWORKING", engAnt: "LAZY" },
+  { cat: "CURT", catAnt: "LLARG", eng: "SHORT", engAnt: "LONG" },
+  { cat: "COMPLICAT", catAnt: "SENZILL", eng: "COMPLICATED", engAnt: "SIMPLE" },
+  { cat: "FOSC", catAnt: "CLAR", eng: "DARK", engAnt: "LIGHT" },
+  { cat: "FRED", catAnt: "CALENT", eng: "COLD", engAnt: "HOT" },
+  { cat: "RÀPID", catAnt: "LENT", eng: "FAST", engAnt: "SLOW" },
+  { cat: "FORT", catAnt: "FEBLE", eng: "STRONG", engAnt: "WEAK" },
+  { cat: "FELIÇ", catAnt: "TRIST", eng: "HAPPY", engAnt: "SAD" },
+  { cat: "DIVERTIT", catAnt: "AVORRIT", eng: "FUNNY", engAnt: "BORING" },
+  { cat: "HONEST", catAnt: "MENTIDER", eng: "HONEST", engAnt: "DISHONEST" },
+  { cat: "LLEST", catAnt: "BADOC", eng: "SMART", engAnt: "FOOLISH" }
+];
+
+// ============================================
+// VARIABLES DE JOC
+// ============================================
+let level = 'easy';
+let cards = [];
+let flippedCards = [];
+let moves = 0;
+let pairsFound = 0;
+let totalPairs = 0;
+let timerInterval = null;
+let seconds = 0;
+let locked = false;
+
+const board = document.getElementById('board');
+const timerEl = document.getElementById('timer');
+const movesEl = document.getElementById('moves');
+const pairsEl = document.getElementById('pairs');
+const totalPairsEl = document.getElementById('totalPairs');
+const modal = document.getElementById('modal');
+const modalText = document.getElementById('modalText');
+
+// ============================================
+// FUNCIONS PRINCIPALS
+// ============================================
+function startGame(newLevel) {
+  level = newLevel || level;
+  clearInterval(timerInterval);
+  seconds = 0;
+  moves = 0;
+  pairsFound = 0;
+  flippedCards = [];
+  locked = false;
+  timerEl.textContent = '0';
+  movesEl.textContent = '0';
+  pairsEl.textContent = '0';
+  
+  // Actualitzar botó actiu
+  document.querySelectorAll('.controls button').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn' + level.charAt(0).toUpperCase() + level.slice(1)).classList.add('active');
+  
+  // Seleccionem 8 parelles a l'atzar
+  const shuffledWords = [...llistaParaules].sort(() => Math.random() - 0.5).slice(0, 8);
+  cards = [];
+  
+  shuffledWords.forEach((w, i) => {
+    let text1, text2;
+    if (level === 'easy') {
+      text1 = w.cat; text2 = w.catAnt;
+    } else if (level === 'medium') {
+      text1 = w.eng; text2 = w.engAnt;
+    } else {
+      text1 = w.cat; text2 = w.engAnt;
+    }
+    cards.push({ id: i*2, pairId: i, text: text1 });
+    cards.push({ id: i*2+1, pairId: i, text: text2 });
+  });
+  
+  // Barrejar cartes (Fisher-Yates)
+  for (let i = cards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [cards[i], cards[j]] = [cards[j], cards[i]];
+  }
+  
+  totalPairs = shuffledWords.length;
+  totalPairsEl.textContent = totalPairs;
+  
+  renderBoard();
+  startTimer();
+}
+
+function renderBoard() {
+  board.innerHTML = '';
+  // 4 columnes per a 16 cartes (8 parelles)
+  board.style.gridTemplateColumns = 'repeat(4, 1fr)';
+  
+  cards.forEach(card => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.dataset.pairId = card.pairId;
+    div.innerHTML = `
+      <div class="card-face card-back">❓</div>
+      <div class="card-face card-front">${card.text}</div>
+    `;
+    div.addEventListener('click', () => flipCard(div, card));
+    board.appendChild(div);
+  });
+}
+
+function flipCard(div, card) {
+  if (locked) return;
+  if (div.classList.contains('flipped')) return;
+  if (flippedCards.length === 2) return;
+  
+  div.classList.add('flipped');
+  flippedCards.push({ div, card });
+  
+  if (flippedCards.length === 2) {
+    moves++;
+    movesEl.textContent = moves;
+    checkMatch();
+  }
+}
+
+function checkMatch() {
+  const [a, b] = flippedCards;
+  if (a.card.pairId === b.card.pairId) {
+    // Parella encertada!
+    setTimeout(() => {
+      a.div.classList.add('matched');
+      b.div.classList.add('matched');
+      pairsFound++;
+      pairsEl.textContent = pairsFound;
+      flippedCards = [];
+      
+      if (pairsFound === totalPairs) {
+        clearInterval(timerInterval);
+        setTimeout(showVictory, 600);
+      }
+    }, 500);
+  } else {
+    // No coincideixen
+    locked = true;
+    setTimeout(() => {
+      a.div.classList.remove('flipped');
+      b.div.classList.remove('flipped');
+      flippedCards = [];
+      locked = false;
+    }, 1000);
+  }
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    seconds++;
+    timerEl.textContent = seconds;
+  }, 1000);
+}
+
+function showVictory() {
+  let missatge = `Has trobat les ${totalPairs} parelles en ${moves} moviments i ${seconds} segons! `;
+  if (moves <= totalPairs + 3) missatge += "🏆 MEMÒRIA DE CAMPIONA/E! 🏆";
+  else if (moves <= totalPairs * 2) missatge += "⭐ Molt bé! ⭐";
+  else missatge += "💪 Continua practicant! 💪";
+  modalText.textContent = missatge;
+  modal.classList.add('show');
+}
+
+function closeModal() {
+  modal.classList.remove('show');
+  startGame();
+}
+
+// ============================================
+// ESDEVENIMENTS DELS BOTONS
+// ============================================
+document.getElementById('btnEasy').onclick = () => startGame('easy');
+document.getElementById('btnMedium').onclick = () => startGame('medium');
+document.getElementById('btnHard').onclick = () => startGame('hard');
+document.getElementById('btnRestart').onclick = () => startGame();
+
+// Iniciar el joc automàticament
+startGame('easy');
+</script>
+
+</body>
+</html>

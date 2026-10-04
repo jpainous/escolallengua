@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐔 13 Activitats de Locucions d'Animals</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Comic Sans MS', 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    min-height: 100vh; padding: 15px; color: #333;
+    display: flex; flex-direction: column;
+  }
+  header {
+    background: white; border-radius: 20px; padding: 15px 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2); margin-bottom: 20px; text-align: center;
+  }
+  h1 { color: #c0392b; font-size: 1.4em; margin-bottom: 10px; }
+  .marcador-zona {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    align-items: center; margin-bottom: 8px;
+  }
+  .marcador {
+    display: inline-block; background: #ffd93d; padding: 6px 18px;
+    border-radius: 30px; font-weight: bold; font-size: 1.1em;
+  }
+  .nivell-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, #c0392b, #e74c3c);
+    color: white; padding: 6px 16px; border-radius: 30px;
+    font-weight: bold; font-size: 1em;
+    box-shadow: 0 4px 12px rgba(192,57,43,0.4);
+  }
+  .barra-progres {
+    width: 100%; max-width: 400px; height: 14px; background: #ffe8e8;
+    border-radius: 10px; overflow: hidden; margin: 8px auto;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .barra-progres-inner {
+    height: 100%; background: linear-gradient(90deg, #6bcf7f, #ffd93d, #e74c3c);
+    width: 0%; transition: width 0.5s ease; border-radius: 10px;
+  }
+  .progres-text { text-align: center; font-size: 0.85em; color: #666; margin-bottom: 10px; }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; margin-top: 12px; }
+  .controls label { font-weight: bold; color: #c0392b; font-size: 0.9em; }
+  select {
+    padding: 10px 14px; font-size: 0.95em; font-family: inherit;
+    border: 3px solid #e74c3c; border-radius: 12px; background: white;
+    color: #333; font-weight: bold; cursor: pointer; max-width: 100%;
+  }
+  main {
+    background: white; border-radius: 20px; padding: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2); min-height: 550px;
+    flex: 1;
+  }
+  .joc { display: none; }
+  .joc.actiu { display: block; animation: fadeIn 0.4s; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; transform: translateY(0);} }
+  h2 { color: #c0392b; margin-bottom: 10px; text-align: center; font-size: 1.3em; }
+  .subtitol { text-align: center; margin-bottom: 18px; color: #666; font-size: 0.95em; }
+  .feedback { text-align: center; font-size: 1.1em; font-weight: bold; margin-top: 15px; min-height: 1.5em; }
+  .feedback.bo { color: #2a8f4a; }
+  .feedback.dolent { color: #cc2a2a; }
+
+  .btn {
+    padding: 10px 22px; font-size: 1em; font-weight: bold;
+    background: #e74c3c; color: white; border: none;
+    border-radius: 25px; cursor: pointer; font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: #c0392b; transform: translateY(-2px); }
+  .btn.verd { background: #6bcf7f; }
+  .btn.verd:hover { background: #5ab86e; }
+  .btn.groc { background: #ffd93d; color: #333; }
+  .btn.groc:hover { background: #f0c520; }
+  .btn.blau { background: #667eea; }
+  .btn.blau:hover { background: #5568d3; }
+  .fila-botons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
+
+  /* MEMORY */
+  .graella-memory {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 10px; max-width: 720px; margin: 0 auto;
+  }
+  .carta {
+    aspect-ratio: 1.2; background: #e74c3c; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: bold; font-size: 0.72em;
+    cursor: pointer; padding: 5px; text-align: center;
+    transition: all 0.3s; user-select: none; word-break: break-word;
+    overflow: hidden;
+  }
+  .carta.girada { background: #ffd93d; color: #333; }
+  .carta.encertada { background: #6bcf7f; color: white; cursor: default; }
+  .carta:hover:not(.girada):not(.encertada) { transform: scale(1.05); }
+
+  /* QUIZ */
+  .pregunta { font-size: 1.25em; text-align: center; margin: 20px 0; line-height: 1.5; }
+  .pregunta strong { color: #e74c3c; }
+  .opcions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 620px; margin: 0 auto; }
+  .opcions button {
+    padding: 16px; font-size: 1em; font-weight: bold;
+    border: 3px solid #e74c3c; background: white; color: #c0392b;
+    border-radius: 12px; cursor: pointer; font-family: inherit;
+    word-break: break-word; transition: all 0.2s;
+    text-align: left;
+  }
+  .opcions button:hover { background: #e74c3c; color: white; }
+  .opcions button.correcte { background: #6bcf7f; border-color: #6bcf7f; color: white; }
+  .opcions button.incorrecte { background: #ff6b6b; border-color: #ff6b6b; color: white; }
+
+  /* DRAG */
+  .drag-contenidor { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 780px; margin: 0 auto; }
+  .columna { display: flex; flex-direction: column; gap: 8px; }
+  .columna h3 { text-align: center; color: #c0392b; margin-bottom: 8px; font-size: 1em; }
+  .item {
+    padding: 12px; background: #ffe8e8; border: 2px dashed #e74c3c;
+    border-radius: 10px; text-align: center; font-weight: bold;
+    cursor: grab; user-select: none; word-break: break-word;
+    font-size: 0.9em;
+  }
+  .item.arrossegable { background: #ffd93d; border-style: solid; }
+  .item.destí { background: #f5f5f5; min-height: 45px; }
+  .item.destí.omplert { background: #6bcf7f; color: white; border-color: #6bcf7f; }
+  .item.destí.error { background: #ff6b6b; color: white; border-color: #ff6b6b; }
+
+  /* FLASHCARDS */
+  .flashcard { width: 340px; height: 240px; margin: 20px auto; perspective: 1000px; cursor: pointer; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.girada .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-cara {
+    position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+    border-radius: 20px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 20px;
+    text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    overflow: auto;
+  }
+  .flashcard-davant { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+  .flashcard-darrere { background: linear-gradient(135deg, #ffd93d, #ff9a3d); color: #333; transform: rotateY(180deg); }
+  .flashcard-cara .paraula { font-size: 1.2em; font-weight: bold; margin-bottom: 8px; word-break: break-word; }
+  .flashcard-cara .petit { font-size: 0.9em; opacity: 0.9; margin-top: 4px; }
+
+  /* SOPA */
+  .sopa-info { text-align: center; margin-bottom: 12px; font-weight: bold; color: #c0392b; }
+  .sopa-graella { display: grid; gap: 3px; max-width: 520px; margin: 0 auto; background: #ffe8e8; padding: 8px; border-radius: 12px; user-select: none; }
+  .sopa-cella {
+    aspect-ratio: 1; background: white; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 0.8em; cursor: pointer;
+    transition: all 0.15s; color: #333;
+  }
+  .sopa-cella:hover { background: #ffd93d; }
+  .sopa-cella.seleccionada { background: #ff9a3d; color: white; }
+  .sopa-cella.trobada { background: #6bcf7f; color: white; }
+  .sopa-llista { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 15px; }
+  .sopa-objectiu { padding: 6px 14px; background: #ffe8e8; border-radius: 20px; font-weight: bold; font-size: 0.85em; color: #c0392b; }
+  .sopa-objectiu.trobat { background: #6bcf7f; color: white; text-decoration: line-through; }
+
+  /* CLASSIFICACIÓ */
+  .class-caixes { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; }
+  .class-caixa {
+    background: #ffe8e8; border: 3px dashed #e74c3c; border-radius: 15px;
+    padding: 12px; min-width: 140px; min-height: 100px; flex: 1;
+    max-width: 180px; text-align: center;
+  }
+  .class-caixa h4 { color: #c0392b; margin-bottom: 8px; font-size: 0.9em; }
+  .class-caixa.hover { background: #ffd93d; }
+  .class-paraula {
+    display: inline-block; padding: 6px 10px; margin: 3px;
+    background: #ffd93d; border-radius: 20px; font-weight: bold;
+    cursor: grab; user-select: none; font-size: 0.78em;
+  }
+  .class-paraula.col·locada { background: #6bcf7f; color: white; }
+
+  /* ORDENA */
+  .ordre-paraules { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 20px auto; max-width: 600px; min-height: 50px; padding: 15px; background: #f5f5f5; border-radius: 12px; border: 2px dashed #ccc; }
+  .ordre-paraula {
+    padding: 10px 16px; background: #e74c3c; color: white;
+    border-radius: 20px; font-weight: bold; cursor: pointer;
+    font-size: 0.95em; transition: all 0.2s;
+  }
+  .ordre-paraula:hover { transform: scale(1.05); }
+  .ordre-paraula.usada { opacity: 0.3; pointer-events: none; }
+  .ordre-resultat {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    margin: 15px auto; max-width: 600px; min-height: 50px; padding: 15px;
+    background: #ffe8e8; border-radius: 12px; border: 3px solid #e74c3c;
+  }
+  .ordre-resultat .ordre-paraula { background: #6bcf7f; }
+
+  /* PENJAT */
+  .penjat-paraula { display: flex; gap: 6px; justify-content: center; margin: 25px 0; flex-wrap: wrap; }
+  .penjat-lletra { font-size: 1.6em; font-weight: bold; border-bottom: 4px solid #e74c3c; min-width: 28px; text-align: center; padding: 5px; }
+  .penjat-lletra.encertada { color: #6bcf7f; }
+  .penjat-lletra.espai { border-bottom: none; }
+  .penjat-teclat { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; max-width: 520px; margin: 0 auto; }
+  .penjat-teclat button {
+    padding: 10px 0; font-weight: bold; font-size: 0.95em;
+    border: 2px solid #e74c3c; background: white; color: #c0392b;
+    border-radius: 8px; cursor: pointer; font-family: inherit;
+  }
+  .penjat-teclat button:hover:not(:disabled) { background: #e74c3c; color: white; }
+  .penjat-teclat button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .penjat-info { text-align: center; font-weight: bold; margin: 10px 0; color: #c0392b; }
+
+  /* BINGO */
+  .bingo-cartro { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 480px; margin: 0 auto; }
+  .bingo-cella {
+    aspect-ratio: 1.2; background: #ffe8e8; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 0.72em; cursor: pointer;
+    padding: 5px; text-align: center; word-break: break-word;
+    transition: all 0.2s; border: 2px solid transparent; overflow: hidden;
+  }
+  .bingo-cella:hover { background: #ffd93d; }
+  .bingo-cella.marcada { background: #6bcf7f; color: white; border-color: #5ab86e; }
+  .bingo-cella.guanyadora { background: #ff6b6b; color: white; animation: pulse 0.6s infinite alternate; }
+  @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.05); } }
+  .bingo-anunci {
+    text-align: center; margin: 15px auto; padding: 12px 20px;
+    background: #ffd93d; border-radius: 12px; font-weight: bold;
+    font-size: 1.05em; max-width: 480px;
+  }
+
+  /* FRASES */
+  .frases-area { max-width: 600px; margin: 0 auto; }
+  .frase-input { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; margin: 15px 0; padding: 15px; background: #ffe8e8; border-radius: 12px; }
+  .frase-input select { flex: 1; min-width: 150px; }
+  .frase-generada {
+    padding: 15px; background: #ffd93d; border-radius: 12px;
+    margin: 10px 0; font-weight: bold; font-size: 1em;
+    text-align: center; animation: fadeIn 0.4s;
+  }
+  .frase-generada .loc { color: #e74c3c; }
+  .llista-frases { max-height: 300px; overflow-y: auto; margin-top: 15px; }
+
+  /* Modal */
+  .modal-fons {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); display: none;
+    justify-content: center; align-items: center; z-index: 1000;
+  }
+  .modal-fons.actiu { display: flex; }
+  .modal {
+    background: white; border-radius: 20px; padding: 25px;
+    max-width: 420px; width: 90%; text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: fadeIn 0.3s;
+  }
+  .modal h3 { color: #c0392b; margin-bottom: 12px; }
+  .modal p { margin-bottom: 15px; color: #555; }
+
+  /* Popup nivell */
+  .nivell-popup {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-200px);
+    background: linear-gradient(135deg, #6bcf7f, #4caf50);
+    color: white; padding: 20px 30px; border-radius: 20px;
+    font-weight: bold; font-size: 1.2em; z-index: 2000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    transition: transform 0.5s ease; text-align: center;
+  }
+  .nivell-popup.actiu { transform: translateX(-50%) translateY(0); }
+
+  /* Indicador autoguardat */
+  .autoguardat {
+    position: fixed; bottom: 10px; right: 10px;
+    background: rgba(107,207,127,0.95); color: white;
+    padding: 6px 14px; border-radius: 20px; font-size: 0.8em;
+    font-weight: bold; opacity: 0; transition: opacity 0.5s;
+    z-index: 100;
+  }
+  .autoguardat.visible { opacity: 1; }
+
+  footer {
+    margin-top: 20px; padding: 15px;
+    background: rgba(255,255,255,0.9); border-radius: 20px;
+    text-align: center; color: #555; font-size: 0.85em;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+  footer strong { color: #c0392b; }
+
+  @media (max-width: 520px) {
+    .graella-memory { grid-template-columns: repeat(3, 1fr); }
+    .opcions, .drag-contenidor { grid-template-columns: 1fr; }
+    .carta { font-size: 0.62em; }
+    .flashcard { width: 90%; }
+    .penjat-teclat { grid-template-columns: repeat(6, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🐔 13 Activitats de Locucions d'Animals</h1>
+  <div class="marcador-zona">
+    <div class="marcador">⭐ Punts: <span id="punts">0</span></div>
+    <div class="nivell-badge" id="nivell-badge">🌱 <span id="nivell-nom">Aprenent</span></div>
+  </div>
+  <div class="barra-progres"><div class="barra-progres-inner" id="barra-inner"></div></div>
+  <div class="progres-text" id="progres-text">Proper nivell: 50 punts</div>
+
+  <div class="controls">
+    <label for="selector-joc">Activitat:</label>
+    <select id="selector-joc">
+      <option value="memory">1. 🧠 Memory</option>
+      <option value="quiz">2. ❓ Quiz</option>
+      <option value="drag">3. 🖱️ Arrossega</option>
+      <option value="flash">4. 🃏 Targetes</option>
+      <option value="sopa">5. 🔍 Sopa de lletres</option>
+      <option value="classificacio">6. 🐾 Classifica per animal</option>
+      <option value="quinAnimal">7. 🎯 Quin animal hi surt?</option>
+      <option value="intrus">8. 🕵️ Intrús</option>
+      <option value="ordena">9. 🎬 Ordena les paraules</option>
+      <option value="penjat">10. 🪢 Penjat</option>
+      <option value="bingo">11. 🎰 Bingo</option>
+      <option value="completa">12. 🔤 Completa la locució</option>
+      <option value="frases">13. ✍️ Inventa una frase</option>
+    </select>
+    <button class="btn groc" onclick="obrirGuardar()">💾 Guardar</button>
+    <button class="btn groc" onclick="obrirRestaurar()">📂 Restaurar</button>
+    <button class="btn blau" onclick="reiniciarPunts()">🔄 Reiniciar</button>
+  </div>
+</header>
+
+<main>
+
+<section id="joc-memory" class="joc actiu">
+  <h2>1. 🧠 Memory de locucions</h2>
+  <p class="subtitol">Empareja cada locució amb el seu significat</p>
+  <div class="graella-memory" id="graella-memory"></div>
+  <p class="feedback" id="feedback-memory"></p>
+  <div class="fila-botons"><button class="btn" onclick="iniciarMemory()">🔄 Nova partida</button></div>
+</section>
+
+<section id="joc-quiz" class="joc">
+  <h2>2. ❓ Quiz: Què vol dir...?</h2>
+  <p class="pregunta" id="pregunta-quiz">Carregant...</p>
+  <div class="opcions" id="opcions-quiz"></div>
+  <p class="feedback" id="feedback-quiz"></p>
+  <div class="fila-botons"><button class="btn blau" id="btn-seguent-quiz" style="display:none;" onclick="novaPreguntaQuiz()">➡️ Següent</button></div>
+</section>
+
+<section id="joc-drag" class="joc">
+  <h2>3. 🖱️ Arrossega el significat</h2>
+  <p class="subtitol">Arrossega cada significat cap a la seva locució</p>
+  <div class="drag-contenidor">
+    <div class="columna"><h3>Locucions</h3><div id="drag-locucions"></div></div>
+    <div class="columna"><h3>Significats</h3><div id="drag-significats"></div></div>
+  </div>
+  <p class="feedback" id="feedback-drag"></p>
+  <div class="fila-botons"><button class="btn" onclick="iniciarDrag()">🔄 Nova partida</button></div>
+</section>
+
+<section id="joc-flash" class="joc">
+  <h2>4. 🃏 Targetes d'estudi</h2>
+  <p class="subtitol">Clica la targeta per girar-la</p>
+  <div class="flashcard" id="flashcard" onclick="girarFlash()">
+    <div class="flashcard-inner">
+      <div class="flashcard-cara flashcard-davant">
+        <div class="paraula" id="flash-davant">al cant del gall</div>
+        <div class="petit">Clica per girar 🔄</div>
+      </div>
+      <div class="flashcard-cara flashcard-darrere">
+        <div class="paraula" id="flash-darrere">a la primera claror del dia</div>
+      </div>
+    </div>
+  </div>
+  <div class="fila-botons">
+    <button class="btn" onclick="flashAnterior()">⬅️</button>
+    <button class="btn" onclick="flashSeguent()">➡️</button>
+  </div>
+  <p class="feedback" id="feedback-flash"></p>
+</section>
+
+<section id="joc-sopa" class="joc">
+  <h2>5. 🔍 Sopa de lletres</h2>
+  <p class="subtitol">Clica les lletres per formar les locucions amagades</p>
+  <div class="sopa-info" id="sopa-info">Troba les locucions!</div>
+  <div class="sopa-graella" id="sopa-graella"></div>
+  <div class="sopa-llista" id="sopa-llista"></div>
+  <p class="feedback" id="feedback-sopa"></p>
+  <div class="fila-botons"><button class="btn" onclick="iniciarSopa()">🔄 Nova sopa</button></div>
+</section>
+
+<section id="joc-classificacio" class="joc">
+  <h2>6. 🐾 Classifica per animal</h2>
+  <p class="subtitol">Arrossega cada locució a la caixa de l'animal que hi surt</p>
+  <div id="class-pool" style="text-align:center; min-height:60px; padding:10px; background:#f9f9ff; border-radius:12px; margin-bottom:15px;"></div>
+  <div class="class-caixes" id="class-caixes"></div>
+  <p class="feedback" id="feedback-classificacio"></p>
+  <div class="fila-botons"><button class="btn" onclick="iniciarClassificacio()">🔄 Nova partida</button></div>
+</section>
+
+<section id="joc-quinAnimal" class="joc">
+  <h2>7. 🎯 Quin animal hi surt?</h2>
+  <p class="subtitol">Donat un significat, tria la locució correcta</p>
+  <p class="pregunta" id="pregunta-animal">Carregant...</p>
+  <div class="opcions" id="opcions-animal"></div>
+  <p class="feedback" id="feedback-animal"></p>
+  <div class="fila-botons"><button class="btn blau" id="btn-seguent-animal" style="display:none;" onclick="novaPreguntaAnimal()">➡️ Següent</button></div>
+</section>
+
+<section id="joc-intrus" class="joc">
+  <h2>8. 🕵️ Troba l'intrús</h2>
+  <p class="subtitol" id="pista-intrus">Quina locució NO encaixa amb les altres?</p>
+  <div class="opcions" id="opcions-intrus"></div>
+  <p class="feedback" id="feedback-intrus"></p>
+  <div class="fila-botons"><button class="btn blau" id="btn-seguent-intrus" style="display:none;" onclick="novaIntrus()">➡️ Següent</button></div>
+</section>
+
+<section id="joc-ordena" class="joc">
+  <h2>9. 🎬 Ordena les paraules</h2>
+  <p class="subtitol" id="ordre-pista">Reconstrueix la locució clicant les paraules en ordre</p>
+  <div class="ordre-resultat" id="ordre-resultat"></div>
+  <div class="ordre-paraules" id="ordre-paraules"></div>
+  <p class="feedback" id="feedback-ordre"></p>
+  <div class="fila-botons">
+    <button class="btn" onclick="iniciarOrdre()">🔄 Nova locució</button>
+    <button class="btn groc" onclick="esborrarOrdre()">↩️ Esborrar</button>
+  </div>
+</section>
+
+<section id="joc-penjat" class="joc">
+  <h2>10. 🪢 Penjat de locucions</h2>
+  <p class="subtitol">Endevina la locució lletra a lletra</p>
+  <div class="penjat-info" id="penjat-info">Carregant...</div>
+  <div class="penjat-paraula" id="penjat-paraula"></div>
+  <div class="penjat-teclat" id="penjat-teclat"></div>
+  <p class="feedback" id="feedback-penjat"></p>
+  <div class="fila-botons"><button class="btn" onclick="iniciarPenjat()">🔄 Nova locució</button></div>
+</section>
+
+<section id="joc-bingo" class="joc">
+  <h2>11. 🎰 Bingo de locucions</h2>
+  <p class="subtitol">Quan sentis un significat, marca la locució al cartró</p>
+  <div class="bingo-anunci" id="bingo-anunci">Clica "Cantar" per començar</div>
+  <div class="bingo-cartro" id="bingo-cartro"></div>
+  <p class="feedback" id="feedback-bingo"></p>
+  <div class="fila-botons">
+    <button class="btn" onclick="cantarBingo()">📢 Cantar significat</button>
+    <button class="btn blau" onclick="iniciarBingo()">🔄 Nova partida</button>
+  </div>
+</section>
+
+<section id="joc-completa" class="joc">
+  <h2>12. 🔤 Completa la locució</h2>
+  <p class="subtitol">Falta una paraula! Tria la correcta</p>
+  <p class="pregunta" id="pregunta-completa">Carregant...</p>
+  <div class="opcions" id="opcions-completa"></div>
+  <p class="feedback" id="feedback-completa"></p>
+  <div class="fila-botons"><button class="btn blau" id="btn-seguent-completa" style="display:none;" onclick="novaPreguntaCompleta()">➡️ Següent</button></div>
+</section>
+
+<section id="joc-frases" class="joc">
+  <h2>13. ✍️ Inventa una frase</h2>
+  <p class="subtitol">Escriu una frase on surti la locució</p>
+  <div class="frases-area">
+    <div class="frase-input">
+      <select id="frase-locucio"></select>
+      <button class="btn verd" onclick="mostrarRepte()">✨ Mostra el repte</button>
+    </div>
+    <div id="frase-repte" style="display:none; text-align:center; padding:15px; background:#ffe8e8; border-radius:12px; margin:10px 0;"></div>
+    <input type="text" id="frase-escrita" placeholder="Escriu la teva frase aquí..." style="width:100%; padding:12px; border:2px solid #e74c3c; border-radius:12px; font-family:inherit; font-size:1em;">
+    <div class="fila-botons">
+      <button class="btn verd" onclick="validarFrase()">✅ Validar frase</button>
+    </div>
+    <div class="llista-frases" id="llista-frases"></div>
+  </div>
+  <p class="feedback" id="feedback-frases"></p>
+</section>
+
+</main>
+
+<div class="modal-fons" id="modal-guardar">
+  <div class="modal">
+    <h3>💾 Vols guardar la sessió?</h3>
+    <p>Es descarregarà un fitxer JSON amb els teus punts, nivell i estadístiques.</p>
+    <div class="fila-botons">
+      <button class="btn verd" onclick="guardarJSON()">Sí, guardar</button>
+      <button class="btn" onclick="tancarModal('modal-guardar')">No, gràcies</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-fons" id="modal-restaurar">
+  <div class="modal">
+    <h3>📂 Restaurar sessió</h3>
+    <p>Selecciona un fitxer JSON guardat prèviament.</p>
+    <input type="file" id="input-fitxer" accept=".json" style="margin-bottom:15px;">
+    <div class="fila-botons">
+      <button class="btn verd" onclick="restaurarJSON()">Restaurar</button>
+      <button class="btn" onclick="tancarModal('modal-restaurar')">Cancel·lar</button>
+    </div>
+  </div>
+</div>
+
+<div class="nivell-popup" id="nivell-popup"></div>
+<div class="autoguardat" id="autoguardat">💾 Autoguardat</div>
+
+<footer>
+  <p>🎓 <strong>13 Activitats de Locucions d'Animals</strong> — Eina educativa per a 8-12 anys</p>
+  <p style="margin-top:6px;">Arxiu HTML generat amb la plataforma <strong>DeepSeek</strong> 🤖</p>
+  <p style="margin-top:6px; font-size:0.8em; color:#999;">Les dades s'autoguarden cada 30 segons al navegador</p>
+</footer>
+
+<script>
+/* ============================================================
+   DADES — Locucions amb variants separades i categoria animal
+   ============================================================ */
+const LOCUCIONS = [
+  // GALLS I GALLINES
+  { loc:"al cant del gall", sig:"a la primera claror del dia", cat:"gallines" },
+  { loc:"al gall cantant", sig:"a la primera claror del dia", cat:"gallines" },
+  { loc:"cap d'aviram", sig:"qualsevol au de corral", cat:"gallines" },
+  { loc:"cul de gallina", sig:"arrugat d'un sargit o pedaç", cat:"gallines" },
+  { loc:"gallina mullada", sig:"covard", cat:"gallines" },
+  { loc:"pell de gallina", sig:"esborronament", cat:"gallines" },
+  { loc:"quan les gallines trauran dents", sig:"mai", cat:"gallines" },
+  { loc:"quan les gallines pixin", sig:"mai", cat:"gallines" },
+  { loc:"anar al llit com les gallines", sig:"anar a dormir molt d'hora", cat:"gallines" },
+  { loc:"esvalotar el galliner", sig:"posar desordre", cat:"gallines" },
+  { loc:"ésser més puta que les gallines", sig:"ésser molt astut", cat:"gallines" },
+  { loc:"no cantar gall i gallina", sig:"ésser oblidat", cat:"gallines" },
+  { loc:"pujar més el farciment que el gall", sig:"fer molta despesa en coses poc importants", cat:"gallines" },
+  { loc:"valer més el farciment que el gall", sig:"fer molta despesa en coses poc importants", cat:"gallines" },
+
+  // GATS
+  { loc:"a peu de gat", sig:"silenciosament", cat:"gats" },
+  { loc:"com un gat vell", sig:"esquerp", cat:"gats" },
+  { loc:"gat amagat", sig:"intenció oculta", cat:"gats" },
+  { loc:"gata maula", sig:"hipòcrita", cat:"gats" },
+  { loc:"gata moixa", sig:"hipòcrita", cat:"gats" },
+  { loc:"gat dels frares", sig:"bromista", cat:"gats" },
+  { loc:"gat de mar", sig:"aprenent de mariner", cat:"gats" },
+  { loc:"gat de vint ungles", sig:"lladre", cat:"gats" },
+  { loc:"gat escaldat", sig:"escarmentat", cat:"gats" },
+  { loc:"gat vell", sig:"experimentat", cat:"gats" },
+  { loc:"estar com el gat i el gos", sig:"estar en enemistat permanent", cat:"gats" },
+  { loc:"agafar el gat", sig:"beure alcohol en excés", cat:"gats" },
+  { loc:"cercar cinc peus al gat", sig:"complicar els afers", cat:"gats" },
+  { loc:"donar gat per llebre", sig:"ensarronar", cat:"gats" },
+  { loc:"donar peix al gat", sig:"afavorir murmuracions o malvolences", cat:"gats" },
+  { loc:"què sap el gat de fer culleus?", sig:"dit a algú inepte", cat:"gats" },
+  { loc:"treure el gat del sac", sig:"sortir de dubtes", cat:"gats" },
+  { loc:"orgue de gats", sig:"enrenou i confusió", cat:"gats" },
+
+  // GOSSOS
+  { loc:"com un gos", sig:"dòcil", cat:"gossos" },
+  { loc:"com un gos amb un os", sig:"content", cat:"gossos" },
+  { loc:"com un gos sense collar", sig:"independent, lliure", cat:"gossos" },
+  { loc:"ésser el gos d'algú", sig:"obeir-lo cegament", cat:"gossos" },
+  { loc:"tractar com un gos", sig:"maltractar", cat:"gossos" },
+  { loc:"deixar algú per als gossos", sig:"desprestigiar-lo", cat:"gossos" },
+  { loc:"de color de gos com fuig", sig:"de color indefinit", cat:"gossos" },
+
+  // PEIXOS
+  { loc:"com un ànec", sig:"mullat", cat:"peixos" },
+  { loc:"com un peix", sig:"mullat", cat:"peixos" },
+  { loc:"com un ull de peix", sig:"transparent, clar", cat:"peixos" },
+  { loc:"peix al cove", sig:"expressió per indicar la consecució de persona important", cat:"peixos" },
+  { loc:"peix gros", sig:"persona important", cat:"peixos" },
+  { loc:"agafar peix", sig:"aconseguir el guany o resultat esperat", cat:"peixos" },
+  { loc:"dormir com un peix", sig:"dormir profundament", cat:"peixos" },
+  { loc:"estar com el peix a l'aigua", sig:"estar còmode", cat:"peixos" },
+  { loc:"estar com un peix al rostoll", sig:"estar incòmode", cat:"peixos" },
+  { loc:"no ésser ni carn ni peix", sig:"ésser indefinible", cat:"peixos" },
+  { loc:"valer més la salsa que el peix", sig:"fer molta despesa en coses poc importants", cat:"peixos" },
+  { loc:"com un bacallà", sig:"sec", cat:"peixos" },
+  { loc:"agradar el bacallà", sig:"ésser addicte al sexe amb dones", cat:"peixos" },
+  { loc:"tallar el bacallà", sig:"manar", cat:"peixos" },
+  { loc:"com una sardina", sig:"cremat", cat:"peixos" },
+  { loc:"com arengades al barril", sig:"estrets", cat:"peixos" },
+  { loc:"com sardines al barril", sig:"estrets", cat:"peixos" },
+  { loc:"com una anguila", sig:"escorredís", cat:"peixos" },
+
+  // RUCOS I ASES
+  { loc:"com un ase", sig:"sense intel·ligència", cat:"rucos" },
+  { loc:"com un ase mort", sig:"feixuc", cat:"rucos" },
+  { loc:"com un ruc", sig:"carregat", cat:"rucos" },
+  { loc:"caure del burro", sig:"desenganyar-se", cat:"rucos" },
+  { loc:"caure del ruc", sig:"desenganyar-se", cat:"rucos" },
+  { loc:"aquesta albarda, per un altre ase", sig:"expressió de refús", cat:"rucos" },
+  { loc:"menjar el pa de l'ase", sig:"viure a costa d'altri", cat:"rucos" },
+  { loc:"més delicat que ungla d'ase", sig:"poc delicat", cat:"rucos" },
+  { loc:"sense dir ni ase ni bèstia", sig:"sense dir res", cat:"rucos" },
+
+  // LLUPS
+  { loc:"fosc com una gola de llop", sig:"molt fosc", cat:"llups" },
+  { loc:"llop de mar", sig:"mariner", cat:"llups" },
+  { loc:"caure a les urpes del llop", sig:"trobar-se en situació perillosa", cat:"llups" },
+  { loc:"veure l'orella al llop", sig:"trobar-se en perill", cat:"llups" },
+  { loc:"com un lleó", sig:"amb feresa", cat:"llups" },
+  { loc:"fer-se la part del lleó", sig:"acaparar", cat:"llups" },
+
+  // RÈPTILS
+  { loc:"com una serp", sig:"de manera sinuosa", cat:"reptils" },
+  { loc:"com un llangardaix", sig:"estirat, estès, ajagut", cat:"reptils" },
+  { loc:"com un gripau", sig:"lleig", cat:"reptils" },
+  { loc:"llengua d'escorpí", sig:"detractor", cat:"reptils" },
+  { loc:"llengua d'escurçó", sig:"detractor", cat:"reptils" },
+  { loc:"com una cua de sargantana", sig:"llest", cat:"reptils" },
+
+  // INSECTES
+  { loc:"com formigues", sig:"en gran nombre", cat:"insectes" },
+  { loc:"com una aranya", sig:"brut, pudent", cat:"insectes" },
+  { loc:"com una guilla", sig:"brut, pudent", cat:"insectes" },
+  { loc:"com una guineu", sig:"brut, pudent", cat:"insectes" },
+  { loc:"com una xinxa", sig:"brut, pudent", cat:"insectes" },
+  { loc:"com una papallona", sig:"inconstant", cat:"insectes" },
+  { loc:"com un cuc", sig:"arrupit", cat:"insectes" },
+  { loc:"com un esquirol", sig:"belluguet", cat:"insectes" },
+  { loc:"aranya de forat", sig:"poc sociable", cat:"insectes" },
+  { loc:"cuca de forat", sig:"tímid", cat:"insectes" },
+  { loc:"ésser una aranya", sig:"saber treure guany de tot", cat:"insectes" },
+  { loc:"ésser una arna", sig:"ésser astut", cat:"insectes" },
+  { loc:"ésser un bon peix", sig:"ésser astut", cat:"insectes" },
+  { loc:"ésser una paparra", sig:"ésser enganxós, pesat", cat:"insectes" },
+  { loc:"més viu que l'arna", sig:"molt espavilat", cat:"insectes" },
+  { loc:"mosca!", sig:"expressió per indicar certa temença", cat:"insectes" },
+  { loc:"mosca morta", sig:"de posat inofensiu", cat:"insectes" },
+  { loc:"no fer mal a una mosca", sig:"ésser inofensiu", cat:"insectes" },
+  { loc:"quina mosca t'ha picat?", sig:"dit estranyant-se de quelcom", cat:"insectes" },
+  { loc:"tenir la mosca", sig:"estar empipat", cat:"insectes" },
+  { loc:"dur la mosca", sig:"estar empipat", cat:"insectes" },
+  { loc:"treure's les mosques", sig:"saber espavilar-se", cat:"insectes" },
+  { loc:"ventar-se les mosques", sig:"saber espavilar-se", cat:"insectes" },
+  { loc:"afluixar la mosca", sig:"pagar", cat:"insectes" },
+  { loc:"buscar les puces", sig:"importunar", cat:"insectes" },
+  { loc:"haver-hi moltes maneres de matar puces", sig:"molts mitjans", cat:"insectes" },
+  { loc:"matar el cuc", sig:"prendre un refrigeri", cat:"insectes" },
+  { loc:"matar l'aranya", sig:"entretenir-se", cat:"insectes" },
+  { loc:"donar menja els cucs", sig:"ésser enterrat", cat:"insectes" },
+  { loc:"no menjar-se les rates", sig:"ésser ben utilitzat", cat:"insectes" },
+  { loc:"córrer la rata", sig:"tenir gana", cat:"insectes" },
+  { loc:"una rata sàvia", sig:"pedant", cat:"insectes" },
+  { loc:"de color d'ala de mosca", sig:"de color indefinit", cat:"insectes" },
+  { loc:"més ric que un grill", sig:"molt ric", cat:"insectes" },
+  { loc:"ésser una olla de cargols", sig:"ésser un enrenou", cat:"insectes" },
+  { loc:"ésser una olla de grills", sig:"ésser un enrenou", cat:"insectes" },
+
+  // OCELLS
+  { loc:"com una cotorra", sig:"xerraire", cat:"ocells" },
+  { loc:"com un òliba", sig:"solitari", cat:"ocells" },
+  { loc:"com un mussol", sig:"solitari", cat:"ocells" },
+  { loc:"com un estornell", sig:"molt espavilat", cat:"ocells" },
+  { loc:"com un indiot", sig:"estufat", cat:"ocells" },
+  { loc:"com un paó", sig:"estufat", cat:"ocells" },
+  { loc:"com un pollet", sig:"arraulit", cat:"ocells" },
+  { loc:"cap d'estornell", sig:"persona d'idees poc consistents", cat:"ocells" },
+  { loc:"ésser un cap de pardals", sig:"ésser d'idees poc consistents", cat:"ocells" },
+  { loc:"ocell de gàbia", sig:"persona que surt poc de casa", cat:"ocells" },
+  { loc:"ocell de nit", sig:"persona que surt molt de nit", cat:"ocells" },
+  { loc:"ocell de pas", sig:"sense residència habitual", cat:"ocells" },
+  { loc:"ocell de rapinya", sig:"lladre", cat:"ocells" },
+  { loc:"somniar perdius", sig:"fantasiar", cat:"ocells" },
+  { loc:"voler la mare i els pardalets", sig:"voler-ho tot", cat:"ocells" },
+  { loc:"donar garses per perdius", sig:"ensarronar", cat:"ocells" },
+  { loc:"pintar la cigonya", sig:"ensarronar", cat:"ocells" },
+  { loc:"fer l'ànec", sig:"morir", cat:"ocells" },
+  { loc:"mudar l'aigua al canari", sig:"orinar", cat:"ocells" },
+  { loc:"estar el cel de les oques", sig:"badar", cat:"ocells" },
+
+  // PORCS I ALTRES
+  { loc:"com un porc", sig:"gras", cat:"porcs" },
+  { loc:"com una truja", sig:"grasa", cat:"porcs" },
+  { loc:"cara de merda d'oca", sig:"que indica poca salut", cat:"porcs" },
+  { loc:"dir el nom del porc", sig:"insultar", cat:"porcs" },
+  { loc:"com una mona", sig:"pelat", cat:"porcs" },
+  { loc:"com un ós", sig:"pelut", cat:"porcs" },
+
+  // BOVINS
+  { loc:"entre les banyes d'un toro", sig:"en una situació compromesa", cat:"bovins" },
+  { loc:"agafar el bou per les banyes", sig:"arriscar-se fins a l'extrem", cat:"bovins" },
+  { loc:"matar el vedell gras", sig:"celebrar amb grans despeses", cat:"bovins" },
+  { loc:"el temps de les vaques grasses", sig:"temps d'abundància", cat:"bovins" },
+  { loc:"el temps de les vaques magres", sig:"temps de pobresa", cat:"bovins" },
+  { loc:"com un marrà", sig:"tossut", cat:"bovins" },
+  { loc:"carregar les cabres", sig:"donar les culpes", cat:"bovins" },
+  { loc:"haver mamat llet de cabra", sig:"ésser molt entremaliat", cat:"bovins" },
+
+  // CONILLS I LLEBRES
+  { loc:"conill de guix", sig:"persona que és menys del que aparenta", cat:"conills" },
+  { loc:"en conill", sig:"nu", cat:"conills" },
+  { loc:"com una cua de conill", sig:"curt", cat:"conills" },
+  { loc:"més curt que una cua de conill", sig:"curtíssim", cat:"conills" },
+  { loc:"no valer un pet de conill", sig:"ésser menyspreable", cat:"conills" },
+  { loc:"com una cua de llebre", sig:"llest", cat:"conills" },
+  { loc:"alçar la llebre", sig:"cridar l'atenció sobre un afer", cat:"conills" },
+  { loc:"saber on jeu la llebre", sig:"ésser llest", cat:"conills" },
+  { loc:"saltar la llebre", sig:"descobrir un secret", cat:"conills" },
+  { loc:"com una mostela", sig:"llest", cat:"conills" },
+
+  // ALTRES ANIMALS
+  { loc:"lleuger com una daina", sig:"àgil, lleuger", cat:"altres" },
+  { loc:"entre les potes del cavall", sig:"a mercè dels atacs", cat:"altres" },
+  { loc:"ésser un cavall desbocat", sig:"ésser desmesurat en els hàbits", cat:"altres" },
+  { loc:"com un llangardaix estirat", sig:"estirat, estès, ajagut", cat:"altres" },
+  { loc:"agafar la mona", sig:"beure alcohol en excés", cat:"altres" },
+  { loc:"dormir la mona", sig:"dormir després d'una borratxera", cat:"altres" },
+  { loc:"arrapar-se com una llagasta", sig:"enganxar-se", cat:"altres" },
+  { loc:"enganxar-se com una llagasta", sig:"ésser empalagós", cat:"altres" },
+  { loc:"caminar a pas de tortuga", sig:"caminar lentament", cat:"altres" },
+  { loc:"ésser el capità aranya", sig:"qui fa actuar però no participa", cat:"altres" },
+  { loc:"ésser un poll resucitat", sig:"ésser un nou ric", cat:"altres" },
+  { loc:"donar mico", sig:"donar una resposta desagradable", cat:"altres" },
+  { loc:"donar peixet", sig:"tàctica de simular afavorir l'adversari", cat:"altres" },
+  { loc:"un colló de mico", sig:"expressió que indica negació o incredulitat", cat:"altres" },
+  { loc:"bona nit, cargol!", sig:"dit quan quelcom s'ha acabat o perdut", cat:"altres" },
+  { loc:"i un be!", sig:"expressió de negació o desmentiment", cat:"altres" },
+  { loc:"i un be negre!", sig:"expressió de negació o desmentiment", cat:"altres" },
+  { loc:"joc bèstia", sig:"afer incongruent", cat:"altres" },
+  { loc:"llàgrimes de cocodril", sig:"fals penediment", cat:"altres" },
+  { loc:"mala bèstia", sig:"persona de mals sentiments", cat:"altres" },
+  { loc:"mala cuca", sig:"persona de mals sentiments", cat:"altres" },
+  { loc:"nit del lloro", sig:"nit de disbauxa", cat:"altres" },
+  { loc:"al temps que les bèsties parlaven", sig:"en temps remot", cat:"altres" },
+  { loc:"a peu i a cavall", sig:"valent-se de tots els mitjans", cat:"altres" },
+  { loc:"anar amb seny de bèstia vella", sig:"prevenir-se", cat:"altres" },
+  { loc:"demà hi haurà pops a plaça", sig:"es diu quan algú es grata el cul", cat:"altres" },
+  { loc:"fer volar coloms", sig:"il·lusionar-se", cat:"altres" },
+  { loc:"perdre bous i esquelles", sig:"perdre-ho tot", cat:"altres" }
+];
+
+const CATEGORIES_ANIMAL = {
+  gallines: { nom: "🐔 Galls i gallines", emoji: "🐔" },
+  gats:     { nom: "🐱 Gats", emoji: "🐱" },
+  gossos:   { nom: "🐶 Gossos", emoji: "🐶" },
+  peixos:   { nom: "🐟 Peixos", emoji: "🐟" },
+  rucos:    { nom: "🐴 Rucos i ases", emoji: "🐴" },
+  llups:    { nom: "🐺 Llops i lleons", emoji: "🐺" },
+  reptils:  { nom: "🐍 Rèptils", emoji: "🐍" },
+  insectes: { nom: "🐛 Insectes", emoji: "🐛" },
+  ocells:   { nom: "🐦 Ocells", emoji: "🐦" },
+  porcs:    { nom: "🐷 Porcs i óssos", emoji: "🐷" },
+  bovins:   { nom: "🐮 Bovins", emoji: "🐮" },
+  conills:  { nom: "🐰 Conills i llebres", emoji: "🐰" },
+  altres:   { nom: "🐾 Altres animals", emoji: "🐾" }
+};
+
+/* ============================================================
+   NIVELLS
+   ============================================================ */
+const NIVELLS = [
+  { nom: 'Aprenent',   emoji: '🌱', min: 0,    max: 50 },
+  { nom: 'Explorador', emoji: '🧭', min: 50,   max: 150 },
+  { nom: 'Aventurer',  emoji: '🗺️', min: 150,  max: 300 },
+  { nom: 'Expert',     emoji: '🎓', min: 300,  max: 500 },
+  { nom: 'Mestre',     emoji: '🏆', min: 500,  max: 800 },
+  { nom: 'Llegenda',   emoji: '👑', min: 800,  max: Infinity }
+];
+function obtenirNivell(p) {
+  for (const n of NIVELLS) if (p >= n.min && p < n.max) return n;
+  return NIVELLS[NIVELLS.length - 1];
+}
+
+/* ============================================================
+   ESTAT
+   ============================================================ */
+let punts = 0;
+let nivellActual = NIVELLS[0];
+let estadistiques = { encerts: 0, errors: 0, locucionsEncertades: [], locucionsFallades: [] };
+let jocActual = 'memory';
+let canviPendent = null;
+
+const CLAU_STORAGE = 'locucions_animals_sessio';
+
+/* ============================================================
+   UTILITATS
+   ============================================================ */
+function mesclar(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function agafarAleatoris(arr, n) { return mesclar(arr).slice(0, n); }
+
+function setFeedback(id, msg, tipus) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.classList.remove('bo', 'dolent');
+  if (tipus === 'bo') el.classList.add('bo');
+  if (tipus === 'dolent') el.classList.add('dolent');
+}
+
+function actualitzarMarcador() {
+  document.getElementById('punts').textContent = punts;
+  const nouNivell = obtenirNivell(punts);
+  if (nouNivell.nom !== nivellActual.nom) {
+    nivellActual = nouNivell;
+    mostrarPopupNivell(nouNivell);
+  }
+  document.getElementById('nivell-nom').textContent = nivellActual.nom;
+  document.querySelector('.nivell-badge').firstChild.textContent = nivellActual.emoji + ' ';
+  const next = NIVELLS.find(n => n.min > punts);
+  const barra = document.getElementById('barra-inner');
+  const text = document.getElementById('progres-text');
+  if (next) {
+    const inici = nivellActual.min, fi = next.min;
+    const pct = Math.min(100, Math.max(0, ((punts - inici) / (fi - inici)) * 100));
+    barra.style.width = pct + '%';
+    text.textContent = `Proper nivell: ${next.nom} ${next.emoji} a ${next.min} punts (falten ${next.min - punts})`;
+  } else {
+    barra.style.width = '100%';
+    text.textContent = '👑 Has arribat al nivell MÀXIM: Llegenda!';
+  }
+}
+function sumarPunts(n, locucio) {
+  punts += n;
+  estadistiques.encerts++;
+  if (locucio && !estadistiques.locucionsEncertades.includes(locucio)) {
+    estadistiques.locucionsEncertades.push(locucio);
+  }
+  actualitzarMarcador();
+  autoguardar();
+}
+function restarPunts(n, locucio) {
+  punts = Math.max(0, punts - n);
+  estadistiques.errors++;
+  if (locucio && !estadistiques.locucionsFallades.includes(locucio)) {
+    estadistiques.locucionsFallades.push(locucio);
+  }
+  actualitzarMarcador();
+  autoguardar();
+}
+function mostrarPopupNivell(n) {
+  const popup = document.getElementById('nivell-popup');
+  popup.textContent = `${n.emoji} Has pujat al nivell: ${n.nom}! ${n.emoji}`;
+  popup.classList.add('actiu');
+  setTimeout(() => popup.classList.remove('actiu'), 3000);
+}
+
+/* ============================================================
+   AUTOGUARDAT
+   ============================================================ */
+function autoguardar() {
+  try {
+    const dades = {
+      versio: '1.0',
+      data: new Date().toISOString(),
+      punts: punts,
+      nivell: nivellActual.nom,
+      estadistiques: estadistiques,
+      sessio: { activitatActual: jocActual }
+    };
+    localStorage.setItem(CLAU_STORAGE, JSON.stringify(dades));
+    const ind = document.getElementById('autoguardat');
+    ind.classList.add('visible');
+    setTimeout(() => ind.classList.remove('visible'), 1200);
+  } catch(e) { /* silenciós */ }
+}
+
+function carregarAutoguardat() {
+  try {
+    const raw = localStorage.getItem(CLAU_STORAGE);
+    if (!raw) return false;
+    const dades = JSON.parse(raw);
+    if (typeof dades.punts !== 'number') return false;
+    punts = dades.punts;
+    estadistiques = dades.estadistiques || estadistiques;
+    jocActual = (dades.sessio && dades.sessio.activitatActual) || 'memory';
+    nivellActual = obtenirNivell(punts);
+    return true;
+  } catch(e) { return false; }
+}
+
+/* ============================================================
+   NAVEGACIÓ amb modal
+   ============================================================ */
+const selectorJoc = document.getElementById('selector-joc');
+selectorJoc.addEventListener('change', () => {
+  const nouJoc = selectorJoc.value;
+  if (nouJoc === jocActual) return;
+  canviPendent = () => {
+    document.querySelectorAll('.joc').forEach(j => j.classList.remove('actiu'));
+    document.getElementById('joc-' + nouJoc).classList.add('actiu');
+    jocActual = nouJoc;
+    iniciarJoc(nouJoc);
+    autoguardar();
+  };
+  obrirGuardar();
+});
+
+function iniciarJoc(nom) {
+  if (nom === 'memory') iniciarMemory();
+  if (nom === 'quiz') novaPreguntaQuiz();
+  if (nom === 'drag') iniciarDrag();
+  if (nom === 'flash') { flashIndex = 0; mostrarFlash(); }
+  if (nom === 'sopa') iniciarSopa();
+  if (nom === 'classificacio') iniciarClassificacio();
+  if (nom === 'quinAnimal') novaPreguntaAnimal();
+  if (nom === 'intrus') novaIntrus();
+  if (nom === 'ordena') iniciarOrdre();
+  if (nom === 'penjat') iniciarPenjat();
+  if (nom === 'bingo') iniciarBingo();
+  if (nom === 'completa') novaPreguntaCompleta();
+  if (nom === 'frases') iniciarFrases();
+}
+
+/* ============================================================
+   1. MEMORY
+   ============================================================ */
+let memoryPrimera = null, memoryBloquejat = false, memoryEncerts = 0, memoryTotal = 0;
+function iniciarMemory() {
+  const graella = document.getElementById('graella-memory');
+  graella.innerHTML = '';
+  memoryPrimera = null; memoryBloquejat = false; memoryEncerts = 0;
+  const parelles = agafarAleatoris(LOCUCIONS, 6);
+  memoryTotal = parelles.length;
+  const cartes = [];
+  parelles.forEach((p, idx) => {
+    cartes.push({ text: p.loc, parella: idx, tipus: 'loc' });
+    cartes.push({ text: p.sig, parella: idx, tipus: 'sig' });
+  });
+  mesclar(cartes).forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'carta';
+    div.dataset.parella = c.parella;
+    div.dataset.tipus = c.tipus;
+    div.dataset.text = c.text;
+    div.textContent = '?';
+    div.onclick = () => girarCartaMemory(div);
+    graella.appendChild(div);
+  });
+  setFeedback('feedback-memory', '');
+}
+function girarCartaMemory(div) {
+  if (memoryBloquejat || div.classList.contains('girada') || div.classList.contains('encertada')) return;
+  div.classList.add('girada');
+  div.textContent = div.dataset.text;
+  if (!memoryPrimera) { memoryPrimera = div; return; }
+  const a = memoryPrimera.dataset.tipus, b = div.dataset.tipus;
+  const complementaris = (a==='loc'&&b==='sig')||(a==='sig'&&b==='loc');
+  if (memoryPrimera.dataset.parella === div.dataset.parella && complementaris) {
+    memoryPrimera.classList.add('encertada'); div.classList.add('encertada');
+    const loc = memoryPrimera.dataset.tipus === 'loc' ? memoryPrimera.dataset.text : div.dataset.text;
+    memoryPrimera = null; memoryEncerts++;
+    sumarPunts(10, loc);
+    setFeedback('feedback-memory', '✅ +10 punts', 'bo');
+    if (memoryEncerts === memoryTotal) setFeedback('feedback-memory', '🎉 Completat!', 'bo');
+  } else {
+    memoryBloquejat = true;
+    const primera = memoryPrimera;
+    restarPunts(3);
+    setFeedback('feedback-memory', '❌ -3 punts', 'dolent');
+    setTimeout(() => {
+      primera.classList.remove('girada'); primera.textContent = '?';
+      div.classList.remove('girada'); div.textContent = '?';
+      memoryPrimera = null; memoryBloquejat = false;
+    }, 1000);
+  }
+}
+
+/* ============================================================
+   2. QUIZ
+   ============================================================ */
+let quizCorrecta = null, quizRespost = false;
+function novaPreguntaQuiz() {
+  quizRespost = false;
+  document.getElementById('btn-seguent-quiz').style.display = 'none';
+  setFeedback('feedback-quiz', '');
+  const d = LOCUCIONS[Math.floor(Math.random() * LOCUCIONS.length)];
+  const distractors = agafarAleatoris(LOCUCIONS.filter(x => x.sig !== d.sig), 3).map(x => x.sig);
+  const opcions = mesclar([d.sig, ...distractors]);
+  quizCorrecta = d.sig;
+  document.getElementById('pregunta-quiz').innerHTML = `Què vol dir <strong>"${d.loc}"</strong>?`;
+  const cont = document.getElementById('opcions-quiz');
+  cont.innerHTML = '';
+  opcions.forEach(op => {
+    const b = document.createElement('button');
+    b.textContent = op;
+    b.onclick = () => {
+      if (quizRespost) return;
+      quizRespost = true;
+      if (op === d.sig) {
+        b.classList.add('correcte'); sumarPunts(15, d.loc);
+        setFeedback('feedback-quiz', '✅ +15 punts', 'bo');
+      } else {
+        b.classList.add('incorrecte');
+        document.querySelectorAll('#opcions-quiz button').forEach(x => { if (x.textContent === d.sig) x.classList.add('correcte'); });
+        restarPunts(5, d.loc);
+        setFeedback('feedback-quiz', `❌ -5 punts. Era: ${d.sig}`, 'dolent');
+      }
+      document.getElementById('btn-seguent-quiz').style.display = 'block';
+    };
+    cont.appendChild(b);
+  });
+}
+
+/* ============================================================
+   3. DRAG
+   ============================================================ */
+function iniciarDrag() {
+  const parelles = agafarAleatoris(LOCUCIONS, 5);
+  setFeedback('feedback-drag', '');
+  const contL = document.getElementById('drag-locucions');
+  const contS = document.getElementById('drag-significats');
+  contL.innerHTML = ''; contS.innerHTML = '';
+  parelles.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'item destí';
+    div.dataset.resposta = p.sig;
+    div.textContent = p.loc;
+    div.ondragover = e => e.preventDefault();
+    div.ondrop = e => {
+      e.preventDefault();
+      const text = e.dataTransfer.getData('text');
+      if (div.classList.contains('omplert')) return;
+      if (text === div.dataset.resposta) {
+        div.classList.add('omplert');
+        div.textContent = p.loc + ' → ' + text;
+        sumarPunts(10, p.loc);
+        setFeedback('feedback-drag', '✅ +10 punts', 'bo');
+      } else {
+        div.classList.add('error');
+        restarPunts(3, p.loc);
+        setFeedback('feedback-drag', '❌ -3 punts', 'dolent');
+        setTimeout(() => div.classList.remove('error'), 700);
+      }
+    };
+    contL.appendChild(div);
+  });
+  mesclar(parelles).forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'item arrossegable';
+    div.draggable = true;
+    div.textContent = p.sig;
+    div.ondragstart = e => e.dataTransfer.setData('text', p.sig);
+    contS.appendChild(div);
+  });
+}
+
+/* ============================================================
+   4. FLASHCARDS
+   ============================================================ */
+let flashIndex = 0, flashGirada = false;
+function mostrarFlash() {
+  flashGirada = false;
+  document.getElementById('flashcard').classList.remove('girada');
+  const d = LOCUCIONS[flashIndex];
+  document.getElementById('flash-davant').textContent = d.loc;
+  document.getElementById('flash-darrere').textContent = d.sig;
+  setFeedback('feedback-flash', `${flashIndex + 1} / ${LOCUCIONS.length}`);
+}
+function girarFlash() {
+  document.getElementById('flashcard').classList.toggle('girada');
+  if (!flashGirada) { sumarPunts(2, LOCUCIONS[flashIndex].loc); flashGirada = true; }
+}
+function flashSeguent() { flashIndex = (flashIndex + 1) % LOCUCIONS.length; mostrarFlash(); }
+function flashAnterior() { flashIndex = (flashIndex - 1 + LOCUCIONS.length) % LOCUCIONS.length; mostrarFlash(); }
+
+/* ============================================================
+   5. SOPA DE LLETRES
+   ============================================================ */
+let sopaParaules = [];
+let sopaSeleccio = [];
+function iniciarSopa() {
+  const MIDA = 12;
+  const candidates = LOCUCIONS.filter(l => l.loc.replace(/[^A-ZÀÈÉÍÏÒÓÚÜÇ]/gi, '').length <= 10);
+  const paraulesTriades = agafarAleatoris(candidates, 3);
+  sopaParaules = paraulesTriades.map(d => ({ loc: d.loc, sig: d.sig, trobat: false }));
+  sopaSeleccio = [];
+  const graella = [];
+  for (let i = 0; i < MIDA; i++) graella.push(Array(MIDA).fill(''));
+  const files = mesclar([...Array(MIDA).keys()]);
+  const col·locades = [];
+  sopaParaules.forEach((p) => {
+    const paraula = p.loc.toUpperCase().replace(/[^A-ZÀÈÉÍÏÒÓÚÜÇ]/g, '');
+    if (paraula.length > MIDA) return;
+    let col·locada = false;
+    for (let intent = 0; intent < 30 && !col·locada; intent++) {
+      const fila = files.pop() || Math.floor(Math.random() * MIDA);
+      const colInici = Math.floor(Math.random() * (MIDA - paraula.length + 1));
+      let ok = true;
+      for (let j = 0; j < paraula.length; j++) {
+        const c = graella[fila][colInici + j];
+        if (c !== '' && c !== paraula[j]) { ok = false; break; }
+      }
+      if (ok) {
+        for (let j = 0; j < paraula.length; j++) graella[fila][colInici + j] = paraula[j];
+        col·locades.push({ ...p, paraula });
+        col·locada = true;
+      }
+    }
+  });
+  sopaParaules = col·locades;
+  const alfabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for (let i = 0; i < MIDA; i++) for (let j = 0; j < MIDA; j++) if (graella[i][j] === '') graella[i][j] = alfabet[Math.floor(Math.random() * 26)];
+  const cont = document.getElementById('sopa-graella');
+  cont.style.gridTemplateColumns = `repeat(${MIDA}, 1fr)`;
+  cont.innerHTML = '';
+  for (let i = 0; i < MIDA; i++) for (let j = 0; j < MIDA; j++) {
+    const c = document.createElement('div');
+    c.className = 'sopa-cella';
+    c.textContent = graella[i][j];
+    c.onclick = () => clicarCellaSopa(c);
+    cont.appendChild(c);
+  }
+  const llista = document.getElementById('sopa-llista');
+  llista.innerHTML = '';
+  sopaParaules.forEach((p, idx) => {
+    const t = document.createElement('div');
+    t.className = 'sopa-objectiu';
+    t.dataset.idx = idx;
+    t.textContent = p.loc;
+    llista.appendChild(t);
+  });
+  setFeedback('feedback-sopa', '');
+}
+function clicarCellaSopa(cella) {
+  if (cella.classList.contains('trobada')) return;
+  if (cella.classList.contains('seleccionada')) {
+    cella.classList.remove('seleccionada');
+    sopaSeleccio = sopaSeleccio.filter(c => c !== cella);
+  } else {
+    cella.classList.add('seleccionada');
+    sopaSeleccio.push(cella);
+  }
+  const text = sopaSeleccio.map(c => c.textContent).join('');
+  const trobada = sopaParaules.find(p => p.paraula === text && !p.trobat);
+  if (trobada) {
+    trobada.trobat = true;
+    sopaSeleccio.forEach(c => { c.classList.remove('seleccionada'); c.classList.add('trobada'); });
+    sopaSeleccio = [];
+    sumarPunts(20, trobada.loc);
+    setFeedback('feedback-sopa', `✅ +20 punts! "${trobada.loc}" = ${trobada.sig}`, 'bo');
+    document.querySelector(`.sopa-objectiu[data-idx="${sopaParaules.indexOf(trobada)}"]`).classList.add('trobat');
+  } else if (text.length >= 3) {
+    const algunaPotencial = sopaParaules.some(p => !p.trobat && p.paraula.startsWith(text));
+    if (!algunaPotencial) {
+      sopaSeleccio.forEach(c => c.classList.remove('seleccionada'));
+      sopaSeleccio = [];
+      restarPunts(2);
+      setFeedback('feedback-sopa', '❌ -2 punts', 'dolent');
+    }
+  }
+}
+
+/* ============================================================
+   6. CLASSIFICACIÓ PER ANIMAL
+   ============================================================ */
+function iniciarClassificacio() {
+  setFeedback('feedback-classificacio', '');
+  const pool = document.getElementById('class-pool');
+  pool.innerHTML = '';
+  const caixes = document.getElementById('class-caixes');
+  caixes.innerHTML = '';
+
+  // Tria 3 categories a l'atzar
+  const cats = mesclar(Object.keys(CATEGORIES_ANIMAL)).slice(0, 3);
+  cats.forEach(cat => {
+    const caixa = document.createElement('div');
+    caixa.className = 'class-caixa destí';
+    caixa.dataset.tipus = cat;
+    caixa.innerHTML = `<h4>${CATEGORIES_ANIMAL[cat].nom}</h4>`;
+    caixa.ondragover = e => { e.preventDefault(); caixa.classList.add('hover'); };
+    caixa.ondragleave = () => caixa.classList.remove('hover');
+    caixa.ondrop = e => dropClassificacio(e, caixa);
+    caixes.appendChild(caixa);
+  });
+
+  // Tria 6 locucions (2 per categoria)
+  const triades = [];
+  cats.forEach(cat => {
+    const disponibles = LOCUCIONS.filter(l => l.cat === cat);
+    agafarAleatoris(disponibles, 2).forEach(l => triades.push(l));
+  });
+  mesclar(triades).forEach(l => {
+    const span = document.createElement('span');
+    span.className = 'class-paraula';
+    span.draggable = true;
+    span.textContent = l.loc;
+    span.dataset.cat = l.cat;
+    span.dataset.loc = l.loc;
+    span.ondragstart = e => e.dataTransfer.setData('text', l.cat + '||' + l.loc);
+    pool.appendChild(span);
+  });
+}
+function dropClassificacio(e, caixa) {
+  e.preventDefault();
+  caixa.classList.remove('hover');
+  const dades = e.dataTransfer.getData('text').split('||');
+  const cat = dades[0], loc = dades[1];
+  const span = document.querySelector(`.class-paraula[data-loc="${loc}"]`);
+  if (!span) return;
+  if (cat === caixa.dataset.tipus) {
+    span.classList.add('col·locada');
+    span.draggable = false;
+    caixa.appendChild(span);
+    sumarPunts(8, loc);
+    setFeedback('feedback-classificacio', '✅ +8 punts', 'bo');
+  } else {
+    span.style.background = '#ff6b6b';
+    setTimeout(() => span.style.background = '', 500);
+    restarPunts(3, loc);
+    setFeedback('feedback-classificacio', '❌ -3 punts. No és aquest animal', 'dolent');
+  }
+}
+
+/* ============================================================
+   7. QUIN ANIMAL HI SURT?
+   ============================================================ */
+let animalCorrecta = null, animalRespost = false;
+function novaPreguntaAnimal() {
+  animalRespost = false;
+  document.getElementById('btn-seguent-animal').style.display = 'none';
+  setFeedback('feedback-animal', '');
+  const d = LOCUCIONS[Math.floor(Math.random() * LOCUCIONS.length)];
+  const distractors = agafarAleatoris(LOCUCIONS.filter(x => x.loc !== d.loc && x.sig !== d.sig), 3).map(x => x.loc);
+  const opcions = mesclar([d.loc, ...distractors]);
+  animalCorrecta = d.loc;
+  document.getElementById('pregunta-animal').innerHTML = `Quina locució significa <strong>"${d.sig}"</strong>?`;
+  const cont = document.getElementById('opcions-animal');
+  cont.innerHTML = '';
+  opcions.forEach(op => {
+    const b = document.createElement('button');
+    b.textContent = op;
+    b.onclick = () => {
+      if (animalRespost) return;
+      animalRespost = true;
+      if (op === d.loc) {
+        b.classList.add('correcte'); sumarPunts(15, d.loc);
+        setFeedback('feedback-animal', '✅ +15 punts', 'bo');
+      } else {
+        b.classList.add('incorrecte');
+        document.querySelectorAll('#opcions-animal button').forEach(x => { if (x.textContent === d.loc) x.classList.add('correcte'); });
+        restarPunts(5, d.loc);
+        setFeedback('feedback-animal', `❌ -5 punts. Era: ${d.loc}`, 'dolent');
+      }
+      document.getElementById('btn-seguent-animal').style.display = 'block';
+    };
+    cont.appendChild(b);
+  });
+}
+
+/* ============================================================
+   8. INTRÚS
+   ============================================================ */
+function novaIntrus() {
+  document.getElementById('btn-seguent-intrus').style.display = 'none';
+  setFeedback('feedback-intrus', '');
+  // Tria 3 locucions de la mateixa categoria i 1 d'una altra
+  const cats = Object.keys(CATEGORIES_ANIMAL);
+  const catTriada = cats[Math.floor(Math.random() * cats.length)];
+  const altresCats = cats.filter(c => c !== catTriada);
+  const catIntrusa = altresCats[Math.floor(Math.random() * altresCats.length)];
+
+  const bones = agafarAleatoris(LOCUCIONS.filter(l => l.cat === catTriada), 3);
+  const intrusa = agafarAleatoris(LOCUCIONS.filter(l => l.cat === catIntrusa), 1)[0];
+  if (!intrusa || bones.length < 3) { novaIntrus(); return; }
+
+  const opcions = mesclar([...bones.map(b => ({ text: b.loc, intrus: false })), { text: intrusa.loc, intrus: true }]);
+  document.getElementById('pista-intrus').textContent = `Quina locució NO és del grup "${CATEGORIES_ANIMAL[catTriada].nom}"?`;
+
+  const cont = document.getElementById('opcions-intrus');
+  cont.innerHTML = '';
+  opcions.forEach(op => {
+    const b = document.createElement('button');
+    b.textContent = op.text;
+    b.onclick = () => {
+      if (op.intrus) {
+        b.classList.add('correcte'); sumarPunts(20, intrusa.loc);
+        setFeedback('feedback-intrus', '✅ +20 punts', 'bo');
+        document.getElementById('btn-seguent-intrus').style.display = 'block';
+      } else {
+        b.classList.add('incorrecte');
+        restarPunts(6);
+        setFeedback('feedback-intrus', '❌ -6 punts. Aquesta sí que hi pertany', 'dolent');
+      }
+    };
+    cont.appendChild(b);
+  });
+}
+
+/* ============================================================
+   9. ORDENA LES PARAULES
+   ============================================================ */
+let ordreObjectiu = null, ordreSeleccio = [];
+function iniciarOrdre() {
+  setFeedback('feedback-ordre', '');
+  ordreSeleccio = [];
+  const candidates = LOCUCIONS.filter(l => l.loc.split(' ').length >= 3 && l.loc.split(' ').length <= 6);
+  ordreObjectiu = candidates[Math.floor(Math.random() * candidates.length)];
+  document.getElementById('ordre-pista').textContent = `Significat: "${ordreObjectiu.sig}"`;
+  const paraules = ordreObjectiu.loc.split(' ');
+  const baralla = mesclar([...paraules]);
+  const cont = document.getElementById('ordre-paraules');
+  cont.innerHTML = '';
+  baralla.forEach((p, idx) => {
+    const span = document.createElement('span');
+    span.className = 'ordre-paraula';
+    span.textContent = p;
+    span.dataset.idx = idx;
+    span.onclick = () => clicarOrdre(span);
+    cont.appendChild(span);
+  });
+  document.getElementById('ordre-resultat').innerHTML = '';
+}
+function clicarOrdre(span) {
+  if (span.classList.contains('usada')) return;
+  span.classList.add('usada');
+  ordreSeleccio.push(span.textContent);
+  const resultat = document.getElementById('ordre-resultat');
+  const nova = document.createElement('span');
+  nova.className = 'ordre-paraula';
+  nova.textContent = span.textContent;
+  resultat.appendChild(nova);
+  comprovarOrdre();
+}
+function esborrarOrdre() {
+  ordreSeleccio = [];
+  document.getElementById('ordre-resultat').innerHTML = '';
+  document.querySelectorAll('#ordre-paraules .ordre-paraula').forEach(s => s.classList.remove('usada'));
+  setFeedback('feedback-ordre', '');
+}
+function comprovarOrdre() {
+  const objectiu = ordreObjectiu.loc.split(' ');
+  if (ordreSeleccio.length !== objectiu.length) return;
+  if (ordreSeleccio.join(' ') === ordreObjectiu.loc) {
+    sumarPunts(20, ordreObjectiu.loc);
+    setFeedback('feedback-ordre', `✅ +20 punts! Locució: "${ordreObjectiu.loc}"`, 'bo');
+    document.querySelectorAll('#ordre-resultat .ordre-paraula').forEach(s => s.style.background = '#6bcf7f');
+  } else {
+    restarPunts(3, ordreObjectiu.loc);
+    setFeedback('feedback-ordre', '❌ -3 punts. Torna-ho a provar', 'dolent');
+    setTimeout(() => esborrarOrdre(), 800);
+  }
+}
+
+/* ============================================================
+   10. PENJAT
+   ============================================================ */
+let penjatActual = null, penjatLletres = [], penjatErrors = 0;
+const MAX_ERRORS = 6;
+function iniciarPenjat() {
+  penjatActual = LOCUCIONS[Math.floor(Math.random() * LOCUCIONS.length)];
+  penjatLletres = [];
+  penjatErrors = 0;
+  setFeedback('feedback-penjat', '');
+  document.getElementById('penjat-info').textContent = `Significat: ${penjatActual.sig}`;
+  renderitzarPenjat();
+  renderitzarTeclatPenjat();
+}
+function renderitzarPenjat() {
+  const paraula = penjatActual.loc.toUpperCase();
+  const cont = document.getElementById('penjat-paraula');
+  cont.innerHTML = '';
+  for (const lletra of paraula) {
+    const d = document.createElement('div');
+    d.className = 'penjat-lletra';
+    if (lletra === ' ' || lletra === '-') { d.textContent = lletra; d.classList.add('espai'); }
+    else if (penjatLletres.includes(lletra)) { d.textContent = lletra; d.classList.add('encertada'); }
+    else d.textContent = '_';
+    cont.appendChild(d);
+  }
+}
+function renderitzarTeclatPenjat() {
+  const cont = document.getElementById('penjat-teclat');
+  cont.innerHTML = '';
+  const alfabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÀÈÉÍÏÒÓÚÜÇ';
+  for (const lletra of alfabet) {
+    const b = document.createElement('button');
+    b.textContent = lletra;
+    b.disabled = penjatLletres.includes(lletra);
+    b.onclick = () => clicarLletraPenjat(lletra);
+    cont.appendChild(b);
+  }
+}
+function clicarLletraPenjat(lletra) {
+  if (penjatLletres.includes(lletra)) return;
+  penjatLletres.push(lletra);
+  const paraula = penjatActual.loc.toUpperCase();
+  if (!paraula.includes(lletra)) {
+    penjatErrors++;
+    restarPunts(1);
+    setFeedback('feedback-penjat', `❌ -1 punt (${penjatErrors}/${MAX_ERRORS})`, 'dolent');
+  }
+  renderitzarPenjat();
+  renderitzarTeclatPenjat();
+  if (penjatErrors >= MAX_ERRORS) {
+    setFeedback('feedback-penjat', `💀 -5 punts. Era: ${penjatActual.loc}`, 'dolent');
+    restarPunts(5, penjatActual.loc);
+    document.getElementById('penjat-teclat').querySelectorAll('button').forEach(b => b.disabled = true);
+    return;
+  }
+  const objectiu = [...paraula].filter(l => l !== ' ' && l !== '-');
+  if (objectiu.every(l => penjatLletres.includes(l))) {
+    sumarPunts(20, penjatActual.loc);
+    setFeedback('feedback-penjat', '✅ +20 punts!', 'bo');
+  }
+}
+
+/* ============================================================
+   11. BINGO
+   ============================================================ */
+let bingoCartro = [], bingoCantades = [], bingoAcabat = false;
+function iniciarBingo() {
+  bingoAcabat = false;
+  bingoCantades = [];
+  const triades = agafarAleatoris(LOCUCIONS, 9);
+  bingoCartro = triades.map(l => ({ loc: l.loc, sig: l.sig, marcada: false }));
+  document.getElementById('bingo-anunci').textContent = 'Clica "Cantar significat" per començar';
+  setFeedback('feedback-bingo', '');
+  const cont = document.getElementById('bingo-cartro');
+  cont.innerHTML = '';
+  bingoCartro.forEach((c, idx) => {
+    const d = document.createElement('div');
+    d.className = 'bingo-cella';
+    d.textContent = c.loc;
+    d.dataset.idx = idx;
+    d.onclick = () => marcarBingo(d, idx);
+    cont.appendChild(d);
+  });
+}
+function cantarBingo() {
+  if (bingoAcabat) return;
+  const disponibles = bingoCartro.filter(c => !bingoCantades.includes(c.sig));
+  if (disponibles.length === 0) { document.getElementById('bingo-anunci').textContent = '🎉 Tots cantats!'; return; }
+  const triada = disponibles[Math.floor(Math.random() * disponibles.length)];
+  bingoCantades.push(triada.sig);
+  document.getElementById('bingo-anunci').textContent = `📢 Significat: "${triada.sig}" — Marca la locució!`;
+}
+function marcarBingo(cella, idx) {
+  if (bingoAcabat) return;
+  const c = bingoCartro[idx];
+  if (c.marcada) return;
+  const ultima = bingoCantades[bingoCantades.length - 1];
+  if (ultima === c.sig) {
+    c.marcada = true;
+    cella.classList.add('marcada');
+    sumarPunts(5, c.loc);
+    setFeedback('feedback-bingo', '✅ +5 punts', 'bo');
+    comprovarBingo();
+  } else {
+    cella.style.background = '#ff6b6b';
+    setTimeout(() => cella.style.background = '', 500);
+    restarPunts(2);
+    setFeedback('feedback-bingo', '❌ -2 punts', 'dolent');
+  }
+}
+function comprovarBingo() {
+  const m = bingoCartro.map(c => c.marcada);
+  const linies = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  for (const linia of linies) {
+    if (linia.every(i => m[i])) {
+      bingoAcabat = true;
+      linia.forEach(i => document.querySelector(`.bingo-cella[data-idx="${i}"]`).classList.add('guanyadora'));
+      setFeedback('feedback-bingo', '🎉 BINGO! +30 punts!', 'bo');
+      sumarPunts(30);
+      return;
+    }
+  }
+}
+
+/* ============================================================
+   12. COMPLETA LA LOCUCIÓ
+   ============================================================ */
+let completaCorrecta = null, completaRespost = false;
+function novaPreguntaCompleta() {
+  completaRespost = false;
+  document.getElementById('btn-seguent-completa').style.display = 'none';
+  setFeedback('feedback-completa', '');
+  const candidates = LOCUCIONS.filter(l => l.loc.split(' ').length >= 2 && l.loc.split(' ').length <= 5);
+  const d = candidates[Math.floor(Math.random() * candidates.length)];
+  const paraules = d.loc.split(' ');
+  const idx = Math.floor(Math.random() * paraules.length);
+  const correcta = paraules[idx];
+  const mostrada = paraules.map((p, i) => i === idx ? '_____' : p).join(' ');
+
+  const totes = LOCUCIONS.flatMap(l => l.loc.split(' '));
+  const distractors = mesclar(totes.filter(p => p.toLowerCase() !== correcta.toLowerCase() && p.length > 2)).slice(0, 3);
+  const opcions = mesclar([correcta, ...distractors]);
+  completaCorrecta = correcta;
+
+  document.getElementById('pregunta-completa').innerHTML =
+    `Completa: <strong>"${mostrada}"</strong><br><small style="color:#666;">Significat: ${d.sig}</small>`;
+
+  const cont = document.getElementById('opcions-completa');
+  cont.innerHTML = '';
+  opcions.forEach(op => {
+    const b = document.createElement('button');
+    b.textContent = op;
+    b.onclick = () => {
+      if (completaRespost) return;
+      completaRespost = true;
+      if (op.toLowerCase() === correcta.toLowerCase()) {
+        b.classList.add('correcte'); sumarPunts(12, d.loc);
+        setFeedback('feedback-completa', '✅ +12 punts', 'bo');
+      } else {
+        b.classList.add('incorrecte');
+        document.querySelectorAll('#opcions-completa button').forEach(x => { if (x.textContent.toLowerCase() === correcta.toLowerCase()) x.classList.add('correcte'); });
+        restarPunts(4, d.loc);
+        setFeedback('feedback-completa', `❌ -4 punts. Era: ${correcta}`, 'dolent');
+      }
+      document.getElementById('btn-seguent-completa').style.display = 'block';
+    };
+    cont.appendChild(b);
+  });
+}
+
+/* ============================================================
+   13. INVENTA UNA FRASE
+   ============================================================ */
+function iniciarFrases() {
+  const sel = document.getElementById('frase-locucio');
+  sel.innerHTML = '';
+  LOCUCIONS.forEach((l, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = l.loc;
+    sel.appendChild(opt);
+  });
+  document.getElementById('llista-frases').innerHTML = '';
+  document.getElementById('frase-repte').style.display = 'none';
+  document.getElementById('frase-escrita').value = '';
+}
+function mostrarRepte() {
+  const idx = document.getElementById('frase-locucio').value;
+  const l = LOCUCIONS[idx];
+  const repte = document.getElementById('frase-repte');
+  repte.style.display = 'block';
+  repte.innerHTML = `<strong>Locució:</strong> "${l.loc}"<br><strong>Significat:</strong> ${l.sig}<br><em>Escriu una frase on surti aquesta locució 👇</em>`;
+}
+function validarFrase() {
+  const idx = document.getElementById('frase-locucio').value;
+  const l = LOCUCIONS[idx];
+  const text = document.getElementById('frase-escrita').value.trim();
+  if (text.length < 10) {
+    setFeedback('feedback-frases', '⚠️ Escriu una frase una mica més llarga', 'dolent');
+    return;
+  }
+  const arrel = l.loc.split(' ')[0].toLowerCase();
+  if (!text.toLowerCase().includes(arrel)) {
+    setFeedback('feedback-frases', `⚠️ La frase hauria de contenir la locució "${l.loc}"`, 'dolent');
+    return;
+  }
+  sumarPunts(15, l.loc);
+  setFeedback('feedback-frases', '✅ +15 punts! Bona feina!', 'bo');
+  const nova = document.createElement('div');
+  nova.className = 'frase-generada';
+  nova.innerHTML = `<strong>"${l.loc}"</strong> → <span class="loc">${text}</span>`;
+  document.getElementById('llista-frases').prepend(nova);
+  document.getElementById('frase-escrita').value = '';
+  document.getElementById('frase-repte').style.display = 'none';
+}
+
+/* ============================================================
+   GUARDAT / RESTAURAR
+   ============================================================ */
+function obrirGuardar() { document.getElementById('modal-guardar').classList.add('actiu'); }
+function tancarModal(id) {
+  document.getElementById(id).classList.remove('actiu');
+  if (id === 'modal-guardar' && canviPendent) {
+    canviPendent(); canviPendent = null;
+    selectorJoc.value = jocActual;
+  }
+}
+function guardarJSON() {
+  const dades = {
+    versio: '1.0',
+    data: new Date().toISOString(),
+    punts: punts,
+    nivell: nivellActual.nom,
+    estadistiques: estadistiques,
+    sessio: { activitatActual: jocActual }
+  };
+  const blob = new Blob([JSON.stringify(dades, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `locucions_${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  tancarModal('modal-guardar');
+  if (canviPendent) { canviPendent(); canviPendent = null; }
+}
+function obrirRestaurar() { document.getElementById('modal-restaurar').classList.add('actiu'); }
+function restaurarJSON() {
+  const input = document.getElementById('input-fitxer');
+  if (!input.files || input.files.length === 0) { alert('Selecciona un fitxer JSON.'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const d = JSON.parse(e.target.result);
+      if (typeof d.punts !== 'number') throw new Error('Format incorrecte');
+      punts = d.punts;
+      estadistiques = d.estadistiques || estadistiques;
+      if (d.sessio && d.sessio.activitatActual) {
+        jocActual = d.sessio.activitatActual;
+        selectorJoc.value = jocActual;
+      }
+      nivellActual = obtenirNivell(punts);
+      actualitzarMarcador();
+      document.querySelectorAll('.joc').forEach(j => j.classList.remove('actiu'));
+      document.getElementById('joc-' + jocActual).classList.add('actiu');
+      iniciarJoc(jocActual);
+      tancarModal('modal-restaurar');
+      autoguardar();
+    } catch (err) { alert('Fitxer JSON no vàlid: ' + err.message); }
+  };
+  reader.readAsText(input.files[0]);
+}
+function reiniciarPunts() {
+  if (!confirm('Segur que vols reiniciar tots els punts i estadístiques?')) return;
+  punts = 0;
+  estadistiques = { encerts: 0, errors: 0, locucionsEncertades: [], locucionsFallades: [] };
+  nivellActual = NIVELLS[0];
+  actualitzarMarcador();
+  autoguardar();
+}
+
+/* ============================================================
+   INICIALITZACIÓ
+   ============================================================ */
+const carregat = carregarAutoguardat();
+selectorJoc.value = jocActual;
+document.querySelectorAll('.joc').forEach(j => j.classList.remove('actiu'));
+document.getElementById('joc-' + jocActual).classList.add('actiu');
+actualitzarMarcador();
+iniciarJoc(jocActual);
+
+// Autoguardat periòdic cada 30 segons
+setInterval(autoguardar, 30000);
+</script>
+</body>
+</html>

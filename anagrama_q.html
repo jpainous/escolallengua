@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🕵️ L'Espia Desendreçat</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #ecf0f1;
+  }
+  
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  
+  h1 {
+    text-align: center;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  }
+  
+  .subtitle {
+    text-align: center;
+    font-size: 1.1em;
+    margin-bottom: 30px;
+    color: #95a5a6;
+  }
+  
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+  
+  .stat-box {
+    background: rgba(255,255,255,0.1);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 1.1em;
+  }
+  
+  .challenge-box {
+    background: rgba(0,0,0,0.3);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    margin-bottom: 30px;
+    border: 2px solid #3498db;
+  }
+  
+  .challenge-box h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #3498db;
+  }
+  
+  .target-word {
+    font-size: 3em;
+    font-weight: bold;
+    color: #f39c12;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  }
+  
+  .letters-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  
+  .letter {
+    width: 60px;
+    height: 60px;
+    background: #3498db;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  }
+  
+  .letter:hover:not(:disabled) {
+    transform: translateY(-5px);
+    background: #2980b9;
+  }
+  
+  .letter:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  
+  .answer-area {
+    min-height: 80px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .answer-letter {
+    width: 50px;
+    height: 50px;
+    background: #27ae60;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    cursor: pointer;
+    animation: slideIn 0.3s;
+  }
+  
+  @keyframes slideIn {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+  }
+  
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  
+  button {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+  }
+  
+  button:hover { background: #c0392b; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  
+  .feedback {
+    text-align: center;
+    font-size: 1.5em;
+    margin-top: 20px;
+    min-height: 40px;
+  }
+  
+  .feedback.correct { color: #27ae60; }
+  .feedback.wrong { color: #e74c3c; }
+  
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal.show { display: flex; }
+  
+  .modal-content {
+    background: #2c3e50;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    border: 3px solid #f39c12;
+  }
+  
+  .modal h2 {
+    font-size: 2.5em;
+    color: #f39c12;
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 600px) {
+    h1 { font-size: 1.8em; }
+    .target-word { font-size: 2em; }
+    .letter { width: 50px; height: 50px; font-size: 1.5em; }
+    .answer-letter { width: 40px; height: 40px; font-size: 1.2em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🕵️ L'Espia Desendreçat</h1>
+  <p class="subtitle">Descodifica l'antònim en anglès!</p>
+  
+  <div class="stats">
+    <div class="stat-box">✅ Encerts: <span id="score">0</span></div>
+    <div class="stat-box">📝 Paraula: <span id="current">1</span>/10</div>
+  </div>
+  
+  <div class="challenge-box">
+    <h2>Troba l'antònim de:</h2>
+    <div class="target-word" id="targetWord">BRUT</div>
+    
+    <div class="answer-area" id="answerArea"></div>
+    
+    <div class="letters-container" id="lettersContainer"></div>
+    
+    <div class="controls">
+      <button id="btnClear">🗑️ Esborrar</button>
+      <button id="btnHint">💡 Pista</button>
+    </div>
+    
+    <div class="feedback" id="feedback"></div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h2>🎉 Missió Completada! 🎉</h2>
+    <p id="modalText">Has desxifrat totes les paraules!</p>
+    <button onclick="restartGame()">Nova Missió</button>
+  </div>
+</div>
+
+<script>
+const llistaParaules = [
+  { cat: "RUGÓS", engAnt: "SMOOTH" },
+  { cat: "ASSEQUIBLE", engAnt: "UNAFFORDABLE" },
+  { cat: "AMPLE", engAnt: "NARROW" },
+  { cat: "TANCAT", engAnt: "OPEN" },
+  { cat: "TRAÏDOR", engAnt: "LOYAL" },
+  { cat: "BRUT", engAnt: "CLEAN" },
+  { cat: "CERT", engAnt: "FALSE" },
+  { cat: "CRIDANER", engAnt: "SUBTLE" },
+  { cat: "CARNÍVOR", engAnt: "HERBIVORE" },
+  { cat: "DESPIETAT", engAnt: "COMPASSIONATE" },
+  { cat: "BONDADÓS", engAnt: "EVIL" },
+  { cat: "ENORME", engAnt: "TINY" },
+  { cat: "COMBUSTIBLE", engAnt: "INCOMBUSTIBLE" },
+  { cat: "ÀCID", engAnt: "SWEET" },
+  { cat: "BLANC", engAnt: "BLACK" },
+  { cat: "FATIGAT", engAnt: "RESTED" },
+  { cat: "RURAL", engAnt: "URBAN" },
+  { cat: "ASSOLIBLE", engAnt: "UNATTAINABLE" },
+  { cat: "CENTRAL", engAnt: "PERIPHERAL" },
+  { cat: "COMPLET", engAnt: "INCOMPLETE" },
+  { cat: "PLE", engAnt: "EMPTY" },
+  { cat: "ARTIFICIAL", engAnt: "NATURAL" },
+  { cat: "INQUIET", engAnt: "CALM" },
+  { cat: "CRUEL", engAnt: "KIND" },
+  { cat: "CAR", engAnt: "CHEAP" },
+  { cat: "FURIÓS", engAnt: "PLACID" },
+  { cat: "CALLAT", engAnt: "TALKATIVE" },
+  { cat: "ACOMODAT", engAnt: "POOR" },
+  { cat: "AFORTUNAT", engAnt: "UNLUCKY" },
+  { cat: "VALENT", engAnt: "COWARDLY" },
+  { cat: "CAPTIU", engAnt: "FREE" },
+  { cat: "COMPETENT", engAnt: "INEPT" },
+  { cat: "MESQUÍ", engAnt: "GENEROUS" },
+  { cat: "TREBALLADOR", engAnt: "LAZY" },
+  { cat: "CURT", engAnt: "LONG" },
+  { cat: "SOLELLÓS", engAnt: "SHADY" },
+  { cat: "COMPLICAT", engAnt: "SIMPLE" },
+  { cat: "PRESENT", engAnt: "ABSENT" },
+  { cat: "FOSC", engAnt: "LIGHT" },
+  { cat: "FRED", engAnt: "HOT" },
+  { cat: "DUR", engAnt: "SOFT" },
+  { cat: "RÀPID", engAnt: "SLOW" },
+  { cat: "ALT", engAnt: "SHORT" },
+  { cat: "NOU", engAnt: "OLD" },
+  { cat: "FORT", engAnt: "WEAK" },
+  { cat: "SEC", engAnt: "WET" },
+  { cat: "PESAT", engAnt: "LIGHT" },
+  { cat: "ACTIU", engAnt: "PASSIVE" },
+  { cat: "AMABLE", engAnt: "UNFRIENDLY" },
+  { cat: "PACIENT", engAnt: "IMPATIENT" },
+  { cat: "FELIÇ", engAnt: "SAD" },
+  { cat: "DIVERTIT", engAnt: "BORING" },
+  { cat: "MODERN", engAnt: "ANCIENT" },
+  { cat: "ORDENAT", engAnt: "MESSY" },
+  { cat: "HONEST", engAnt: "DISHONEST" },
+  { cat: "OPTIMISTA", engAnt: "PESSIMISTIC" },
+  { cat: "LLEST", engAnt: "FOOLISH" },
+  { cat: "FAMÓS", engAnt: "UNKNOWN" },
+  { cat: "ELEGANT", engAnt: "RUDE" }
+];
+
+let currentWordIndex = 0;
+let currentAnswer = '';
+let userAnswer = [];
+let availableLetters = [];
+let score = 0;
+let hintsUsed = 0;
+
+const targetWordEl = document.getElementById('targetWord');
+const lettersContainer = document.getElementById('lettersContainer');
+const answerArea = document.getElementById('answerArea');
+const feedbackEl = document.getElementById('feedback');
+const scoreEl = document.getElementById('score');
+const currentEl = document.getElementById('current');
+const modal = document.getElementById('modal');
+const modalText = document.getElementById('modalText');
+
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+function loadWord() {
+  const word = llistaParaules[currentWordIndex];
+  targetWordEl.textContent = word.cat;
+  currentAnswer = word.engAnt;
+  userAnswer = [];
+  
+  // Crear lletres barrejades (afegim algunes extra per dificultar)
+  const letters = currentAnswer.split('');
+  const extraLetters = ['X', 'Z', 'Q', 'W'];
+  const extraCount = Math.min(2, Math.max(0, 5 - letters.length));
+  const extras = shuffleArray(extraLetters).slice(0, extraCount);
+  
+  availableLetters = shuffleArray([...letters, ...extras]);
+  
+  renderLetters();
+  renderAnswer();
+  currentEl.textContent = currentWordIndex + 1;
+  feedbackEl.textContent = '';
+  feedbackEl.className = 'feedback';
+}
+
+function renderLetters() {
+  lettersContainer.innerHTML = '';
+  availableLetters.forEach((letter, index) => {
+    const btn = document.createElement('button');
+    btn.className = 'letter';
+    btn.textContent = letter;
+    btn.onclick = () => addLetter(letter, index);
+    lettersContainer.appendChild(btn);
+  });
+}
+
+function renderAnswer() {
+  answerArea.innerHTML = '';
+  userAnswer.forEach((item, index) => {
+    const div = document.createElement('div');
+    div.className = 'answer-letter';
+    div.textContent = item.letter;
+    div.onclick = () => removeLetter(index);
+    answerArea.appendChild(div);
+  });
+}
+
+function addLetter(letter, index) {
+  userAnswer.push({ letter, originalIndex: index });
+  availableLetters[index] = null;
+  
+  const buttons = lettersContainer.querySelectorAll('button');
+  buttons[index].disabled = true;
+  
+  renderAnswer();
+  checkComplete();
+}
+
+function removeLetter(answerIndex) {
+  const removed = userAnswer.splice(answerIndex, 1)[0];
+  availableLetters[removed.originalIndex] = removed.letter;
+  
+  const buttons = lettersContainer.querySelectorAll('button');
+  buttons[removed.originalIndex].disabled = false;
+  
+  renderAnswer();
+}
+
+function checkComplete() {
+  if (userAnswer.length === currentAnswer.length) {
+    const userWord = userAnswer.map(item => item.letter).join('');
+    
+    if (userWord === currentAnswer) {
+      score++;
+      scoreEl.textContent = score;
+      feedbackEl.textContent = '✅ CORRECTE!';
+      feedbackEl.className = 'feedback correct';
+      
+      setTimeout(() => {
+        currentWordIndex++;
+        if (currentWordIndex >= 10) {
+          showVictory();
+        } else {
+          loadWord();
+        }
+      }, 1500);
+    } else {
+      feedbackEl.textContent = '❌ Incorrecte, torna-ho a provar!';
+      feedbackEl.className = 'feedback wrong';
+      
+      setTimeout(() => {
+        clearAnswer();
+        feedbackEl.textContent = '';
+      }, 1500);
+    }
+  }
+}
+
+function clearAnswer() {
+  userAnswer.forEach(item => {
+    availableLetters[item.originalIndex] = item.letter;
+  });
+  userAnswer = [];
+  renderLetters();
+  renderAnswer();
+}
+
+function showHint() {
+  if (userAnswer.length < currentAnswer.length) {
+    const nextLetter = currentAnswer[userAnswer.length];
+    const letterIndex = availableLetters.findIndex(l => l === nextLetter);
+    
+    if (letterIndex !== -1) {
+      addLetter(nextLetter, letterIndex);
+      hintsUsed++;
+    }
+  }
+}
+
+function showVictory() {
+  let message = `Has desxifrat ${score} paraules! `;
+  if (hintsUsed === 0) message += "🏆 MESTRE ESPIA! 🏆";
+  else if (hintsUsed <= 3) message += "⭐ Molt bé! ⭐";
+  else message += "💪 Continua practicant! 💪";
+  
+  modalText.textContent = message;
+  modal.classList.add('show');
+}
+
+function restartGame() {
+  currentWordIndex = 0;
+  score = 0;
+  hintsUsed = 0;
+  scoreEl.textContent = '0';
+  modal.classList.remove('show');
+  loadWord();
+}
+
+document.getElementById('btnClear').onclick = clearAnswer;
+document.getElementById('btnHint').onclick = showHint;
+
+loadWord();
+</script>
+
+</body>
+</html>

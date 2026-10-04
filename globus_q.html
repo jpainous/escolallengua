@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎈 Pop els Globus dels Contraris</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: 'Comic Sans MS', 'Trebuchet MS', sans-serif;
+    background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+  
+  /* Núvols de fons decoratius */
+  body::before, body::after {
+    content: '☁️';
+    position: fixed;
+    font-size: 5em;
+    opacity: 0.4;
+    animation: cloudMove 20s linear infinite;
+  }
+  body::before { top: 10%; left: -100px; animation-duration: 25s; }
+  body::after { top: 40%; left: -100px; animation-duration: 35s; animation-delay: 5s; }
+  
+  @keyframes cloudMove {
+    from { transform: translateX(-100px); }
+    to { transform: translateX(calc(100vw + 100px)); }
+  }
+  
+  .game-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 15px;
+  }
+  
+  h1 {
+    font-size: 2.5em;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+    margin-bottom: 10px;
+  }
+  
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  
+  .stat-box {
+    background: white;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 1.1em;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  
+  .target-word {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    margin: 15px 0;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    border: 4px dashed #e74c3c;
+  }
+  
+  .target-word h2 {
+    font-size: 3em;
+    color: #e74c3c;
+    margin-bottom: 5px;
+    letter-spacing: 2px;
+  }
+  
+  .target-word p {
+    font-size: 1.1em;
+    color: #7f8c8d;
+  }
+  
+  .balloons-area {
+    flex: 1;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+    min-height: 300px;
+    gap: 15px;
+  }
+  
+  .balloon {
+    width: 140px;
+    height: 170px;
+    border-radius: 50% 50% 50% 50% / 55% 55% 45% 45%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s;
+    box-shadow: inset -15px -15px 30px rgba(0,0,0,0.2), 0 8px 15px rgba(0,0,0,0.2);
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .balloon:nth-child(1) { animation-delay: 0s; }
+  .balloon:nth-child(2) { animation-delay: 0.5s; }
+  .balloon:nth-child(3) { animation-delay: 1s; }
+  
+  .balloon:hover {
+    transform: scale(1.1) rotate(-3deg);
+  }
+  
+  .balloon::before {
+    content: '';
+    position: absolute;
+    top: 15%;
+    left: 20%;
+    width: 25px;
+    height: 25px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 50%;
+  }
+  
+  .balloon::after {
+    content: '';
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 30px;
+    background: #555;
+  }
+  
+  .balloon-text {
+    color: white;
+    font-weight: bold;
+    font-size: 1em;
+    text-align: center;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    padding: 15px;
+    z-index: 1;
+  }
+  
+  .balloon-1 { background: radial-gradient(circle at 30% 30%, #ff8a8a, #e74c3c); }
+  .balloon-2 { background: radial-gradient(circle at 30% 30%, #5fd9d0, #16a085); }
+  .balloon-3 { background: radial-gradient(circle at 30% 30%, #f5a9f0, #8e44ad); }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+  
+  .balloon.pop {
+    animation: pop 0.4s forwards !important;
+  }
+  
+  @keyframes pop {
+    0% { transform: scale(1); opacity: 1; }
+    30% { transform: scale(1.4); }
+    100% { transform: scale(0); opacity: 0; }
+  }
+  
+  .balloon.wrong {
+    animation: shake 0.5s;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-15px); }
+    75% { transform: translateX(15px); }
+  }
+  
+  .feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5em;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 1000;
+  }
+  
+  .feedback.show {
+    animation: feedbackPop 1s forwards;
+  }
+  
+  @keyframes feedbackPop {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+  }
+  
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+  
+  .modal.show { display: flex; }
+  
+  .modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 25px;
+    text-align: center;
+    max-width: 90%;
+    animation: bounce 0.5s;
+  }
+  
+  @keyframes bounce {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  
+  .modal h2 {
+    font-size: 2.5em;
+    color: #27ae60;
+    margin-bottom: 20px;
+  }
+  
+  .modal p {
+    font-size: 1.3em;
+    margin-bottom: 25px;
+    color: #333;
+  }
+  
+  button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+  }
+  
+  button:hover { transform: scale(1.05); background: #2980b9; }
+  
+  @media (max-width: 600px) {
+    h1 { font-size: 1.8em; }
+    .target-word h2 { font-size: 2em; }
+    .balloon { width: 100px; height: 125px; }
+    .balloon-text { font-size: 0.8em; padding: 10px; }
+    .balloon::before { width: 18px; height: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="game-container">
+  <div class="header">
+    <h1>🎈 Pop els Globus!</h1>
+    <div class="stats">
+      <div class="stat-box">✅ <span id="score">0</span></div>
+      <div class="stat-box">❌ <span id="mistakes">0</span></div>
+      <div class="stat-box">🔥 <span id="streak">0</span></div>
+      <div class="stat-box">🎯 <span id="round">1</span>/10</div>
+    </div>
+  </div>
+  
+  <div class="target-word">
+    <p>Quin és l'antònim en anglès de:</p>
+    <h2 id="targetWord">FURIÓS</h2>
+  </div>
+  
+  <div class="balloons-area" id="balloonsArea"></div>
+</div>
+
+<div class="feedback" id="feedback"></div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h2 id="modalTitle">🎉 Fantàstic! 🎉</h2>
+    <p id="modalText">Has completat 10 rondes!</p>
+    <button onclick="restartGame()">🔄 Juga una altra vegada</button>
+  </div>
+</div>
+
+<script>
+const llistaParaules = [
+  { cat: "RUGÓS", engAnt: "SMOOTH" },
+  { cat: "ASSEQUIBLE", engAnt: "UNAFFORDABLE" },
+  { cat: "AMPLE", engAnt: "NARROW" },
+  { cat: "TANCAT", engAnt: "OPEN" },
+  { cat: "TRAÏDOR", engAnt: "LOYAL" },
+  { cat: "BRUT", engAnt: "CLEAN" },
+  { cat: "CERT", engAnt: "FALSE" },
+  { cat: "CRIDANER", engAnt: "SUBTLE" },
+  { cat: "CARNÍVOR", engAnt: "HERBIVORE" },
+  { cat: "DESPIETAT", engAnt: "COMPASSIONATE" },
+  { cat: "BONDADÓS", engAnt: "EVIL" },
+  { cat: "ENORME", engAnt: "TINY" },
+  { cat: "COMBUSTIBLE", engAnt: "INCOMBUSTIBLE" },
+  { cat: "ÀCID", engAnt: "SWEET" },
+  { cat: "BLANC", engAnt: "BLACK" },
+  { cat: "FATIGAT", engAnt: "RESTED" },
+  { cat: "RURAL", engAnt: "URBAN" },
+  { cat: "ASSOLIBLE", engAnt: "UNATTAINABLE" },
+  { cat: "CENTRAL", engAnt: "PERIPHERAL" },
+  { cat: "COMPLET", engAnt: "INCOMPLETE" },
+  { cat: "PLE", engAnt: "EMPTY" },
+  { cat: "ARTIFICIAL", engAnt: "NATURAL" },
+  { cat: "INQUIET", engAnt: "CALM" },
+  { cat: "CRUEL", engAnt: "KIND" },
+  { cat: "CAR", engAnt: "CHEAP" },
+  { cat: "FURIÓS", engAnt: "PLACID" },
+  { cat: "CALLAT", engAnt: "TALKATIVE" },
+  { cat: "ACOMODAT", engAnt: "POOR" },
+  { cat: "AFORTUNAT", engAnt: "UNLUCKY" },
+  { cat: "VALENT", engAnt: "COWARDLY" },
+  { cat: "CAPTIU", engAnt: "FREE" },
+  { cat: "COMPETENT", engAnt: "INEPT" },
+  { cat: "MESQUÍ", engAnt: "GENEROUS" },
+  { cat: "TREBALLADOR", engAnt: "LAZY" },
+  { cat: "CURT", engAnt: "LONG" },
+  { cat: "SOLELLÓS", engAnt: "SHADY" },
+  { cat: "COMPLICAT", engAnt: "SIMPLE" },
+  { cat: "PRESENT", engAnt: "ABSENT" },
+  { cat: "FOSC", engAnt: "LIGHT" },
+  { cat: "FRED", engAnt: "HOT" },
+  { cat: "DUR", engAnt: "SOFT" },
+  { cat: "RÀPID", engAnt: "SLOW" },
+  { cat: "ALT", engAnt: "SHORT" },
+  { cat: "NOU", engAnt: "OLD" },
+  { cat: "FORT", engAnt: "WEAK" },
+  { cat: "SEC", engAnt: "WET" },
+  { cat: "PESAT", engAnt: "LIGHT" },
+  { cat: "ACTIU", engAnt: "PASSIVE" },
+  { cat: "AMABLE", engAnt: "UNFRIENDLY" },
+  { cat: "PACIENT", engAnt: "IMPATIENT" },
+  { cat: "FELIÇ", engAnt: "SAD" },
+  { cat: "DIVERTIT", engAnt: "BORING" },
+  { cat: "MODERN", engAnt: "ANCIENT" },
+  { cat: "ORDENAT", engAnt: "MESSY" },
+  { cat: "HONEST", engAnt: "DISHONEST" },
+  { cat: "OPTIMISTA", engAnt: "PESSIMISTIC" },
+  { cat: "LLEST", engAnt: "FOOLISH" },
+  { cat: "FAMÓS", engAnt: "UNKNOWN" },
+  { cat: "ELEGANT", engAnt: "RUDE" }
+];
+
+let score = 0;
+let mistakes = 0;
+let streak = 0;
+let roundsPlayed = 0;
+let currentAnswer = '';
+let roundActive = false;
+
+const targetWordEl = document.getElementById('targetWord');
+const balloonsArea = document.getElementById('balloonsArea');
+const scoreEl = document.getElementById('score');
+const mistakesEl = document.getElementById('mistakes');
+const streakEl = document.getElementById('streak');
+const roundEl = document.getElementById('round');
+const feedbackEl = document.getElementById('feedback');
+const modal = document.getElementById('modal');
+const modalTitle = document.getElementById('modalTitle');
+const modalText = document.getElementById('modalText');
+
+function shuffle(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function startRound() {
+  roundActive = true;
+  roundsPlayed++;
+  roundEl.textContent = roundsPlayed;
+  
+  // Triem 3 paraules diferents a l'atzar
+  const shuffled = shuffle(llistaParaules);
+  const correctWord = shuffled[0];
+  const distractors = [shuffled[1].engAnt, shuffled[2].engAnt];
+  
+  targetWordEl.textContent = correctWord.cat;
+  currentAnswer = correctWord.engAnt;
+  
+  // Creem les 3 opcions i les barregem
+  const options = shuffle([correctWord.engAnt, ...distractors]);
+  
+  balloonsArea.innerHTML = '';
+  
+  options.forEach((option, index) => {
+    const balloon = document.createElement('div');
+    balloon.className = `balloon balloon-${index + 1}`;
+    balloon.innerHTML = `<div class="balloon-text">${option}</div>`;
+    balloon.onclick = () => checkAnswer(option, balloon);
+    balloonsArea.appendChild(balloon);
+  });
+}
+
+function checkAnswer(answer, balloon) {
+  if (!roundActive) return;
+  
+  if (answer === currentAnswer) {
+    roundActive = false;
+    score++;
+    streak++;
+    scoreEl.textContent = score;
+    streakEl.textContent = streak;
+    
+    balloon.classList.add('pop');
+    showFeedback('✅');
+    
+    setTimeout(() => {
+      if (roundsPlayed >= 10) {
+        showVictory();
+      } else {
+        startRound();
+      }
+    }, 1200);
+  } else {
+    mistakes++;
+    streak = 0;
+    mistakesEl.textContent = mistakes;
+    streakEl.textContent = streak;
+    
+    balloon.classList.add('wrong');
+    showFeedback('❌');
+    
+    setTimeout(() => {
+      feedbackEl.classList.remove('show');
+    }, 800);
+  }
+}
+
+function showFeedback(emoji) {
+  feedbackEl.textContent = emoji;
+  feedbackEl.classList.remove('show');
+  void feedbackEl.offsetWidth;
+  feedbackEl.classList.add('show');
+}
+
+function showVictory() {
+  let title, message;
+  
+  if (score === 10) {
+    title = "🏆 PERFECTE! 🏆";
+    message = `Has encertat les 10 rondes sense errors! Ets un/a crack!`;
+  } else if (score >= 8) {
+    title = "⭐ MOLT BÉ! ⭐";
+    message = `Has encertat ${score} de 10 rondes! Genial!`;
+  } else if (score >= 5) {
+    title = "👍 BEN FET!";
+    message = `Has encertat ${score} de 10 rondes. Continua així!`;
+  } else {
+    title = "💪 ÀNIMS!";
+    message = `Has encertat ${score} de 10 rondes. Practica una mica més!`;
+  }
+  
+  modalTitle.textContent = title;
+  modalText.textContent = message;
+  modal.classList.add('show');
+}
+
+function restartGame() {
+  score = 0;
+  mistakes = 0;
+  streak = 0;
+  roundsPlayed = 0;
+  scoreEl.textContent = '0';
+  mistakesEl.textContent = '0';
+  streakEl.textContent = '0';
+  roundEl.textContent = '1';
+  modal.classList.remove('show');
+  startRound();
+}
+
+startRound();
+</script>
+
+</body>
+</html>

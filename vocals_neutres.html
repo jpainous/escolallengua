@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercicis de Vocal Neutra - Català</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            padding-bottom: 60px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        
+        h1 { text-align: center; color: #667eea; font-size: 2.5em; margin-bottom: 10px; }
+        
+        .progress {
+            text-align: center; font-size: 1.3em; color: #667eea; margin-bottom: 20px;
+            font-weight: bold; background: #f8f9fa; padding: 15px; border-radius: 10px;
+            display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap;
+        }
+        
+        .level-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white; padding: 5px 15px; border-radius: 20px; font-size: 1em;
+        }
+
+        /* ========== MANUAL ALUMNE ========== */
+        .guide-toggle-btn {
+            display: block; margin: 0 auto 20px; background: #fff3cd; color: #856404;
+            border: 2px solid #ffeeba; padding: 10px 25px; border-radius: 25px;
+            font-size: 1.1em; font-weight: bold; cursor: pointer; transition: all 0.2s;
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+        }
+        .guide-toggle-btn:hover { background: #ffe8a1; transform: scale(1.05); }
+        
+        .student-guide {
+            display: none; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 3px solid #2196f3; border-radius: 15px; padding: 20px; margin-bottom: 25px;
+            animation: fadeIn 0.3s ease;
+        }
+        .student-guide.visible { display: block; }
+        
+        .guide-title { text-align: center; font-size: 1.5em; color: #1976d2; margin-bottom: 15px; font-weight: bold; }
+        
+        .guide-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        
+        .guide-step {
+            background: white; border-radius: 12px; padding: 15px; text-align: center;
+            border: 2px solid #90caf9; transition: transform 0.2s;
+        }
+        .guide-step:hover { transform: translateY(-3px); }
+        .guide-step-icon { font-size: 2.5em; margin-bottom: 10px; }
+        .guide-step-title { font-size: 1.2em; font-weight: bold; color: #1976d2; margin-bottom: 8px; }
+        .guide-step-text { font-size: 1em; color: #555; line-height: 1.4; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* ========== MENÚ HAMBURGUESA ========== */
+        .menu-toggle {
+            position: fixed; top: 20px; right: 20px; width: 55px; height: 55px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;
+            border-radius: 50%; cursor: pointer; z-index: 500; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            display: flex; align-items: center; justify-content: center; transition: transform 0.2s;
+        }
+        .menu-toggle:hover { transform: scale(1.1); }
+        .menu-toggle-icon { font-size: 1.8em; color: white; line-height: 1; }
+        
+        .menu-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 600; animation: fade-in 0.2s ease;
+        }
+        .menu-overlay.active { display: block; }
+        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+        
+        .menu-panel {
+            position: fixed; top: 0; right: -350px; width: 320px; max-width: 85vw; height: 100vh;
+            background: white; z-index: 700; box-shadow: -5px 0 30px rgba(0,0,0,0.3);
+            transition: right 0.3s ease; overflow-y: auto; display: flex; flex-direction: column;
+        }
+        .menu-panel.active { right: 0; }
+        
+        .menu-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;
+            padding: 25px 20px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .menu-header-title { font-size: 1.4em; font-weight: bold; }
+        .menu-close {
+            background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px;
+            border-radius: 50%; cursor: pointer; font-size: 1.3em; transition: background 0.2s;
+        }
+        .menu-close:hover { background: rgba(255,255,255,0.3); }
+        
+        .menu-section { padding: 15px 20px; border-bottom: 1px solid #e9ecef; }
+        .menu-section-title { font-size: 0.85em; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: bold; }
+        
+        .menu-item {
+            display: flex; align-items: center; gap: 12px; padding: 12px 15px; background: white;
+            border: 2px solid #e9ecef; border-radius: 10px; cursor: pointer; font-size: 1em;
+            font-weight: bold; color: #333; margin-bottom: 8px; width: 100%; text-align: left; transition: all 0.2s;
+        }
+        .menu-item:hover { transform: translateX(5px); border-color: #667eea; background: #f8f9ff; }
+        .menu-item-icon { font-size: 1.4em; width: 30px; text-align: center; }
+        
+        .menu-item.save { border-color: #28a745; color: #28a745; }
+        .menu-item.save:hover { background: #d4edda; }
+        .menu-item.load { border-color: #17a2b8; color: #17a2b8; }
+        .menu-item.load:hover { background: #d1ecf1; }
+        .menu-item.words { border-color: #fd7e14; color: #fd7e14; }
+        .menu-item.words:hover { background: #fff3cd; }
+        .menu-item.danger { border-color: #dc3545; color: #dc3545; }
+        .menu-item.danger:hover { background: #f8d7da; }
+        .menu-item.warning { border-color: #fd7e14; color: #fd7e14; }
+        .menu-item.warning:hover { background: #fff3cd; }
+        .menu-item.manual { border-color: #6f42c1; color: #6f42c1; }
+        .menu-item.manual:hover { background: #f3eafa; }
+        
+        .menu-info { padding: 15px 20px; background: #f8f9fa; font-size: 0.9em; color: #666; line-height: 1.5; }
+        .menu-info strong { color: #667eea; }
+        
+        /* ========== FASES DEL JOC ========== */
+        .word-complete-container {
+            text-align: center; padding: 40px 20px; background: linear-gradient(135deg, #fff9e6 0%, #ffe4b5 100%);
+            border-radius: 20px; margin-bottom: 20px; border: 4px dashed #ffa500;
+        }
+        .word-complete { font-size: 4em; font-weight: bold; color: #d2691e; margin-bottom: 25px; letter-spacing: 3px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .timer-bar { width: 100%; max-width: 500px; height: 25px; background: #e9ecef; border-radius: 15px; overflow: hidden; margin: 0 auto 15px; border: 2px solid #ffa500; }
+        .timer-fill { height: 100%; background: linear-gradient(90deg, #ff6b6b, #ffa500); width: 100%; animation: timer-shrink 3.5s linear forwards; }
+        @keyframes timer-shrink { from { width: 100%; } to { width: 0%; } }
+        .timer-text { font-size: 1.4em; color: #d2691e; font-weight: bold; }
+        .skip-hint { font-size: 1em; color: #999; margin-top: 15px; font-style: italic; }
+        
+        .word-row { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+        .word-column { display: flex; flex-direction: column; align-items: center; }
+        .word-label { font-size: 1.3em; color: #666; margin-bottom: 15px; font-weight: bold; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; }
+        .word-display {
+            font-size: 2.5em; font-weight: bold; padding: 20px 25px; background: white;
+            border-radius: 15px; width: 100%; text-align: center; display: flex; align-items: center;
+            justify-content: center; flex-wrap: wrap; min-height: 120px; border: 3px solid #e9ecef;
+        }
+        .word-display.minuscula { color: #28a745; border-color: #28a745; }
+        .word-display.majuscula { color: #dc3545; border-color: #dc3545; }
+        .word-part { display: inline; }
+        
+        .letter-input-container { display: inline-flex; flex-direction: column; align-items: center; margin: 0 3px; }
+        .letter-input {
+            width: 55px; height: 70px; font-size: 1.8em; text-align: center; border: 4px solid #667eea;
+            border-radius: 10px; font-weight: bold; background: white; transition: all 0.3s;
+        }
+        .letter-input:focus { outline: none; border-color: #764ba2; box-shadow: 0 0 15px rgba(102, 126, 234, 0.4); }
+        .letter-input.correct { border-color: #28a745; background: #d4edda; color: #28a745; }
+        .letter-input.incorrect { border-color: #dc3545; background: #f8d7da; color: #dc3545; animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .sticker { font-size: 1.8em; margin-top: 8px; min-height: 40px; display: flex; align-items: center; justify-content: center; }
+        
+        .word-input-container { margin-top: 30px; text-align: center; padding: 25px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 15px; border: 3px solid #2196f3; }
+        .word-input-label { font-size: 1.5em; color: #1976d2; margin-bottom: 10px; font-weight: bold; }
+        .word-input-case { font-size: 1.8em; color: #d32f2f; margin: 15px 0; font-weight: bold; background: white; padding: 10px 25px; border-radius: 10px; display: inline-block; border: 3px dashed #d32f2f; }
+        .word-input-wrapper { display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 20px; flex-wrap: wrap; }
+        .word-input {
+            font-size: 2em; padding: 15px 25px; border: 4px solid #2196f3; border-radius: 12px;
+            width: 400px; max-width: 100%; text-align: center; font-weight: bold; letter-spacing: 2px;
+        }
+        .word-input:focus { outline: none; border-color: #1976d2; box-shadow: 0 0 15px rgba(33, 150, 243, 0.4); }
+        .word-input.correct { border-color: #28a745; background: #d4edda; color: #28a745; }
+        
+        .letter-feedback {
+            margin-top: 20px; font-size: 2.2em; font-weight: bold; letter-spacing: 3px;
+            min-height: 60px; padding: 15px; background: white; border-radius: 10px; border: 2px solid #e9ecef; word-break: break-all;
+        }
+        .letter-correct { color: #28a745; }
+        .letter-incorrect { color: #dc3545; text-decoration: line-through; }
+        .letter-expected { color: #28a745; font-size: 0.7em; vertical-align: super; }
+        .letter-placeholder { color: #ccc; }
+        
+        .check-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;
+            padding: 15px 30px; font-size: 1.3em; border-radius: 12px; cursor: pointer; font-weight: bold; transition: transform 0.2s;
+        }
+        .check-btn:hover { transform: scale(1.05); }
+        
+        .feedback { margin-top: 15px; font-size: 1.5em; font-weight: bold; text-align: center; min-height: 40px; }
+        .feedback.success { color: #28a745; }
+        .feedback.error { color: #dc3545; }
+        
+        .attempts-info { font-size: 1.2em; color: #d32f2f; margin-top: 15px; font-weight: bold; background: white; padding: 10px 20px; border-radius: 10px; display: inline-block; }
+        
+        /* ========== NIVELLS ========== */
+        .level-up-container { text-align: center; padding: 40px 20px; position: relative; overflow: hidden; }
+        .level-up-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); border-radius: 20px; opacity: 0.1; z-index: 0; }
+        .level-up-content { position: relative; z-index: 1; }
+        .confetti-container { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; overflow: hidden; z-index: 2; }
+        .confetti-piece { position: absolute; width: 15px; height: 15px; top: -20px; animation: confetti-fall linear forwards; }
+        @keyframes confetti-fall { 0% { top: -20px; transform: rotate(0deg) scale(1); opacity: 1; } 100% { top: 110%; transform: rotate(720deg) scale(0.5); opacity: 0; } }
+        .level-icon { font-size: 6em; animation: level-bounce 0.8s ease infinite; margin-bottom: 20px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2)); }
+        @keyframes level-bounce { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-25px) scale(1.1); } }
+        .level-title {
+            font-size: 2.8em; font-weight: bold; background: linear-gradient(135deg, #667eea, #f093fb, #f5576c);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 15px; animation: level-glow 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes level-glow { from { filter: brightness(1); transform: scale(1); } to { filter: brightness(1.3); transform: scale(1.05); } }
+        .level-subtitle { font-size: 1.5em; color: #666; margin-bottom: 10px; }
+        .level-stars { font-size: 3em; margin: 20px 0; animation: stars-spin 2s ease-in-out infinite; }
+        @keyframes stars-spin { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+        
+        .levels-gallery { background: white; border-radius: 15px; padding: 20px; margin: 20px 0; border: 3px solid #e9ecef; }
+        .levels-gallery-title { font-size: 1.3em; color: #667eea; margin-bottom: 15px; font-weight: bold; }
+        .levels-gallery-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .level-trophy { display: flex; flex-direction: column; align-items: center; background: linear-gradient(135deg, #fff9e6 0%, #ffe4b5 100%); padding: 10px 15px; border-radius: 12px; border: 2px solid #ffa500; min-width: 80px; animation: trophy-pop 0.5s ease; }
+        @keyframes trophy-pop { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .level-trophy-icon { font-size: 2em; }
+        .level-trophy-label { font-size: 0.9em; color: #d2691e; font-weight: bold; margin-top: 5px; }
+        .level-continue-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none;
+            padding: 18px 40px; font-size: 1.5em; border-radius: 15px; cursor: pointer; font-weight: bold;
+            margin-top: 25px; transition: transform 0.2s; box-shadow: 0 5px 20px rgba(245, 87, 108, 0.4);
+        }
+        .level-continue-btn:hover { transform: scale(1.1); }
+        .celebration { font-size: 3em; text-align: center; padding: 40px; animation: bounce 1s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        
+        /* ========== MODALS ========== */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: white; border-radius: 20px; padding: 30px; max-width: 600px; width: 100%;
+            text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.3); animation: modal-pop 0.3s ease; max-height: 90vh; overflow-y: auto;
+        }
+        @keyframes modal-pop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .modal-title { font-size: 1.8em; color: #667eea; margin-bottom: 15px; font-weight: bold; }
+        .modal-message { font-size: 1.1em; color: #555; margin-bottom: 20px; line-height: 1.5; }
+        .modal-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .modal-btn { padding: 12px 25px; font-size: 1.1em; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; transition: transform 0.2s; }
+        .modal-btn:hover { transform: scale(1.05); }
+        .modal-btn.primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .modal-btn.success { background: #28a745; color: white; }
+        .modal-btn.cancel { background: #e9ecef; color: #666; }
+        .modal-btn.danger { background: #dc3545; color: white; }
+        .modal-btn.warning { background: #fd7e14; color: white; }
+        
+        .file-input-wrapper { margin-top: 15px; }
+        .file-input-wrapper input[type="file"] { display: none; }
+        .file-input-label { display: inline-block; background: #17a2b8; color: white; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: transform 0.2s; }
+        .file-input-label:hover { transform: scale(1.05); }
+        
+        .model-preview {
+            background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 10px; padding: 15px; margin: 15px 0;
+            text-align: left; font-family: 'Courier New', monospace; font-size: 0.95em; color: #333;
+            white-space: pre-wrap; word-break: break-word; max-height: 250px; overflow-y: auto;
+        }
+        .model-preview .comment { color: #28a745; }
+        .model-preview .header { color: #667eea; font-weight: bold; }
+
+        /* ========== MANUAL PROFESSOR ========== */
+        .manual-content { text-align: left; }
+        .manual-section { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e9ecef; }
+        .manual-section:last-child { border-bottom: none; }
+        .manual-section h3 { color: #667eea; font-size: 1.3em; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .manual-section p, .manual-section li { font-size: 1em; color: #444; line-height: 1.6; margin-bottom: 8px; }
+        .manual-section ul { padding-left: 20px; }
+        .manual-code { background: #f8f9fa; padding: 10px; border-radius: 8px; font-family: monospace; font-size: 0.9em; color: #d63384; border: 1px solid #e9ecef; }
+        
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #333; color: white; padding: 15px 30px; border-radius: 10px; font-size: 1.1em;
+            font-weight: bold; box-shadow: 0 5px 20px rgba(0,0,0,0.3); transition: transform 0.3s ease; z-index: 2000; max-width: 90vw; text-align: center;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.success { background: #28a745; }
+        .toast.error { background: #dc3545; }
+        .toast.info { background: #17a2b8; }
+        
+        .app-footer {
+            text-align: center; padding: 20px 10px; color: rgba(255, 255, 255, 0.85);
+            font-size: 0.95em; font-family: 'Arial', sans-serif; margin-top: 10px; text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .app-footer strong { color: rgba(255, 255, 255, 1); font-weight: bold; }
+        
+        @media (max-width: 768px) {
+            .word-row { grid-template-columns: 1fr; }
+            .word-complete { font-size: 2.5em; }
+            .word-display { font-size: 1.8em; }
+            .letter-input { width: 45px; height: 60px; font-size: 1.5em; }
+            .word-input { width: 100%; font-size: 1.5em; }
+            .letter-feedback { font-size: 1.5em; }
+            .level-title { font-size: 2em; }
+            .level-icon { font-size: 4em; }
+            h1 { font-size: 1.8em; }
+            .menu-toggle { width: 48px; height: 48px; top: 15px; right: 15px; }
+            .menu-toggle-icon { font-size: 1.5em; }
+            .guide-steps { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Obrir menú">
+        <span class="menu-toggle-icon">☰</span>
+    </button>
+    
+    <div class="menu-overlay" id="menu-overlay" onclick="closeMenu()"></div>
+    
+    <div class="menu-panel" id="menu-panel">
+        <div class="menu-header">
+            <div class="menu-header-title">⚙️ Opcions</div>
+            <button class="menu-close" onclick="closeMenu()">✕</button>
+        </div>
+        
+        <div class="menu-section">
+            <div class="menu-section-title">📖 Ajuda</div>
+            <button class="menu-item manual" onclick="showTeacherManual()">
+                <span class="menu-item-icon">📚</span>
+                <span>Manual del professor</span>
+            </button>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-section-title">📚 Paraules</div>
+            <button class="menu-item words" onclick="showLoadWordsModal()">
+                <span class="menu-item-icon">📋</span>
+                <span>Carregar noves paraules</span>
+            </button>
+            <button class="menu-item words" onclick="downloadWordsModel()">
+                <span class="menu-item-icon">📥</span>
+                <span>Descarregar model</span>
+            </button>
+        </div>
+        
+        <div class="menu-section">
+            <div class="menu-section-title">💾 Sessió</div>
+            <button class="menu-item save" onclick="saveSession()">
+                <span class="menu-item-icon">💾</span>
+                <span>Guardar sessió</span>
+            </button>
+            <button class="menu-item" onclick="exportSession()">
+                <span class="menu-item-icon">📤</span>
+                <span>Descarregar sessió (fitxer)</span>
+            </button>
+            <button class="menu-item load" onclick="showLoadModal()">
+                <span class="menu-item-icon">📂</span>
+                <span>Carregar sessió</span>
+            </button>
+        </div>
+        
+        <div class="menu-section">
+            <div class="menu-section-title">🔄 Partida</div>
+            <button class="menu-item danger" onclick="showResetModal()">
+                <span class="menu-item-icon">🔄</span>
+                <span>Nova partida</span>
+            </button>
+            <button class="menu-item warning" onclick="showDeleteSavedModal()">
+                <span class="menu-item-icon">🗑️</span>
+                <span>Esborrar sessió guardada</span>
+            </button>
+        </div>
+        
+        <div class="menu-info">
+            <strong>💡 Consell:</strong><br>
+            Els botons d'aquest menú són només per al professor. Els alumnes només han de jugar!
+        </div>
+    </div>
+    
+    <div class="container">
+        <h1>🎨 Exercicis de Vocal Neutra 🎨</h1>
+        <div class="progress">
+            <span>Paraules: <span id="progress">0</span> / <span id="total">0</span></span>
+            <span class="level-badge" id="level-badge">Nivell 1</span>
+        </div>
+        
+        <!-- MANUAL DE L'ALUMNE -->
+        <button class="guide-toggle-btn" onclick="toggleStudentGuide()">❓ Com es juga?</button>
+        <div class="student-guide" id="student-guide">
+            <div class="guide-title">🎯 Segueix aquests 3 passos!</div>
+            <div class="guide-steps">
+                <div class="guide-step">
+                    <div class="guide-step-icon">👀</div>
+                    <div class="guide-step-title">1. Memoritza</div>
+                    <div class="guide-step-text">Mira la paraula completa durant uns segons i intenta recordar-la bé.</div>
+                </div>
+                <div class="guide-step">
+                    <div class="guide-step-icon">✏️</div>
+                    <div class="guide-step-title">2. Completa</div>
+                    <div class="guide-step-text">Escriu la lletra que falta. Fixa't bé si et demanen <b>minúscula</b> o <b>majúscula</b>!</div>
+                </div>
+                <div class="guide-step">
+                    <div class="guide-step-icon">⌨️</div>
+                    <div class="guide-step-title">3. Escriu</div>
+                    <div class="guide-step-text">Escriu la paraula sencera. Si t'equivoques, hauràs de tornar-ho a intentar 2 cops!</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="exercise-area"></div>
+    </div>
+    
+    <div class="app-footer">
+        Eina educativa desenvolupada amb l'ajut de la plataforma <strong>Qwen</strong>.
+    </div>
+
+    <!-- MODAL: Carregar sessió -->
+    <div class="modal-overlay" id="modal-load">
+        <div class="modal">
+            <div class="modal-title">📂 Carregar sessió</div>
+            <div class="modal-message">Tria d'on vols carregar la sessió guardada:</div>
+            <div class="modal-actions" style="flex-direction: column; gap: 15px;">
+                <button class="modal-btn primary" onclick="loadFromLocalStorage()">💾 Carregar des del navegador</button>
+                <div class="file-input-wrapper">
+                    <label class="file-input-label" for="file-import">📁 Carregar des d'un fitxer</label>
+                    <input type="file" id="file-import" accept=".json" onchange="importSessionFromFile(event)">
+                </div>
+                <button class="modal-btn cancel" onclick="closeModal('modal-load')">Cancel·lar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL: Carregar paraules -->
+    <div class="modal-overlay" id="modal-load-words">
+        <div class="modal">
+            <div class="modal-title">📋 Carregar noves paraules</div>
+            <div class="modal-message">Selecciona un fitxer CSV amb el llistat de paraules.<br><span style="color: #dc3545; font-size: 0.9em;">⚠️ Es perdrà la partida actual si no l'has guardat.</span></div>
+            <div class="modal-actions" style="flex-direction: column; gap: 15px;">
+                <div class="file-input-wrapper">
+                    <label class="file-input-label" for="file-words" style="background: #fd7e14;">📁 Seleccionar fitxer de paraules (.csv)</label>
+                    <input type="file" id="file-words" accept=".csv,.txt" onchange="importWordsFromFile(event)">
+                </div>
+                <button class="modal-btn primary" onclick="showWordsModelPreview()">👀 Veure model d'exemple</button>
+                <button class="modal-btn cancel" onclick="closeModal('modal-load-words')">Cancel·lar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL: Model de paraules -->
+    <div class="modal-overlay" id="modal-model-preview">
+        <div class="modal">
+            <div class="modal-title">📄 Model de fitxer de paraules</div>
+            <div class="modal-message" style="text-align: left;">Crea un fitxer de text i guarda'l amb extensió <strong>.csv</strong>. Cada línia ha de tenir 3 columnes separades per comes:</div>
+            <div class="model-preview" id="model-preview-content"></div>
+            <div class="modal-message" style="text-align: left; font-size: 0.95em;">
+                <strong>📌 Regles:</strong><br>
+                • <strong>Columna 1:</strong> Paraula completa (en majúscules)<br>
+                • <strong>Columna 2:</strong> Paraula en minúscules amb <code>_</code> on falta la lletra<br>
+                • <strong>Columna 3:</strong> Paraula en MAJÚSCULES amb <code>_</code> on falta la lletra<br>
+                • Les línies que comencen amb <code>#</code> són comentaris (s'ignoren)
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn success" onclick="downloadWordsModel()">📥 Descarregar model</button>
+                <button class="modal-btn cancel" onclick="closeModal('modal-model-preview')">Tancar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL: Esborrar sessió -->
+    <div class="modal-overlay" id="modal-delete-saved">
+        <div class="modal">
+            <div class="modal-title">🗑️ Esborrar sessió guardada</div>
+            <div class="modal-message" id="delete-saved-message">Vols esborrar la sessió guardada al navegador?<br><span style="color: #dc3545; font-size: 0.9em;">Aquesta acció no es pot desfer.</span></div>
+            <div class="modal-actions">
+                <button class="modal-btn warning" onclick="confirmDeleteSaved()">Sí, esborrar</button>
+                <button class="modal-btn cancel" onclick="closeModal('modal-delete-saved')">Cancel·lar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL: Nova partida -->
+    <div class="modal-overlay" id="modal-reset">
+        <div class="modal">
+            <div class="modal-title">🔄 Nova partida</div>
+            <div class="modal-message">Vols començar una partida nova des de zero?<br><span style="color: #28a745; font-size: 0.95em;">✅ La sessió guardada es mantindrà.</span></div>
+            <div class="modal-actions">
+                <button class="modal-btn danger" onclick="confirmReset()">Sí, començar de nou</button>
+                <button class="modal-btn cancel" onclick="closeModal('modal-reset')">Cancel·lar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL: Sobreescriure -->
+    <div class="modal-overlay" id="modal-overwrite">
+        <div class="modal">
+            <div class="modal-title">💾 Guardar sessió</div>
+            <div class="modal-message" id="overwrite-message">Ja tens una sessió guardada al navegador.<br>Vols sobreescriure-la?</div>
+            <div class="modal-actions">
+                <button class="modal-btn success" onclick="confirmSave()">Sí, guardar</button>
+                <button class="modal-btn cancel" onclick="closeModal('modal-overwrite')">Cancel·lar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL: Confirmar canvi de paraules -->
+    <div class="modal-overlay" id="modal-confirm-words">
+        <div class="modal">
+            <div class="modal-title">📋 Carregar noves paraules</div>
+            <div class="modal-message" id="confirm-words-message">Estàs a mig d'una partida.<br>Vols carregar les noves paraules i començar de zero?</div>
+            <div class="modal-actions">
+                <button class="modal-btn warning" onclick="confirmLoadWords()">Sí, carregar</button>
+                <button class="modal-btn cancel" onclick="closeModal('modal-confirm-words')">Cancel·lar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Manual del professor -->
+    <div class="modal-overlay" id="modal-teacher-manual">
+        <div class="modal">
+            <div class="modal-title">📚 Manual del Professor</div>
+            <div class="manual-content">
+                <div class="manual-section">
+                    <h3>🎯 Objectiu</h3>
+                    <p>Eina interactiva per a alumnes de 8 a 12 anys per practicar l'escriptura correcta de paraules amb vocal neutra (a/e), treballant la memòria visual i la distinció entre majúscules i minúscules.</p>
+                </div>
+                <div class="manual-section">
+                    <h3>⚙️ Mecànica de joc</h3>
+                    <ul>
+                        <li><strong>Fase 1:</strong> La paraula es mostra completa durant 3,5 segons per a la memorització.</li>
+                        <li><strong>Fase 2:</strong> L'alumne ha de completar els buits en minúscules i majúscules. El sistema valida lletra a lletra.</li>
+                        <li><strong>Fase 3:</strong> S'escriu la paraula sencera. El sistema demana aleatòriament en minúscules o majúscules.</li>
+                        <li><strong>Penalització:</strong> Si s'equivoca a la fase 3, haurà d'escriure la paraula correctament <strong>2 cops consecutius</strong>.</li>
+                        <li><strong>Nivells:</strong> Cada 10 paraules encertades es desbloqueja un nou nivell amb icona i confeti.</li>
+                    </ul>
+                </div>
+                <div class="manual-section">
+                    <h3>📋 Gestió de Paraules</h3>
+                    <p>Pots carregar el teu propi llistat des del menú "Carregar noves paraules". El fitxer ha de ser <strong>.csv</strong> o <strong>.txt</strong> amb codificació UTF-8 i aquest format:</p>
+                    <div class="manual-code">COMPLETA,MINUSCULA,MAJUSCULA<br>ANAGRAMA,anagram_,ANAGRAM_<br>AVANTATGE,avantatg__,AVANTATG__</div>
+                    <p style="margin-top:8px; font-size: 0.9em;">Utilitza el botó "Descarregar model" per obtenir una plantilla llesta per omplir.</p>
+                </div>
+                <div class="manual-section">
+                    <h3>💾 Sessions</h3>
+                    <ul>
+                        <li><strong>Guardar:</strong> Desa el progrés al navegador (localStorage). Persistent entre tancaments.</li>
+                        <li><strong>Descarregar:</strong> Genera un fitxer <code>.json</code> per fer còpia de seguretat o portar el progrés a un altre dispositiu.</li>
+                        <li><strong>Carregar:</strong> Restaura una partida des del navegador o des d'un fitxer <code>.json</code> previ.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-actions" style="margin-top: 20px;">
+                <button class="modal-btn primary" onclick="closeModal('modal-teacher-manual')">Entesos</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const defaultWords = [
+            { complete: "ANAGRAMA", minuscula: "anagram_", majuscula: "ANAGRAM_", answer: ["a"] },
+            { complete: "CATÀSTROFE", minuscula: "catàstrof_", majuscula: "CATÀSTROF_", answer: ["e"] },
+            { complete: "DRAMA", minuscula: "dram_", majuscula: "DRAM_", answer: ["a"] },
+            { complete: "FARINGE", minuscula: "faring_", majuscula: "FARING_", answer: ["e"] },
+            { complete: "PENTAGRAMA", minuscula: "pentagram_", majuscula: "PENTAGRAM_", answer: ["a"] },
+            { complete: "SUPERFÍCIE", minuscula: "superfici_", majuscula: "SUPERFICI_", answer: ["e"] },
+            { complete: "BASE", minuscula: "bas_", majuscula: "BAS_", answer: ["e"] },
+            { complete: "CINEMA", minuscula: "cinem_", majuscula: "CINEM_", answer: ["a"] },
+            { complete: "DRUIDA", minuscula: "druid_", majuscula: "DRUID_", answer: ["a"] },
+            { complete: "IDIOMA", minuscula: "idiom_", majuscula: "IDIOM_", answer: ["a"] },
+            { complete: "PIJAMA", minuscula: "pijam_", majuscula: "PIJAM_", answer: ["a"] },
+            { complete: "TITELLA", minuscula: "titell_", majuscula: "TITELL_", answer: ["a"] },
+            { complete: "CAL·LIGRAMA", minuscula: "cal·ligram_", majuscula: "CAL·LIGRAM_", answer: ["a"] },
+            { complete: "COMETA", minuscula: "comet_", majuscula: "COMET_", answer: ["a"] },
+            { complete: "ENIGMA", minuscula: "enigm_", majuscula: "ENIGM_", answer: ["a"] },
+            { complete: "MAPA", minuscula: "map_", majuscula: "MAP_", answer: ["a"] },
+            { complete: "POEMA", minuscula: "poem_", majuscula: "POEM_", answer: ["a"] },
+            { complete: "TORRE", minuscula: "torr_", majuscula: "TORR_", answer: ["e"] },
+            { complete: "CALIFA", minuscula: "calif_", majuscula: "CALIF_", answer: ["a"] },
+            { complete: "DELTA", minuscula: "delt_", majuscula: "DELT_", answer: ["a"] },
+            { complete: "ESQUEMA", minuscula: "esquem_", majuscula: "ESQUEM_", answer: ["a"] },
+            { complete: "PARADIGMA", minuscula: "paradigm_", majuscula: "PARADIGM_", answer: ["a"] },
+            { complete: "SÈRIE", minuscula: "sèri_", majuscula: "SÈRI_", answer: ["e"] },
+            { complete: "VERGE", minuscula: "verg_", majuscula: "VERG_", answer: ["e"] },
+            { complete: "AGRICULTURA", minuscula: "agricultur_", majuscula: "AGRICULTUR_", answer: ["a"] },
+            { complete: "APRENENTATGE", minuscula: "aprenentatg_", majuscula: "APRENENTATG_", answer: ["e"] },
+            { complete: "CERCLE", minuscula: "cercl_", majuscula: "CERCL_", answer: ["e"] },
+            { complete: "EMBALATGE", minuscula: "embalatg_", majuscula: "EMBALATG_", answer: ["e"] },
+            { complete: "MÀNEGA", minuscula: "màneg_", majuscula: "MÀNEG_", answer: ["a"] },
+            { complete: "PERA", minuscula: "per_", majuscula: "PER_", answer: ["a"] },
+            { complete: "CIVADA", minuscula: "civad_", majuscula: "CIVAD_", answer: ["a"] },
+            { complete: "BARRACA", minuscula: "barrac_", majuscula: "BARRAC_", answer: ["a"] },
+            { complete: "CIGNE", minuscula: "cign_", majuscula: "CIGN_", answer: ["e"] },
+            { complete: "ESPECTACLE", minuscula: "espectacl_", majuscula: "ESPECTACL_", answer: ["e"] },
+            { complete: "MORRERA", minuscula: "morrer_", majuscula: "MORRER_", answer: ["a"] },
+            { complete: "RAPINYAIRE", minuscula: "rapinyair_", majuscula: "RAPINYAIR_", answer: ["e"] },
+            { complete: "COGOMBRE", minuscula: "cogombr_", majuscula: "COGOMBR_", answer: ["e"] },
+            { complete: "CAFRE", minuscula: "cafr_", majuscula: "CAFR_", answer: ["a"] },
+            { complete: "EDICTE", minuscula: "edict_", majuscula: "EDICT_", answer: ["e"] },
+            { complete: "GORGE", minuscula: "gorg_", majuscula: "GORG_", answer: ["e"] },
+            { complete: "ORFE", minuscula: "orf_", majuscula: "ORF_", answer: ["e"] },
+            { complete: "TARDA", minuscula: "tard_", majuscula: "TARD_", answer: ["a"] },
+            { complete: "AIXADA", minuscula: "aixad_", majuscula: "AIXAD_", answer: ["a"] },
+            { complete: "CARENA", minuscula: "caren_", majuscula: "CAREN_", answer: ["a"] },
+            { complete: "EINA", minuscula: "ein_", majuscula: "EIN_", answer: ["a"] },
+            { complete: "JARDINERA", minuscula: "jardiner_", majuscula: "JARDINER_", answer: ["a"] },
+            { complete: "PASTURA", minuscula: "pastur_", majuscula: "PASTUR_", answer: ["a"] },
+            { complete: "TOTXANA", minuscula: "totxan_", majuscula: "TOTXAN_", answer: ["a"] },
+            { complete: "CORRE", minuscula: "corr_", majuscula: "CORR_", answer: ["e"] },
+            { complete: "VINE", minuscula: "vin_", majuscula: "VIN_", answer: ["e"] },
+            { complete: "OBRE", minuscula: "obr_", majuscula: "OBR_", answer: ["e"] },
+            { complete: "OMPLE", minuscula: "ompl_", majuscula: "OMPL_", answer: ["e"] },
+            { complete: "PERDRE", minuscula: "perdr_", majuscula: "PERDR_", answer: ["e"] },
+            { complete: "SEURE", minuscula: "s_ure", majuscula: "S_URE", answer: ["e"] },
+            { complete: "TREURE", minuscula: "tr_ure", majuscula: "TR_URE", answer: ["e"] },
+            { complete: "JEURE", minuscula: "j_ure", majuscula: "J_URE", answer: ["e"] },
+            { complete: "NÉIXER", minuscula: "n_ixer", majuscula: "N_IXER", answer: ["é"] },
+            { complete: "AFAITAR", minuscula: "af_itar", majuscula: "AF_ITAR", answer: ["a"] },
+            { complete: "AMBAIXADA", minuscula: "ambaixad_", majuscula: "AMBAIXAD_", answer: ["a"] },
+            { complete: "ARRAVATAR-SE", minuscula: "arr_vatar-se", majuscula: "ARR_VATAR-SE", answer: ["a"] },
+            { complete: "ASSASSÍ", minuscula: "ass_ssí", majuscula: "ASS_SSÍ", answer: ["a"] },
+            { complete: "AVALUAR", minuscula: "_valuar", majuscula: "_VALUAR", answer: ["a"] },
+            { complete: "AVANTATGE", minuscula: "avantatg__", majuscula: "AVANTATG__", answer: ["a", "e"] },
+            { complete: "AVARIA", minuscula: "av_ria", majuscula: "AV_RIA", answer: ["a"] },
+            { complete: "DAVANT", minuscula: "d_vant", majuscula: "D_VANT", answer: ["a"] },
+            { complete: "LATRINA", minuscula: "l_trina", majuscula: "L_TRINA", answer: ["a"] },
+            { complete: "MARAGDA", minuscula: "maragd_", majuscula: "MARAGD_", answer: ["a"] },
+            { complete: "RAMAT", minuscula: "r_mat", majuscula: "R_MAT", answer: ["a"] },
+            { complete: "RANCOR", minuscula: "r_ncor", majuscula: "R_NCOR", answer: ["a"] },
+            { complete: "SANEFA", minuscula: "s_nefa", majuscula: "S_NEFA", answer: ["a"] },
+            { complete: "SARDENYA", minuscula: "sard_nya", majuscula: "SARD_NYA", answer: ["e"] },
+            { complete: "ALBERCOC", minuscula: "alb_rcoc", majuscula: "ALB_RCOC", answer: ["e"] },
+            { complete: "ALMOGÀVER", minuscula: "almogàv_r", majuscula: "ALMOGÀV_R", answer: ["e"] },
+            { complete: "AMETISTA", minuscula: "am_tista", majuscula: "AM_TISTA", answer: ["e"] },
+            { complete: "ASSEMBLEA", minuscula: "ass_mblea", majuscula: "ASS_MBLEA", answer: ["e"] },
+            { complete: "EBEN", minuscula: "_ben", majuscula: "_BEN", answer: ["e"] },
+            { complete: "EFEMINAT", minuscula: "_feminat", majuscula: "_FEMINAT", answer: ["e"] },
+            { complete: "EMPARAR", minuscula: "_mparar", majuscula: "_MPARAR", answer: ["e"] },
+            { complete: "EMPORDÀ", minuscula: "_mpordà", majuscula: "_MPORDÀ", answer: ["e"] },
+            { complete: "EMPÚRIES", minuscula: "_mpúries", majuscula: "_MPÚRIES", answer: ["e"] },
+            { complete: "ESPÀRREC", minuscula: "_spàrrec", majuscula: "_SPÀRREC", answer: ["e"] },
+            { complete: "ESTELLA", minuscula: "_stella", majuscula: "_STELLA", answer: ["e"] },
+            { complete: "ESTENDARD", minuscula: "est_ndard", majuscula: "EST_NDARD", answer: ["e"] },
+            { complete: "GELEA", minuscula: "g_lea", majuscula: "G_LEA", answer: ["e"] },
+            { complete: "JAVELINA", minuscula: "jav_lina", majuscula: "JAV_LINA", answer: ["a"] },
+            { complete: "MERAVELLA", minuscula: "m_ravella", majuscula: "M_RAVELLA", answer: ["e"] },
+            { complete: "MONESTIR", minuscula: "mon_stir", majuscula: "MON_STIR", answer: ["e"] },
+            { complete: "RÀFEGA", minuscula: "ràf_ga", majuscula: "RÀF_GA", answer: ["e"] },
+            { complete: "RESPLENDIR", minuscula: "r_splendir", majuscula: "R_SPLENDIR", answer: ["e"] },
+            { complete: "SERGENT", minuscula: "s_rgent", majuscula: "S_RGENT", answer: ["e"] },
+            { complete: "SETÍ", minuscula: "s_tí", majuscula: "S_TÍ", answer: ["e"] },
+            { complete: "TEMPTEJAR", minuscula: "t_mptejar", majuscula: "T_MPTEJAR", answer: ["e"] },
+            { complete: "TREBALL", minuscula: "tr_ball", majuscula: "TR_BALL", answer: ["e"] },
+            { complete: "VERNÍS", minuscula: "v_rnís", majuscula: "V_RNÍS", answer: ["e"] },
+            { complete: "REMAT", minuscula: "r_mat", majuscula: "R_MAT", answer: ["e"] },
+            { complete: "DUBTE", minuscula: "dubt_", majuscula: "DUBT_", answer: ["e"] },
+            { complete: "DUBTA", minuscula: "dubt_", majuscula: "DUBT_", answer: ["a"] },
+            { complete: "TRACTE", minuscula: "tract_", majuscula: "TRACT_", answer: ["e"] },
+            { complete: "TRACTA", minuscula: "tract_", majuscula: "TRACT_", answer: ["a"] },
+            { complete: "VIATGE", minuscula: "viatg_", majuscula: "VIATG_", answer: ["e"] },
+            { complete: "VIATJA", minuscula: "viatj_", majuscula: "VIATJ_", answer: ["a"] },
+            { complete: "ASPIRAVA", minuscula: "_spirava", majuscula: "_SPIRAVA", answer: ["a"] },
+            { complete: "ESPIRAVA", minuscula: "_spirava", majuscula: "_SPIRAVA", answer: ["e"] }
+        ];
+
+        let words = [...defaultWords];
+        const levelIcons = ['⭐', '🏆', '🎖️', '👑', '💎', '🦁', '🚀', '🌟', '🎯', '🏅'];
+        const confettiColors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff6fff', '#ffa500', '#00d2ff', '#ff4757'];
+        const STORAGE_KEY = 'vocalNeutraSession';
+
+        let state = {
+            availableWords: [], currentIndex: null, phase: 'show', wordCase: null,
+            wordCorrectCount: 0, wordRequiredCorrect: 1, completedCount: 0,
+            showTimer: null, skipHandler: null, sessionStartTime: null
+        };
+        let pendingWords = null;
+
+        // ========== MENÚ I GUIA ==========
+        function toggleMenu() {
+            const panel = document.getElementById('menu-panel');
+            const overlay = document.getElementById('menu-overlay');
+            if (panel.classList.contains('active')) closeMenu();
+            else { panel.classList.add('active'); overlay.classList.add('active'); }
+        }
+        function closeMenu() {
+            document.getElementById('menu-panel').classList.remove('active');
+            document.getElementById('menu-overlay').classList.remove('active');
+        }
+        function toggleStudentGuide() {
+            const guide = document.getElementById('student-guide');
+            guide.classList.toggle('visible');
+        }
+        function showTeacherManual() {
+            closeMenu();
+            openModal('modal-teacher-manual');
+        }
+
+        // ========== SISTEMA DE SESSIÓ ==========
+        function getSessionData() {
+            return { version: 1, completedCount: state.completedCount, availableWords: state.availableWords, sessionStartTime: state.sessionStartTime, wordsCount: words.length, savedAt: new Date().toISOString() };
+        }
+        function saveToLocalStorage() {
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(getSessionData())); return true; } 
+            catch (e) { console.error('Error guardant:', e); return false; }
+        }
+        function loadFromLocalStorageData() {
+            try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; } 
+            catch (e) { return null; }
+        }
+        function hasSavedSession() { return loadFromLocalStorageData() !== null; }
+        
+        function saveSession() {
+            closeMenu();
+            if (hasSavedSession()) {
+                const saved = loadFromLocalStorageData();
+                document.getElementById('overwrite-message').innerHTML = `Ja tens una sessió guardada al navegador.<br><span style="color:#888; font-size:0.9em;">Guardada el: ${new Date(saved.savedAt).toLocaleString('ca-ES')}</span><br><span style="color:#dc3545; font-size:0.9em;">Vols sobreescriure-la?</span>`;
+                openModal('modal-overwrite');
+            } else { doSave(); }
+        }
+        function confirmSave() { closeModal('modal-overwrite'); doSave(); }
+        function doSave() {
+            if (saveToLocalStorage()) showToast('✅ Sessió guardada correctament!', 'success');
+            else showToast('❌ Error guardant la sessió', 'error');
+        }
+        function exportSession() {
+            closeMenu();
+            try {
+                const data = getSessionData();
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = `vocal-neutra-sessio-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                showToast('📤 Fitxer descarregat!', 'success');
+            } catch (e) { showToast('❌ Error descarregant el fitxer', 'error'); }
+        }
+        function showLoadModal() { closeMenu(); openModal('modal-load'); }
+        function loadFromLocalStorage() {
+            const data = loadFromLocalStorageData();
+            if (!data) { showToast('❌ No hi ha cap sessió guardada al navegador', 'error'); return; }
+            closeModal('modal-load'); applySessionData(data); showToast('✅ Sessió carregada des del navegador!', 'success');
+        }
+        function importSessionFromFile(event) {
+            const file = event.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (!validateSessionData(data)) { showToast('❌ El fitxer no és una sessió vàlida', 'error'); return; }
+                    closeModal('modal-load'); applySessionData(data); showToast('✅ Sessió carregada des del fitxer!', 'success');
+                } catch (err) { showToast('❌ Error llegint el fitxer', 'error'); }
+            };
+            reader.readAsText(file); event.target.value = '';
+        }
+        function validateSessionData(data) {
+            if (!data || typeof data !== 'object') return false;
+            if (typeof data.completedCount !== 'number' || !Array.isArray(data.availableWords)) return false;
+            if (data.completedCount < 0 || data.completedCount > words.length) return false;
+            for (const idx of data.availableWords) { if (typeof idx !== 'number' || idx < 0 || idx >= words.length) return false; }
+            return true;
+        }
+        function applySessionData(data) {
+            state.completedCount = data.completedCount; state.availableWords = [...data.availableWords];
+            state.sessionStartTime = data.sessionStartTime || new Date().toISOString();
+            state.wordCorrectCount = 0; state.wordRequiredCorrect = 1;
+            document.getElementById('progress').textContent = state.completedCount;
+            updateLevelBadge();
+            if (state.availableWords.length === 0) showFinalCelebration(); else loadNextWord();
+        }
+        function showResetModal() { closeMenu(); openModal('modal-reset'); }
+        function confirmReset() {
+            closeModal('modal-reset');
+            state.completedCount = 0; state.availableWords = Array.from({length: words.length}, (_, i) => i);
+            state.sessionStartTime = new Date().toISOString(); state.wordCorrectCount = 0; state.wordRequiredCorrect = 1;
+            document.getElementById('progress').textContent = 0; updateLevelBadge(); loadNextWord();
+            showToast('🔄 Nova partida començada!', 'info');
+        }
+        function showDeleteSavedModal() {
+            closeMenu();
+            const saved = loadFromLocalStorageData();
+            const msg = document.getElementById('delete-saved-message');
+            if (saved) msg.innerHTML = `Vols esborrar la sessió guardada al navegador?<br><span style="color:#888; font-size:0.9em;">Guardada el: ${new Date(saved.savedAt).toLocaleString('ca-ES')}</span><br><span style="color: #dc3545; font-size: 0.9em;">Aquesta acció no es pot desfer.</span>`;
+            else msg.innerHTML = `<span style="color: #888;">No hi ha cap sessió guardada al navegador.</span>`;
+            openModal('modal-delete-saved');
+        }
+        function confirmDeleteSaved() {
+            closeModal('modal-delete-saved');
+            try { localStorage.removeItem(STORAGE_KEY); showToast('🗑️ Sessió guardada esborrada!', 'info'); } 
+            catch (e) { showToast('❌ Error esborrant la sessió', 'error'); }
+        }
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message; toast.className = `toast ${type} show`;
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+        document.addEventListener('click', function(e) { if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('active'); });
+
+        // ========== CÀRREGA DE NOVES PARAULES ==========
+        function showLoadWordsModal() { closeMenu(); openModal('modal-load-words'); }
+        function showWordsModelPreview() {
+            closeModal('modal-load-words');
+            document.getElementById('model-preview-content').innerHTML = `<span class="comment"># Llistat de paraules per a exercicis de vocal neutra</span>\n<span class="comment"># Format: COMPLETA,MINUSCULA,MAJUSCULA</span>\n<span class="header">COMPLETA,MINUSCULA,MAJUSCULA</span>\nANAGRAMA,anagram_,ANAGRAM_\nCATÀSTROFE,catàstrof_,CATÀSTROF_\nAVANTATGE,avantatg__,AVANTATG__`;
+            openModal('modal-model-preview');
+        }
+        function downloadWordsModel() {
+            closeMenu(); closeModal('modal-model-preview');
+            const content = `# MODEL DE LLISTAT DE PARAULES - VOCAL NEUTRA\n# FORMAT: COMPLETA,MINUSCULA,MAJUSCULA\n# Les línies amb # són comentaris.\nCOMPLETA,MINUSCULA,MAJUSCULA\nANAGRAMA,anagram_,ANAGRAM_\nCATÀSTROFE,catàstrof_,CATÀSTROF_\nAVANTATGE,avantatg__,AVANTATG__\nSEURE,s_ure,S_URE`;
+            const blob = new Blob([content], { type: 'text/csv;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'model-paraules-vocal-neutra.csv';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+            showToast('📥 Model descarregat!', 'success');
+        }
+        function importWordsFromFile(event) {
+            const file = event.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsedWords = parseWordsCSV(e.target.result);
+                    if (parsedWords.length === 0) { showToast('❌ No s\'han trobat paraules vàlides', 'error'); return; }
+                    if (parsedWords.length < 3) { showToast('⚠️ Només ' + parsedWords.length + ' paraules. Se\'n necessiten almenys 3.', 'error'); return; }
+                    for (let i = 0; i < parsedWords.length; i++) {
+                        const w = parsedWords[i];
+                        if (!w.complete || !w.minuscula || !w.majuscula || !w.answer || w.answer.length === 0) { showToast(`❌ Error a la línia ${i + 1}`, 'error'); return; }
+                        if ((w.minuscula.match(/_/g) || []).length !== w.answer.length) { showToast(`❌ Error a "${w.complete}": els _ no coincideixen`, 'error'); return; }
+                    }
+                    closeModal('modal-load-words');
+                    if (state.completedCount > 0 || state.availableWords.length < words.length) {
+                        pendingWords = parsedWords;
+                        document.getElementById('confirm-words-message').innerHTML = `Estàs a mig d'una partida (${state.completedCount} paraules).<br><span style="color:#fd7e14; font-weight:bold;">S'han trobat ${parsedWords.length} paraules.</span><br><span style="color: #dc3545; font-size: 0.9em;">Vols carregar-les i començar de zero?</span>`;
+                        openModal('modal-confirm-words');
+                    } else { applyNewWords(parsedWords); }
+                } catch (err) { showToast('❌ Error llegint el fitxer', 'error'); }
+            };
+            reader.readAsText(file, 'UTF-8'); event.target.value = '';
+        }
+        function parseWordsCSV(text) {
+            const lines = text.split(/\r?\n/); const result = []; let firstDataLine = true;
+            for (let line of lines) {
+                line = line.trim(); if (line === '' || line.startsWith('#')) continue;
+                if (firstDataLine) {
+                    if (line.toLowerCase().includes('completa') || line.toLowerCase().includes('minuscula')) { firstDataLine = false; continue; }
+                    firstDataLine = false;
+                }
+                const parts = line.split(',').map(p => p.trim()); if (parts.length < 3) continue;
+                const complete = parts[0].toUpperCase(), minuscula = parts[1].toLowerCase(), majuscula = parts[2].toUpperCase();
+                const answer = extractAnswers(complete, minuscula); if (answer === null) continue;
+                result.push({ complete, minuscula, majuscula, answer });
+            }
+            return result;
+        }
+        function extractAnswers(complete, template) {
+            const answers = []; let tIdx = 0, cIdx = 0;
+            while (tIdx < template.length && cIdx < complete.length) {
+                if (template[tIdx] === '_') {
+                    let nextTemplateChar = null;
+                    for (let k = tIdx + 1; k < template.length; k++) { if (template[k] !== '_') { nextTemplateChar = template[k]; break; } }
+                    if (nextTemplateChar === null) {
+                        const remaining = complete.length - cIdx, remainingBlanks = (template.substring(tIdx).match(/_/g) || []).length;
+                        if (remaining === remainingBlanks) { for (let i = 0; i < remainingBlanks; i++) answers.push(complete[cIdx + i]); cIdx += remaining; tIdx += remainingBlanks; }
+                        else return null;
+                    } else {
+                        const pos = complete.indexOf(nextTemplateChar, cIdx); if (pos === -1) return null;
+                        for (let i = cIdx; i < pos; i++) answers.push(complete[i]);
+                        cIdx = pos; while (tIdx < template.length && template[tIdx] === '_') tIdx++;
+                    }
+                } else {
+                    if (template[tIdx].toLowerCase() !== complete[cIdx].toLowerCase()) return null;
+                    tIdx++; cIdx++;
+                }
+            }
+            return (tIdx === template.length && cIdx === complete.length) ? answers : null;
+        }
+        function confirmLoadWords() { closeModal('modal-confirm-words'); if (pendingWords) { applyNewWords(pendingWords); pendingWords = null; } }
+        function applyNewWords(newWords) {
+            words = newWords; state.completedCount = 0; state.availableWords = Array.from({length: words.length}, (_, i) => i);
+            state.sessionStartTime = new Date().toISOString(); state.wordCorrectCount = 0; state.wordRequiredCorrect = 1;
+            document.getElementById('total').textContent = words.length; document.getElementById('progress').textContent = 0;
+            updateLevelBadge(); try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+            loadNextWord(); showToast(`✅ S'han carregat ${words.length} paraules noves!`, 'success');
+        }
+
+        // ========== LÒGICA DEL JOC ==========
+        function init() {
+            state.availableWords = Array.from({length: words.length}, (_, i) => i);
+            state.sessionStartTime = new Date().toISOString();
+            document.getElementById('total').textContent = words.length;
+            updateLevelBadge(); loadNextWord();
+        }
+        function getCurrentLevel() { return Math.floor(state.completedCount / 10) + 1; }
+        function updateLevelBadge() {
+            const level = getCurrentLevel();
+            document.getElementById('level-badge').textContent = `${levelIcons[(level - 1) % levelIcons.length]} Nivell ${level}`;
+        }
+        function loadNextWord() {
+            if (state.availableWords.length === 0) { showFinalCelebration(); return; }
+            const randomIdx = Math.floor(Math.random() * state.availableWords.length);
+            state.currentIndex = state.availableWords[randomIdx]; state.availableWords.splice(randomIdx, 1);
+            state.phase = 'show'; state.wordCase = null; state.wordCorrectCount = 0; state.wordRequiredCorrect = 1;
+            renderExercise(); startShowPhase();
+        }
+        function startShowPhase() {
+            if (state.skipHandler) document.removeEventListener('keydown', state.skipHandler);
+            state.showTimer = setTimeout(() => { state.phase = 'letters'; renderExercise(); }, 3500);
+            state.skipHandler = function(e) {
+                if (state.phase === 'show') {
+                    clearTimeout(state.showTimer); document.removeEventListener('keydown', state.skipHandler);
+                    state.skipHandler = null; state.phase = 'letters'; renderExercise();
+                }
+            };
+            document.addEventListener('keydown', state.skipHandler);
+        }
+        function renderExercise() {
+            const word = words[state.currentIndex]; const area = document.getElementById('exercise-area');
+            let html = '';
+            if (state.phase === 'show') {
+                html = `<div class="word-complete-container"><div class="word-complete">${word.complete}</div><div class="timer-bar"><div class="timer-fill"></div></div><div class="timer-text">👀 Memoritza la paraula...</div><div class="skip-hint">(Pots prémer qualsevol tecla per continuar)</div></div>`;
+            } else if (state.phase === 'letters') {
+                html = `<div class="word-row"><div class="word-column"><div class="word-label">📝 Minúscules</div><div class="word-display minuscula">${createWordInputs(word.minuscula, word.answer, 'minuscula')}</div></div><div class="word-column"><div class="word-label">📝 Majúscules</div><div class="word-display majuscula">${createWordInputs(word.majuscula, word.answer, 'majuscula')}</div></div></div>`;
+            } else if (state.phase === 'word') {
+                html = `<div class="word-input-container"><div class="word-input-label">✍️ Escriu la paraula sencera:</div><div class="word-input-case">${state.wordCase === 'minuscula' ? '🔤 En minúscules' : '🔠 En MAJÚSCULES'}</div><div class="word-input-wrapper"><input type="text" class="word-input" id="word-input" placeholder="" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="check-btn" onclick="checkWord()">Comprova</button></div><div class="letter-feedback" id="letter-feedback"></div><div class="feedback" id="feedback"></div><div class="attempts-info" id="attempts-info"></div></div>`;
+            }
+            area.innerHTML = html;
+            if (state.phase === 'letters') {
+                const inputs = document.querySelectorAll('.letter-input');
+                inputs.forEach(input => {
+                    input.addEventListener('input', function() { checkLetter(this); });
+                    input.addEventListener('keydown', function(e) {
+                        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                            const allInputs = Array.from(inputs); const currentIdx = allInputs.indexOf(this);
+                            if (e.key === 'ArrowRight' && currentIdx < allInputs.length - 1) allInputs[currentIdx + 1].focus();
+                            else if (e.key === 'ArrowLeft' && currentIdx > 0) allInputs[currentIdx - 1].focus();
+                        }
+                    });
+                });
+                if (inputs.length > 0) inputs[0].focus();
+            } else if (state.phase === 'word') {
+                const wordInput = document.getElementById('word-input');
+                wordInput.addEventListener('input', function() { updateLetterFeedback(); });
+                wordInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') checkWord(); });
+                wordInput.focus(); updateAttemptsInfo(); updateLetterFeedback();
+            }
+        }
+        function createWordInputs(wordTemplate, answers, type) {
+            let html = ''; let inputIndex = 0; const parts = wordTemplate.split('_');
+            parts.forEach((part, i) => {
+                if (part) html += `<span class="word-part">${part}</span>`;
+                if (i < parts.length - 1) {
+                    html += `<div class="letter-input-container"><input type="text" class="letter-input" maxlength="1" data-input-index="${inputIndex}" data-type="${type}" data-answer="${answers[inputIndex]}" autocomplete="off" autocapitalize="off" spellcheck="false"><span class="sticker" id="sticker-${type}-${inputIndex}"></span></div>`;
+                    inputIndex++;
+                }
+            });
+            return html;
+        }
+        function checkLetter(input) {
+            const value = input.value; const answer = input.dataset.answer; const type = input.dataset.type;
+            const inputIndex = input.dataset.inputIndex; const sticker = document.getElementById(`sticker-${type}-${inputIndex}`);
+            let expected = type === 'minuscula' ? answer.toLowerCase() : answer.toUpperCase();
+            if (value === '') { sticker.textContent = ''; input.classList.remove('correct', 'incorrect'); return; }
+            if (value === expected) {
+                sticker.textContent = '✅'; input.classList.add('correct'); input.classList.remove('incorrect'); input.disabled = true;
+                const allInputs = document.querySelectorAll(`.letter-input[data-type="${type}"]`);
+                if (Array.from(allInputs).every(inp => inp.classList.contains('correct'))) {
+                    const minusculaComplete = Array.from(document.querySelectorAll('.letter-input[data-type="minuscula"]')).every(inp => inp.classList.contains('correct'));
+                    const majusculaComplete = Array.from(document.querySelectorAll('.letter-input[data-type="majuscula"]')).every(inp => inp.classList.contains('correct'));
+                    if (minusculaComplete && majusculaComplete) setTimeout(() => startWordPhase(), 600);
+                }
+            } else { sticker.textContent = '❌'; input.classList.add('incorrect'); input.classList.remove('correct'); }
+        }
+        function startWordPhase() { state.phase = 'word'; state.wordCase = Math.random() < 0.5 ? 'minuscula' : 'majuscula'; renderExercise(); }
+        function updateLetterFeedback() {
+            const input = document.getElementById('word-input'); const feedbackDiv = document.getElementById('letter-feedback');
+            const word = words[state.currentIndex]; if (!input || !feedbackDiv) return;
+            const expected = state.wordCase === 'minuscula' ? word.complete.toLowerCase() : word.complete.toUpperCase();
+            const typed = input.value; let html = '';
+            for (let i = 0; i < Math.max(typed.length, expected.length); i++) {
+                if (i < typed.length) {
+                    if (typed[i] === expected[i]) html += `<span class="letter-correct">${typed[i]}</span>`;
+                    else { html += `<span class="letter-incorrect">${typed[i]}</span>`; if (i < expected.length) html += `<span class="letter-expected">${expected[i]}</span>`; }
+                } else { html += `<span class="letter-placeholder">_</span>`; }
+            }
+            feedbackDiv.innerHTML = html;
+        }
+        function checkWord() {
+            const input = document.getElementById('word-input'); const feedback = document.getElementById('feedback');
+            const word = words[state.currentIndex];
+            const expected = state.wordCase === 'minuscula' ? word.complete.toLowerCase() : word.complete.toUpperCase();
+            const userAnswer = input.value;
+            if (userAnswer === expected) {
+                state.wordCorrectCount++;
+                if (state.wordCorrectCount >= state.wordRequiredCorrect) {
+                    state.completedCount++; document.getElementById('progress').textContent = state.completedCount;
+                    input.classList.add('correct'); input.disabled = true;
+                    if (state.completedCount % 10 === 0) {
+                        feedback.textContent = '🎉 Paraula completada!'; feedback.className = 'feedback success';
+                        setTimeout(() => showLevelUp(state.completedCount / 10), 1000);
+                    } else {
+                        feedback.textContent = '🎉 Paraula completada! Passant a la següent...'; feedback.className = 'feedback success';
+                        setTimeout(() => loadNextWord(), 1800);
+                    }
+                } else {
+                    feedback.textContent = `✅ Correcte! Un més!`; feedback.className = 'feedback success';
+                    updateAttemptsInfo(); input.value = ''; input.focus(); updateLetterFeedback();
+                }
+            } else {
+                state.wordRequiredCorrect = 2; state.wordCorrectCount = 0;
+                feedback.textContent = '❌ Incorrecte. Has d\'escriure-la correctament 2 cops.'; feedback.className = 'feedback error';
+                input.value = ''; input.focus(); updateAttemptsInfo(); updateLetterFeedback();
+            }
+        }
+        function updateAttemptsInfo() {
+            const info = document.getElementById('attempts-info'); if (!info) return;
+            if (state.wordRequiredCorrect <= 1) { info.textContent = ''; info.style.display = 'none'; }
+            else { info.textContent = `🎯 Et falten ${state.wordRequiredCorrect - state.wordCorrectCount} intent(s) correcte(s) consecutiu(s).`; info.style.display = 'inline-block'; }
+        }
+        function showLevelUp(level) {
+            const area = document.getElementById('exercise-area'); const icon = levelIcons[(level - 1) % levelIcons.length];
+            let confettiHtml = '';
+            for (let i = 0; i < 50; i++) {
+                const color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                confettiHtml += `<div class="confetti-piece" style="left: ${Math.random() * 100}%; background: ${color}; width: ${8 + Math.random() * 15}px; height: ${8 + Math.random() * 15}px; border-radius: ${Math.random() > 0.5 ? '50%' : '0'}; animation-delay: ${Math.random() * 2}s; animation-duration: ${2 + Math.random() * 2}s;"></div>`;
+            }
+            let galleryHtml = '';
+            if (level > 0) {
+                galleryHtml = `<div class="levels-gallery"><div class="levels-gallery-title">🏅 Nivells assolits fins ara:</div><div class="levels-gallery-grid">`;
+                for (let i = 1; i <= level; i++) galleryHtml += `<div class="level-trophy" style="animation-delay: ${(i-1) * 0.1}s"><div class="level-trophy-icon">${levelIcons[(i - 1) % levelIcons.length]}</div><div class="level-trophy-label">Niv. ${i}</div></div>`;
+                galleryHtml += `</div></div>`;
+            }
+            area.innerHTML = `<div class="level-up-container"><div class="level-up-bg"></div><div class="confetti-container">${confettiHtml}</div><div class="level-up-content"><div class="level-icon">${icon}</div><div class="level-title">Has superat el Nivell ${level}!</div><div class="level-stars">⭐⭐⭐⭐⭐</div><div class="level-subtitle">Has completat ${level * 10} paraules correctament!</div>${galleryHtml}<button class="level-continue-btn" onclick="continueAfterLevel()">Continuar al Nivell ${level + 1} ➡️</button></div></div>`;
+            updateLevelBadge();
+        }
+        function continueAfterLevel() { loadNextWord(); }
+        function showFinalCelebration() {
+            const area = document.getElementById('exercise-area'); const totalLevels = Math.floor(state.completedCount / 10);
+            let confettiHtml = '';
+            for (let i = 0; i < 80; i++) {
+                const color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                confettiHtml += `<div class="confetti-piece" style="left: ${Math.random() * 100}%; background: ${color}; width: ${8 + Math.random() * 15}px; height: ${8 + Math.random() * 15}px; border-radius: ${Math.random() > 0.5 ? '50%' : '0'}; animation-delay: ${Math.random() * 3}s; animation-duration: ${2 + Math.random() * 3}s;"></div>`;
+            }
+            let galleryHtml = '';
+            if (totalLevels > 0) {
+                galleryHtml = `<div class="levels-gallery"><div class="levels-gallery-title">🏅 Tots els nivells superats:</div><div class="levels-gallery-grid">`;
+                for (let i = 1; i <= totalLevels; i++) galleryHtml += `<div class="level-trophy" style="animation-delay: ${(i-1) * 0.1}s"><div class="level-trophy-icon">${levelIcons[(i - 1) % levelIcons.length]}</div><div class="level-trophy-label">Niv. ${i}</div></div>`;
+                galleryHtml += `</div></div>`;
+            }
+            area.innerHTML = `<div class="level-up-container"><div class="level-up-bg"></div><div class="confetti-container">${confettiHtml}</div><div class="level-up-content"><div class="celebration">🎉🏆🎊</div><div class="level-title">Felicitats!</div><div class="level-subtitle">Has completat totes les ${words.length} paraules!</div>${galleryHtml}<div style="font-size:1.3em; color:#667eea; margin: 15px 0;">Has superat ${totalLevels} nivell(s)!</div><button class="level-continue-btn" onclick="restart()">🔄 Tornar a començar</button></div></div>`;
+        }
+        function restart() { state.completedCount = 0; document.getElementById('progress').textContent = 0; updateLevelBadge(); init(); }
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

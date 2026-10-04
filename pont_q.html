@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌉 Construeix el Pont</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: 'Comic Sans MS', 'Trebuchet MS', sans-serif;
+    background: linear-gradient(to bottom, #87CEEB 0%, #98D8C8 50%, #F7DC6F 100%);
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  h1 {
+    text-align: center;
+    font-size: 2.5em;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(255,255,255,0.5);
+  }
+  
+  .subtitle {
+    text-align: center;
+    font-size: 1.2em;
+    color: #34495e;
+    margin-bottom: 20px;
+  }
+  
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+  
+  .stat-box {
+    background: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 1.2em;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  
+  .game-area {
+    display: flex;
+    gap: 40px;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  
+  .column {
+    flex: 1;
+    min-width: 250px;
+  }
+  
+  .column h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 1.5em;
+  }
+  
+  .word-slot {
+    background: white;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border: 3px solid #3498db;
+  }
+  
+  .word-slot.matched {
+    background: #27ae60;
+    color: white;
+    border-color: #229954;
+  }
+  
+  .blocks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .block {
+    background: linear-gradient(135deg, #e67e22, #d35400);
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: white;
+    cursor: move;
+    cursor: grab;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    transition: transform 0.2s;
+    user-select: none;
+  }
+  
+  .block:hover {
+    transform: scale(1.05);
+  }
+  
+  .block.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+  }
+  
+  .block.matched {
+    background: #27ae60;
+    cursor: default;
+  }
+  
+  .bridge-visual {
+    text-align: center;
+    margin: 30px 0;
+    font-size: 3em;
+  }
+  
+  .feedback {
+    text-align: center;
+    font-size: 1.5em;
+    margin-top: 20px;
+    min-height: 40px;
+  }
+  
+  .feedback.correct { color: #27ae60; }
+  .feedback.wrong { color: #e74c3c; }
+  
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal.show { display: flex; }
+  
+  .modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 90%;
+  }
+  
+  .modal h2 {
+    font-size: 2.5em;
+    color: #27ae60;
+    margin-bottom: 20px;
+  }
+  
+  .modal p {
+    font-size: 1.3em;
+    margin-bottom: 20px;
+  }
+  
+  button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+  }
+  
+  button:hover { background: #2980b9; }
+  
+  @media (max-width: 768px) {
+    .game-area { flex-direction: column; }
+    h1 { font-size: 1.8em; }
+    .word-slot, .block { font-size: 1.1em; padding: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🌉 Construeix el Pont</h1>
+  <p class="subtitle">Arrossega els blocs per connectar cada paraula amb el seu antònim!</p>
+  
+  <div class="stats">
+    <div class="stat-box">✅ Encerts: <span id="score">0</span></div>
+    <div class="stat-box">❌ Errors: <span id="mistakes">0</span></div>
+    <div class="stat-box">🌉 Pont: <span id="progress">0</span>/8</div>
+  </div>
+  
+  <div class="game-area">
+    <div class="column">
+      <h2>📝 Paraules en Català</h2>
+      <div id="wordsColumn"></div>
+    </div>
+    
+    <div class="column">
+      <h2>🧱 Antònims en Anglès</h2>
+      <div class="blocks-container" id="blocksContainer"></div>
+    </div>
+  </div>
+  
+  <div class="bridge-visual" id="bridgeVisual">🌉</div>
+  
+  <div class="feedback" id="feedback"></div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h2>🎉 Pont Completat! 🎉</h2>
+    <p id="modalText">Has construït el pont perfectament!</p>
+    <button onclick="restartGame()">Construeix un altre pont</button>
+  </div>
+</div>
+
+<script>
+const llistaParaules = [
+  { cat: "RUGÓS", engAnt: "SMOOTH" },
+  { cat: "ASSEQUIBLE", engAnt: "UNAFFORDABLE" },
+  { cat: "AMPLE", engAnt: "NARROW" },
+  { cat: "TANCAT", engAnt: "OPEN" },
+  { cat: "TRAÏDOR", engAnt: "LOYAL" },
+  { cat: "BRUT", engAnt: "CLEAN" },
+  { cat: "CERT", engAnt: "FALSE" },
+  { cat: "CRIDANER", engAnt: "SUBTLE" },
+  { cat: "CARNÍVOR", engAnt: "HERBIVORE" },
+  { cat: "DESPIETAT", engAnt: "COMPASSIONATE" },
+  { cat: "BONDADÓS", engAnt: "EVIL" },
+  { cat: "ENORME", engAnt: "TINY" },
+  { cat: "COMBUSTIBLE", engAnt: "INCOMBUSTIBLE" },
+  { cat: "ÀCID", engAnt: "SWEET" },
+  { cat: "BLANC", engAnt: "BLACK" },
+  { cat: "FATIGAT", engAnt: "RESTED" },
+  { cat: "RURAL", engAnt: "URBAN" },
+  { cat: "ASSOLIBLE", engAnt: "UNATTAINABLE" },
+  { cat: "CENTRAL", engAnt: "PERIPHERAL" },
+  { cat: "COMPLET", engAnt: "INCOMPLETE" },
+  { cat: "PLE", engAnt: "EMPTY" },
+  { cat: "ARTIFICIAL", engAnt: "NATURAL" },
+  { cat: "INQUIET", engAnt: "CALM" },
+  { cat: "CRUEL", engAnt: "KIND" },
+  { cat: "CAR", engAnt: "CHEAP" },
+  { cat: "FURIÓS", engAnt: "PLACID" },
+  { cat: "CALLAT", engAnt: "TALKATIVE" },
+  { cat: "ACOMODAT", engAnt: "POOR" },
+  { cat: "AFORTUNAT", engAnt: "UNLUCKY" },
+  { cat: "VALENT", engAnt: "COWARDLY" },
+  { cat: "CAPTIU", engAnt: "FREE" },
+  { cat: "COMPETENT", engAnt: "INEPT" },
+  { cat: "MESQUÍ", engAnt: "GENEROUS" },
+  { cat: "TREBALLADOR", engAnt: "LAZY" },
+  { cat: "CURT", engAnt: "LONG" },
+  { cat: "SOLELLÓS", engAnt: "SHADY" },
+  { cat: "COMPLICAT", engAnt: "SIMPLE" },
+  { cat: "PRESENT", engAnt: "ABSENT" },
+  { cat: "FOSC", engAnt: "LIGHT" },
+  { cat: "FRED", engAnt: "HOT" },
+  { cat: "DUR", engAnt: "SOFT" },
+  { cat: "RÀPID", engAnt: "SLOW" },
+  { cat: "ALT", engAnt: "SHORT" },
+  { cat: "NOU", engAnt: "OLD" },
+  { cat: "FORT", engAnt: "WEAK" },
+  { cat: "SEC", engAnt: "WET" },
+  { cat: "PESAT", engAnt: "LIGHT" },
+  { cat: "ACTIU", engAnt: "PASSIVE" },
+  { cat: "AMABLE", engAnt: "UNFRIENDLY" },
+  { cat: "PACIENT", engAnt: "IMPATIENT" },
+  { cat: "FELIÇ", engAnt: "SAD" },
+  { cat: "DIVERTIT", engAnt: "BORING" },
+  { cat: "MODERN", engAnt: "ANCIENT" },
+  { cat: "ORDENAT", engAnt: "MESSY" },
+  { cat: "HONEST", engAnt: "DISHONEST" },
+  { cat: "OPTIMISTA", engAnt: "PESSIMISTIC" },
+  { cat: "LLEST", engAnt: "FOOLISH" },
+  { cat: "FAMÓS", engAnt: "UNKNOWN" },
+  { cat: "ELEGANT", engAnt: "RUDE" }
+];
+
+
+let score = 0;
+let mistakes = 0;
+let matchedPairs = 0;
+let totalPairs = 8;
+let currentWords = [];
+let draggedBlock = null;
+
+const wordsColumn = document.getElementById('wordsColumn');
+const blocksContainer = document.getElementById('blocksContainer');
+const scoreEl = document.getElementById('score');
+const mistakesEl = document.getElementById('mistakes');
+const progressEl = document.getElementById('progress');
+const feedbackEl = document.getElementById('feedback');
+const bridgeVisual = document.getElementById('bridgeVisual');
+const modal = document.getElementById('modal');
+const modalText = document.getElementById('modalText');
+
+function getRandomWords(count) {
+  return [...llistaParaules].sort(() => Math.random() - 0.5).slice(0, count);
+}
+
+function initGame() {
+  currentWords = getRandomWords(totalPairs);
+  score = 0;
+  mistakes = 0;
+  matchedPairs = 0;
+  
+  scoreEl.textContent = '0';
+  mistakesEl.textContent = '0';
+  progressEl.textContent = '0';
+  feedbackEl.textContent = '';
+  bridgeVisual.textContent = '🌉';
+  
+  renderWords();
+  renderBlocks();
+}
+
+function renderWords() {
+  wordsColumn.innerHTML = '';
+  currentWords.forEach((word, index) => {
+    const slot = document.createElement('div');
+    slot.className = 'word-slot';
+    slot.textContent = word.cat;
+    slot.dataset.pairId = index;
+    slot.dataset.answer = word.engAnt;
+    wordsColumn.appendChild(slot);
+  });
+}
+
+function renderBlocks() {
+  blocksContainer.innerHTML = '';
+  const shuffledWords = [...currentWords].sort(() => Math.random() - 0.5);
+  
+  shuffledWords.forEach((word, index) => {
+    const block = document.createElement('div');
+    block.className = 'block';
+    block.textContent = word.engAnt;
+    block.draggable = true;
+    block.dataset.answer = word.engAnt;
+    
+    // Drag events
+    block.addEventListener('dragstart', handleDragStart);
+    block.addEventListener('dragend', handleDragEnd);
+    
+    // Touch events per mòbil
+    block.addEventListener('touchstart', handleTouchStart, { passive: false });
+    block.addEventListener('touchmove', handleTouchMove, { passive: false });
+    block.addEventListener('touchend', handleTouchEnd);
+    
+    blocksContainer.appendChild(block);
+  });
+  
+  // Drop events per les paraules
+  document.querySelectorAll('.word-slot').forEach(slot => {
+    slot.addEventListener('dragover', handleDragOver);
+    slot.addEventListener('drop', handleDrop);
+  });
+}
+
+function handleDragStart(e) {
+  draggedBlock = e.target;
+  e.target.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragEnd(e) {
+  e.target.classList.remove('dragging');
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  const slot = e.target.closest('.word-slot');
+  
+  if (!slot || slot.classList.contains('matched')) return;
+  if (!draggedBlock || draggedBlock.classList.contains('matched')) return;
+  
+  checkMatch(slot, draggedBlock);
+}
+
+// Touch handlers per mòbil
+let touchStartY = 0;
+let touchStartX = 0;
+
+function handleTouchStart(e) {
+  e.preventDefault();
+  draggedBlock = e.target;
+  const touch = e.touches[0];
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+}
+
+function handleTouchMove(e) {
+  e.preventDefault();
+}
+
+function handleTouchEnd(e) {
+  const touch = e.changedTouches[0];
+  const element = document.elementFromPoint(touch.clientX, touch.clientY);
+  const slot = element?.closest('.word-slot');
+  
+  if (slot && !slot.classList.contains('matched')) {
+    checkMatch(slot, draggedBlock);
+  }
+}
+
+function checkMatch(slot, block) {
+  if (slot.dataset.answer === block.dataset.answer) {
+    // Correcte!
+    score++;
+    matchedPairs++;
+    scoreEl.textContent = score;
+    progressEl.textContent = matchedPairs;
+    
+    slot.classList.add('matched');
+    block.classList.add('matched');
+    block.draggable = false;
+    
+    feedbackEl.textContent = '✅ Perfecte!';
+    feedbackEl.className = 'feedback correct';
+    
+    updateBridge();
+    
+    if (matchedPairs === totalPairs) {
+      setTimeout(showVictory, 1000);
+    }
+  } else {
+    // Incorrecte
+    mistakes++;
+    mistakesEl.textContent = mistakes;
+    
+    feedbackEl.textContent = '❌ No coincideix, torna-ho a provar!';
+    feedbackEl.className = 'feedback wrong';
+    
+    // Animació de sacsejada
+    slot.style.animation = 'shake 0.5s';
+    setTimeout(() => {
+      slot.style.animation = '';
+      feedbackEl.textContent = '';
+    }, 1000);
+  }
+  
+  setTimeout(() => {
+    feedbackEl.textContent = '';
+    feedbackEl.className = 'feedback';
+  }, 1500);
+}
+
+function updateBridge() {
+  const progress = matchedPairs / totalPairs;
+  if (progress < 0.25) bridgeVisual.textContent = '🌉';
+  else if (progress < 0.5) bridgeVisual.textContent = '🌉🌉';
+  else if (progress < 0.75) bridgeVisual.textContent = '🌉🌉🌉';
+  else bridgeVisual.textContent = '🌉🌉🌉🌉';
+}
+
+function showVictory() {
+  let message = `Has construït el pont amb ${score} encerts! `;
+  if (mistakes === 0) message += "🏆 PERFECTE! 🏆";
+  else if (mistakes <= 3) message += "⭐ Molt bé! ⭐";
+  else message += "💪 Continua practicant! 💪";
+  
+  modalText.textContent = message;
+  modal.classList.add('show');
+}
+
+function restartGame() {
+  modal.classList.remove('show');
+  initGame();
+}
+
+// Afegir animació de sacsejada
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+`;
+document.head.appendChild(style);
+
+initGame();
+</script>
+
+</body>
+</html>

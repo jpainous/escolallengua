@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎯 12 Activitats d'Antònims CAT/ENG</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Comic Sans MS', 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh; padding: 15px; color: #333;
+    display: flex; flex-direction: column;
+  }
+  header {
+    background: white; border-radius: 20px; padding: 15px 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2); margin-bottom: 20px; text-align: center;
+  }
+  h1 { color: #764ba2; font-size: 1.5em; margin-bottom: 10px; }
+
+  /* Marcador amb nivell */
+  .marcador-zona {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    align-items: center; margin-bottom: 8px;
+  }
+  .marcador {
+    display: inline-block; background: #ffd93d; padding: 6px 18px;
+    border-radius: 30px; font-weight: bold; font-size: 1.1em;
+  }
+  .nivell-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white; padding: 6px 16px; border-radius: 30px;
+    font-weight: bold; font-size: 1em;
+    box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+  }
+  .barra-progres {
+    width: 100%; max-width: 400px; height: 14px; background: #e8eaff;
+    border-radius: 10px; overflow: hidden; margin: 8px auto;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .barra-progres-inner {
+    height: 100%; background: linear-gradient(90deg, #6bcf7f, #ffd93d, #ff6b6b);
+    width: 0%; transition: width 0.5s ease; border-radius: 10px;
+  }
+  .progres-text { text-align: center; font-size: 0.85em; color: #666; margin-bottom: 10px; }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; margin-top: 12px; }
+  .controls label { font-weight: bold; color: #764ba2; font-size: 0.9em; }
+  select {
+    padding: 10px 14px; font-size: 0.95em; font-family: inherit;
+    border: 3px solid #667eea; border-radius: 12px; background: white;
+    color: #333; font-weight: bold; cursor: pointer;
+  }
+  main {
+    background: white; border-radius: 20px; padding: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2); min-height: 550px;
+    flex: 1;
+  }
+  .joc { display: none; }
+  .joc.actiu { display: block; animation: fadeIn 0.4s; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; transform: translateY(0);} }
+  h2 { color: #764ba2; margin-bottom: 10px; text-align: center; font-size: 1.3em; }
+  .subtitol { text-align: center; margin-bottom: 18px; color: #666; font-size: 0.95em; }
+  .feedback { text-align: center; font-size: 1.1em; font-weight: bold; margin-top: 15px; min-height: 1.5em; }
+  .feedback.bo { color: #2a8f4a; }
+  .feedback.dolent { color: #cc2a2a; }
+
+  .btn {
+    padding: 10px 22px; font-size: 1em; font-weight: bold;
+    background: #667eea; color: white; border: none;
+    border-radius: 25px; cursor: pointer; font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: #764ba2; transform: translateY(-2px); }
+  .btn.rosa { background: #ff6b6b; }
+  .btn.rosa:hover { background: #ee5a5a; }
+  .btn.verd { background: #6bcf7f; }
+  .btn.verd:hover { background: #5ab86e; }
+  .btn.groc { background: #ffd93d; color: #333; }
+  .btn.groc:hover { background: #f0c520; }
+  .fila-botons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
+
+  /* 1. MEMORY */
+  .graella-memory {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 10px; max-width: 640px; margin: 0 auto;
+  }
+  .carta {
+    aspect-ratio: 1; background: #667eea; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: bold; font-size: 0.8em;
+    cursor: pointer; padding: 5px; text-align: center;
+    transition: all 0.3s; user-select: none; word-break: break-word;
+  }
+  .carta.girada { background: #ffd93d; color: #333; }
+  .carta.encertada { background: #6bcf7f; color: white; cursor: default; }
+  .carta:hover:not(.girada):not(.encertada) { transform: scale(1.05); }
+
+  /* 2. QUIZ */
+  .pregunta { font-size: 1.3em; text-align: center; margin: 20px 0; }
+  .pregunta strong { color: #ff6b6b; }
+  .opcions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 520px; margin: 0 auto; }
+  .opcions button {
+    padding: 16px; font-size: 1em; font-weight: bold;
+    border: 3px solid #667eea; background: white; color: #667eea;
+    border-radius: 12px; cursor: pointer; font-family: inherit;
+    word-break: break-word; transition: all 0.2s;
+  }
+  .opcions button:hover { background: #667eea; color: white; }
+  .opcions button.correcte { background: #6bcf7f; border-color: #6bcf7f; color: white; }
+  .opcions button.incorrecte { background: #ff6b6b; border-color: #ff6b6b; color: white; }
+
+  /* 3. DRAG */
+  .drag-contenidor { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 700px; margin: 0 auto; }
+  .columna { display: flex; flex-direction: column; gap: 8px; }
+  .columna h3 { text-align: center; color: #764ba2; margin-bottom: 8px; font-size: 1em; }
+  .item {
+    padding: 12px; background: #e8eaff; border: 2px dashed #667eea;
+    border-radius: 10px; text-align: center; font-weight: bold;
+    cursor: grab; user-select: none; word-break: break-word;
+  }
+  .item.arrossegable { background: #ffd93d; border-style: solid; }
+  .item.destí { background: #f0f0f0; min-height: 45px; }
+  .item.destí.omplert { background: #6bcf7f; color: white; border-color: #6bcf7f; }
+  .item.destí.error { background: #ff6b6b; color: white; border-color: #ff6b6b; }
+
+  /* 4. FLASHCARDS */
+  .flashcard { width: 320px; height: 220px; margin: 20px auto; perspective: 1000px; cursor: pointer; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.girada .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-cara {
+    position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+    border-radius: 20px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 20px;
+    text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  }
+  .flashcard-davant { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+  .flashcard-darrere { background: linear-gradient(135deg, #ffd93d, #ff9a3d); color: #333; transform: rotateY(180deg); }
+  .flashcard-cara .paraula { font-size: 1.5em; font-weight: bold; margin-bottom: 6px; word-break: break-word; }
+  .flashcard-cara .petit { font-size: 0.9em; opacity: 0.9; margin-top: 4px; }
+
+  /* 5. SOPA */
+  .sopa-info { text-align: center; margin-bottom: 12px; font-weight: bold; color: #764ba2; }
+  .sopa-graella { display: grid; gap: 3px; max-width: 480px; margin: 0 auto; background: #e8eaff; padding: 8px; border-radius: 12px; user-select: none; }
+  .sopa-cella {
+    aspect-ratio: 1; background: white; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 0.85em; cursor: pointer;
+    transition: all 0.15s; color: #333;
+  }
+  .sopa-cella:hover { background: #ffd93d; }
+  .sopa-cella.seleccionada { background: #ff9a3d; color: white; }
+  .sopa-cella.trobada { background: #6bcf7f; color: white; }
+  .sopa-llista { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 15px; }
+  .sopa-objectiu { padding: 6px 14px; background: #e8eaff; border-radius: 20px; font-weight: bold; font-size: 0.85em; color: #764ba2; }
+  .sopa-objectiu.trobat { background: #6bcf7f; color: white; text-decoration: line-through; }
+
+  /* 7. BINGO */
+  .bingo-cartro { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 420px; margin: 0 auto; }
+  .bingo-cella {
+    aspect-ratio: 1; background: #e8eaff; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 0.8em; cursor: pointer;
+    padding: 5px; text-align: center; word-break: break-word;
+    transition: all 0.2s; border: 2px solid transparent;
+  }
+  .bingo-cella:hover { background: #ffd93d; }
+  .bingo-cella.marcada { background: #6bcf7f; color: white; border-color: #5ab86e; }
+  .bingo-cella.guanyadora { background: #ff6b6b; color: white; animation: pulse 0.6s infinite alternate; }
+  @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.05); } }
+  .bingo-anunci {
+    text-align: center; margin: 15px auto; padding: 12px 20px;
+    background: #ffd93d; border-radius: 12px; font-weight: bold;
+    font-size: 1.1em; max-width: 420px;
+  }
+
+  /* 8. PENJAT */
+  .penjat-paraula { display: flex; gap: 10px; justify-content: center; margin: 25px 0; flex-wrap: wrap; }
+  .penjat-lletra { font-size: 2em; font-weight: bold; border-bottom: 4px solid #667eea; min-width: 35px; text-align: center; padding: 5px; }
+  .penjat-lletra.encertada { color: #6bcf7f; }
+  .penjat-teclat { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; max-width: 480px; margin: 0 auto; }
+  .penjat-teclat button {
+    padding: 12px 0; font-weight: bold; font-size: 1em;
+    border: 2px solid #667eea; background: white; color: #667eea;
+    border-radius: 8px; cursor: pointer; font-family: inherit;
+  }
+  .penjat-teclat button:hover:not(:disabled) { background: #667eea; color: white; }
+  .penjat-teclat button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .penjat-info { text-align: center; font-weight: bold; margin: 10px 0; color: #764ba2; }
+
+  /* 11. CLASSIFICACIÓ */
+  .class-caixes { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+  .class-caixa {
+    background: #e8eaff; border: 3px dashed #667eea; border-radius: 15px;
+    padding: 15px; min-width: 180px; min-height: 120px; flex: 1;
+    max-width: 220px; text-align: center;
+  }
+  .class-caixa h4 { color: #764ba2; margin-bottom: 10px; font-size: 1em; }
+  .class-caixa.hover { background: #ffd93d; }
+  .class-paraula {
+    display: inline-block; padding: 8px 14px; margin: 4px;
+    background: #ffd93d; border-radius: 20px; font-weight: bold;
+    cursor: grab; user-select: none; font-size: 0.9em;
+  }
+  .class-paraula.col·locada { background: #6bcf7f; color: white; }
+
+  /* 12. FRASES */
+  .frases-boges-area { max-width: 600px; margin: 0 auto; }
+  .frase-input { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; margin: 15px 0; padding: 15px; background: #e8eaff; border-radius: 12px; }
+  .frase-input select { flex: 1; min-width: 120px; }
+  .frase-generada {
+    padding: 15px; background: #ffd93d; border-radius: 12px;
+    margin: 10px 0; font-weight: bold; font-size: 1.1em;
+    text-align: center; animation: fadeIn 0.4s;
+  }
+  .frase-generada .cat { color: #ff6b6b; }
+  .frase-generada .ant { color: #2a8f4a; }
+  .frase-generada .eng { color: #764ba2; font-size: 0.85em; display: block; margin-top: 5px; }
+  .llista-frases { max-height: 300px; overflow-y: auto; margin-top: 15px; }
+
+  /* Modal de guardat */
+  .modal-fons {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); display: none;
+    justify-content: center; align-items: center; z-index: 1000;
+  }
+  .modal-fons.actiu { display: flex; }
+  .modal {
+    background: white; border-radius: 20px; padding: 25px;
+    max-width: 420px; width: 90%; text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: fadeIn 0.3s;
+  }
+  .modal h3 { color: #764ba2; margin-bottom: 12px; }
+  .modal p { margin-bottom: 15px; color: #555; }
+
+  /* Notificació de pujada de nivell */
+  .nivell-popup {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-200px);
+    background: linear-gradient(135deg, #6bcf7f, #4caf50);
+    color: white; padding: 20px 30px; border-radius: 20px;
+    font-weight: bold; font-size: 1.2em; z-index: 2000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    transition: transform 0.5s ease;
+    text-align: center;
+  }
+  .nivell-popup.actiu { transform: translateX(-50%) translateY(0); }
+
+  /* Peu de pàgina */
+  footer {
+    margin-top: 20px; padding: 15px;
+    background: rgba(255,255,255,0.9); border-radius: 20px;
+    text-align: center; color: #555; font-size: 0.85em;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+  footer strong { color: #764ba2; }
+
+  @media (max-width: 520px) {
+    .graella-memory { grid-template-columns: repeat(3, 1fr); }
+    .opcions, .drag-contenidor { grid-template-columns: 1fr; }
+    .carta { font-size: 0.7em; }
+    .flashcard { width: 90%; }
+    .penjat-teclat { grid-template-columns: repeat(6, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎯 12 Activitats d'Antònims CAT/ENG</h1>
+  <div class="marcador-zona">
+    <div class="marcador">⭐ Punts: <span id="punts">0</span></div>
+    <div class="nivell-badge" id="nivell-badge">🌱 <span id="nivell-nom">Aprenent</span></div>
+  </div>
+  <div class="barra-progres">
+    <div class="barra-progres-inner" id="barra-inner"></div>
+  </div>
+  <div class="progres-text" id="progres-text">Proper nivell: 50 punts</div>
+
+  <div class="controls">
+    <label for="selector-joc">Activitat:</label>
+    <select id="selector-joc">
+      <option value="memory">1. 🧠 Memory</option>
+      <option value="quiz">2. ❓ Quiz</option>
+      <option value="drag">3. 🖱️ Arrossega</option>
+      <option value="flash">4. 🃏 Targetes</option>
+      <option value="sopa">5. 🔍 Sopa de lletres</option>
+      <option value="traductor">6. 🎯 Traductor CAT↔ENG</option>
+      <option value="bingo">7. 🎰 Bingo</option>
+      <option value="penjat">8. 🪢 Penjat</option>
+      <option value="intrus">9. 🕵️ Intrús</option>
+      <option value="parelles">10. 🔗 Parelles CAT-ENG</option>
+      <option value="classificacio">11. 📦 Classificació</option>
+      <option value="frases">12. ✍️ Frases boges</option>
+    </select>
+    <label for="selector-idioma">Idioma:</label>
+    <select id="selector-idioma">
+      <option value="cat">Català</option>
+      <option value="eng">English</option>
+      <option value="mix">Mixt CAT↔ENG</option>
+    </select>
+    <button class="btn groc" onclick="obrirGuardar()">💾 Guardar</button>
+    <button class="btn groc" onclick="obrirRestaurar()">📂 Restaurar</button>
+    <button class="btn rosa" onclick="reiniciarPunts()">🔄 Reiniciar punts</button>
+  </div>
+</header>
+
+<main>
+
+<section id="joc-memory" class="joc actiu">
+  <h2>1. 🧠 Memory d'antònims</h2>
+  <p class="subtitol" id="sub-memory">Empareja paraula ↔ antònim</p>
+  <div class="graella-memory" id="graella-memory"></div>
+  <p class="feedback" id="feedback-memory"></p>
+  <div class="fila-botons"><button class="btn" onclick="iniciarMemory()">🔄 Nova partida</button></div>
+</section>
+
+<section id="joc-quiz" class="joc">
+  <h2>2. ❓ Quiz d'antònims</h2>
+  <p class="pregunta" id="pregunta-quiz">Carregant...</p>
+  <div class="opcions" id="opcions-quiz"></div>
+  <p class="feedback" id="feedback-quiz"></p>
+  <div class="fila-botons"><button class="btn rosa" id="btn-seguent-quiz" style="display:none;" onclick="novaPreguntaQuiz()">➡️ Següent</button></div>
+</section>
+
+<section id="joc-drag" class="joc">
+  <h2>3. 🖱️ Arrossega l'antònim correcte</h2>
+  <p class="subtitol" id="sub-drag">Arrossega cada antònim cap a la seva paraula</p>
+  <div class="drag-contenidor">
+    <div class="columna"><h3 id="capçalera-drag-esq">Paraules</h3><div id="drag-paraules"></div></div>
+    <div class="columna"><h3 id="capçalera-drag-dret">Antònims</h3><div id="drag-antonims"></div></div>
+  </div>
+  <p class="feedback" id="feedback-drag"></p>
+  <div class="fila-botons"><button class="btn" onclick="iniciarDrag()">🔄 Nova partida</button></div>
+</section>
+
+<section id="joc-flash" class="joc">
+  <h2>4. 🃏 Targetes d'estudi</h2>
+  <p class="subtitol">Clica la targeta per girar-la</p>
+  <div class="flashcard" id="flashcard" onclick="girarFlash()">
+    <div class="flashcard-inner">
+      <div class="flashcard-cara flashcard-davant">
+        <div class="paraula" id="flash-davant">RUGÓS</div>
+        <div class="petit" id="flash-davant-eng">ROUGH</div>
+        <div class="petit">Clica per girar 🔄</div>
+      </div>
+      <div class="flashcard-cara flashcard-darrere">
+        <div class="paraula" id="flash-darrere">LLIS</div>
+        <div class="petit" id="flash-darrere-eng">SMOOTH</div>
+      </div>
+    </div>
+  </div>
+  <div class="fila-botons">
+    <button class="btn" onclick="flashAnterior()">⬅️</button>
+    <button class="btn" onclick="flashSeguent()">➡️</button>
+  </div>
+  <p class="feedback" id="feedback-flash"></p>
+</section>
+
+<section id="joc-sopa" class="joc">
+  <h2>5. 🔍 Sopa de lletres</h2>
+  <p class="subtitol">Clica les lletres per formar les paraules amagades</p>
+  <div class="sopa-info" id="sopa-info">Paraula a trobar: <span id="sopa-objectiu-actual">-</span></div>
+  <div class="sopa-graella" id="sopa-graella"></div>
+  <div class="sopa-llista" id="sopa-llista"></div>
+  <p class="feedback" id="feedback-sopa"></p>
+  <div class="fila-botons"><button class="btn" onclick="iniciarSopa()">🔄 Nova sopa</button></div>
+</section>
+
+<section id="joc-traductor" class="joc">
+  <h2>6. 🎯 Traductor CAT↔ENG</h2>
+  <p class="subtitol" id="info-traductor"></p>
+  <p class="pregunta" id="pregunta-traductor">Carregant...</p>
+  <div class="opcions" id="opcions-traductor"></div>
+  <p class="feedback" id="feedback-traductor"></p>
+  <div class="fila-botons"><button class="btn rosa" id="btn-seguent-traductor" style="display:none;" onclick="novaPreguntaTraductor()">➡️ Següent</button></div>
+</section>
+
+<section id="joc-bingo" class="joc">
+  <h2>7. 🎰 Bingo d'antònims</h2>
+  <p class="subtitol">Quan sentis una paraula, marca el seu antònim al cartró</p>
+  <div class="bingo-anunci" id="bingo-anunci">Clica "Cantar" per començar</div>
+  <div class="bingo-cartro" id="bingo-cartro"></div>
+  <p class="feedback" id="feedback-bingo"></p>
+  <div class="fila-botons">
+    <button class="btn" onclick="cantarBingo()">📢 Cantar paraula</button>
+    <button class="btn rosa" onclick="iniciarBingo()">🔄 Nova partida</button>
+  </div>
+</section>
+
+<section id="joc-penjat" class="joc">
+  <h2>8. 🪢 Penjat invers</h2>
+  <p class="subtitol">Es mostra l'antònim. Endevina la paraula original!</p>
+  <div class="penjat-info" id="penjat-info">Carregant...</div>
+  <div class="penjat-paraula" id="penjat-paraula"></div>
+  <div class="penjat-teclat" id="penjat-teclat"></div>
+  <p class="feedback" id="feedback-penjat"></p>
+  <div class="fila-botons"><button class="btn rosa" onclick="iniciarPenjat()">🔄 Nova paraula</button></div>
+</section>
+
+<section id="joc-intrus" class="joc">
+  <h2>9. 🕵️ Troba l'intrús</h2>
+  <p class="subtitol" id="pista-intrus">Quina paraula NO pertany al grup?</p>
+  <div class="opcions" id="opcions-intrus"></div>
+  <p class="feedback" id="feedback-intrus"></p>
+  <div class="fila-botons"><button class="btn rosa" id="btn-seguent-intrus" style="display:none;" onclick="novaIntrus()">➡️ Següent</button></div>
+</section>
+
+<section id="joc-parelles" class="joc">
+  <h2>10. 🔗 Parelles Català-Anglès</h2>
+  <p class="subtitol">Arrossega cada paraula anglesa cap a la seva traducció catalana</p>
+  <div class="drag-contenidor">
+    <div class="columna"><h3>Català</h3><div id="parelles-cat"></div></div>
+    <div class="columna"><h3>English</h3><div id="parelles-eng"></div></div>
+  </div>
+  <p class="feedback" id="feedback-parelles"></p>
+  <div class="fila-botons"><button class="btn" onclick="iniciarParelles()">🔄 Nova partida</button></div>
+</section>
+
+<section id="joc-classificacio" class="joc">
+  <h2>11. 📦 Classificació per categories</h2>
+  <p class="subtitol">Arrossega cada paraula a la caixa correcta: <strong>Positiu</strong> o <strong>Negatiu</strong></p>
+  <div id="class-paraules-pool" style="text-align:center; min-height:60px; padding:10px; background:#f9f9ff; border-radius:12px; margin-bottom:15px;"></div>
+  <div class="class-caixes">
+    <div class="class-caixa destí" id="caixa-positiu" data-tipus="positiu" ondragover="event.preventDefault(); this.classList.add('hover')" ondragleave="this.classList.remove('hover')" ondrop="dropClassificacio(event, this)">
+      <h4>😊 Positiu</h4>
+    </div>
+    <div class="class-caixa destí" id="caixa-negatiu" data-tipus="negatiu" ondragover="event.preventDefault(); this.classList.add('hover')" ondragleave="this.classList.remove('hover')" ondrop="dropClassificacio(event, this)">
+      <h4>😟 Negatiu</h4>
+    </div>
+  </div>
+  <p class="feedback" id="feedback-classificacio"></p>
+  <div class="fila-botons"><button class="btn" onclick="iniciarClassificacio()">🔄 Nova partida</button></div>
+</section>
+
+<section id="joc-frases" class="joc">
+  <h2>12. ✍️ Frases boges</h2>
+  <p class="subtitol">Escriu una frase que contingui una paraula i el seu antònim</p>
+  <div class="frases-boges-area">
+    <div class="frase-input">
+      <select id="frase-paraula"></select>
+      <button class="btn verd" onclick="generarFrase()">✨ Generar frase</button>
+    </div>
+    <div class="frase-generada" id="frase-generada" style="display:none;"></div>
+    <div class="llista-frases" id="llista-frases"></div>
+  </div>
+  <p class="feedback" id="feedback-frases"></p>
+</section>
+
+</main>
+
+<!-- Modal de guardat -->
+<div class="modal-fons" id="modal-guardar">
+  <div class="modal">
+    <h3>💾 Vols guardar la partida?</h3>
+    <p>Es descarregarà un fitxer JSON amb els teus punts, nivell i estadístiques.</p>
+    <div class="fila-botons">
+      <button class="btn verd" onclick="guardarJSON()">Sí, guardar</button>
+      <button class="btn rosa" onclick="tancarModal('modal-guardar')">No, gràcies</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de restaurar -->
+<div class="modal-fons" id="modal-restaurar">
+  <div class="modal">
+    <h3>📂 Restaurar partida</h3>
+    <p>Selecciona un fitxer JSON guardat prèviament.</p>
+    <input type="file" id="input-fitxer" accept=".json" style="margin-bottom:15px;">
+    <div class="fila-botons">
+      <button class="btn verd" onclick="restaurarJSON()">Restaurar</button>
+      <button class="btn rosa" onclick="tancarModal('modal-restaurar')">Cancel·lar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Popup de pujada de nivell -->
+<div class="nivell-popup" id="nivell-popup"></div>
+
+<footer>
+  <p>🎓 <strong>12 Activitats d'Antònims CAT/ENG</strong> — Eina educativa per a 8-12 anys</p>
+  <p style="margin-top:6px;">Arxiu HTML generat amb la plataforma <strong>DeepSeek</strong> 🤖</p>
+  <p style="margin-top:6px; font-size:0.8em; color:#999;">Punts, nivells i progrés es guarden en un fitxer JSON local</p>
+</footer>
+
+<script>
+/* ============================================================
+   DADES
+   ============================================================ */
+const DADES = [
+  { cat:"RUGÓS", ant:"LLIS", eng:"ROUGH", engAnt:"SMOOTH" },
+  { cat:"ASSEQUIBLE", ant:"INACCESSIBLE", eng:"AFFORDABLE", engAnt:"UNAFFORDABLE" },
+  { cat:"AMPLE", ant:"ESTRET", eng:"WIDE", engAnt:"NARROW" },
+  { cat:"TANCAT", ant:"OBERT", eng:"CLOSED", engAnt:"OPEN" },
+  { cat:"TRAÏDOR", ant:"LLEIAL", eng:"TREACHEROUS", engAnt:"LOYAL" },
+  { cat:"BRUT", ant:"NET", eng:"DIRTY", engAnt:"CLEAN" },
+  { cat:"CERT", ant:"FALS", eng:"TRUE", engAnt:"FALSE" },
+  { cat:"CRIDANER", ant:"DISCRET", eng:"FLASHY", engAnt:"SUBTLE" },
+  { cat:"CARNÍVOR", ant:"HERBÍVOR", eng:"CARNIVORE", engAnt:"HERBIVORE" },
+  { cat:"DESPIETAT", ant:"COMPASSIU", eng:"RUTHLESS", engAnt:"COMPASSIONATE" },
+  { cat:"BONDADÓS", ant:"MALVAT", eng:"KIND", engAnt:"EVIL" },
+  { cat:"ENORME", ant:"PETIT", eng:"HUGE", engAnt:"TINY" },
+  { cat:"COMBUSTIBLE", ant:"INCOMBUSTIBLE", eng:"COMBUSTIBLE", engAnt:"INCOMBUSTIBLE" },
+  { cat:"ÀCID", ant:"DOLÇ", eng:"SOUR", engAnt:"SWEET" },
+  { cat:"BLANC", ant:"NEGRE", eng:"WHITE", engAnt:"BLACK" },
+  { cat:"FATIGAT", ant:"DESCANSAT", eng:"TIRED", engAnt:"RESTED" },
+  { cat:"RURAL", ant:"URBÀ", eng:"RURAL", engAnt:"URBAN" },
+  { cat:"ASSOLIBLE", ant:"INASSOLIBLE", eng:"ATTAINABLE", engAnt:"UNATTAINABLE" },
+  { cat:"CENTRAL", ant:"PERIFÈRIC", eng:"CENTRAL", engAnt:"PERIPHERAL" },
+  { cat:"COMPLET", ant:"INCOMPLET", eng:"COMPLETE", engAnt:"INCOMPLETE" },
+  { cat:"PLE", ant:"BUIT", eng:"FULL", engAnt:"EMPTY" },
+  { cat:"ARTIFICIAL", ant:"NATURAL", eng:"ARTIFICIAL", engAnt:"NATURAL" },
+  { cat:"INQUIET", ant:"TRANQUIL", eng:"RESTLESS", engAnt:"CALM" },
+  { cat:"CRUEL", ant:"BO", eng:"CRUEL", engAnt:"KIND" },
+  { cat:"CAR", ant:"BARAT", eng:"EXPENSIVE", engAnt:"CHEAP" },
+  { cat:"FURIÓS", ant:"PLÀCID", eng:"FURIOUS", engAnt:"PLACID" },
+  { cat:"CALLAT", ant:"XERRAIRE", eng:"QUIET", engAnt:"TALKATIVE" },
+  { cat:"ACOMODAT", ant:"POBRE", eng:"WEALTHY", engAnt:"POOR" },
+  { cat:"AFORTUNAT", ant:"DESGRACIAT", eng:"LUCKY", engAnt:"UNLUCKY" },
+  { cat:"VALENT", ant:"COVARD", eng:"BRAVE", engAnt:"COWARDLY" },
+  { cat:"CAPTIU", ant:"LLIURE", eng:"CAPTIVE", engAnt:"FREE" },
+  { cat:"COMPETENT", ant:"INEPTE", eng:"COMPETENT", engAnt:"INEPT" },
+  { cat:"MESQUÍ", ant:"GENERÓS", eng:"STINGY", engAnt:"GENEROUS" },
+  { cat:"TREBALLADOR", ant:"GANDUL", eng:"HARDWORKING", engAnt:"LAZY" },
+  { cat:"CURT", ant:"LLARG", eng:"SHORT", engAnt:"LONG" },
+  { cat:"SOLELLÓS", ant:"OMBRÍVOL", eng:"SUNNY", engAnt:"SHADY" },
+  { cat:"COMPLICAT", ant:"SENZILL", eng:"COMPLICATED", engAnt:"SIMPLE" },
+  { cat:"PRESENT", ant:"ABSENT", eng:"PRESENT", engAnt:"ABSENT" },
+  { cat:"FOSC", ant:"CLAR", eng:"DARK", engAnt:"LIGHT" },
+  { cat:"FRED", ant:"CALENT", eng:"COLD", engAnt:"HOT" },
+  { cat:"DUR", ant:"TOU", eng:"HARD", engAnt:"SOFT" },
+  { cat:"RÀPID", ant:"LENT", eng:"FAST", engAnt:"SLOW" },
+  { cat:"ALT", ant:"BAIX", eng:"TALL", engAnt:"SHORT" },
+  { cat:"NOU", ant:"VELL", eng:"NEW", engAnt:"OLD" },
+  { cat:"FORT", ant:"FEBLE", eng:"STRONG", engAnt:"WEAK" },
+  { cat:"SEC", ant:"HUMIT", eng:"DRY", engAnt:"WET" },
+  { cat:"PESAT", ant:"LLEUGER", eng:"HEAVY", engAnt:"LIGHT" },
+  { cat:"ACTIU", ant:"PASSIU", eng:"ACTIVE", engAnt:"PASSIVE" },
+  { cat:"AMABLE", ant:"DESAGRADABLE", eng:"FRIENDLY", engAnt:"UNFRIENDLY" },
+  { cat:"PACIENT", ant:"IMPACIENT", eng:"PATIENT", engAnt:"IMPATIENT" },
+  { cat:"FELIÇ", ant:"TRIST", eng:"HAPPY", engAnt:"SAD" },
+  { cat:"DIVERTIT", ant:"AVORRIT", eng:"FUNNY", engAnt:"BORING" },
+  { cat:"MODERN", ant:"ANTIC", eng:"MODERN", engAnt:"ANCIENT" },
+  { cat:"ORDENAT", ant:"DESORDENAT", eng:"TIDY", engAnt:"MESSY" },
+  { cat:"HONEST", ant:"MENTIDER", eng:"HONEST", engAnt:"DISHONEST" },
+  { cat:"OPTIMISTA", ant:"PESSIMISTA", eng:"OPTIMISTIC", engAnt:"PESSIMISTIC" },
+  { cat:"LLEST", ant:"BADOC", eng:"SMART", engAnt:"FOOLISH" },
+  { cat:"FAMÓS", ant:"DESCONEGUT", eng:"FAMOUS", engAnt:"UNKNOWN" },
+  { cat:"ELEGANT", ant:"GROLLER", eng:"ELEGANT", engAnt:"RUDE" }
+];
+
+/* ============================================================
+   NIVELLS
+   ============================================================ */
+const NIVELLS = [
+  { nom: 'Aprenent',   emoji: '🌱', min: 0,    max: 50 },
+  { nom: 'Explorador', emoji: '🧭', min: 50,   max: 150 },
+  { nom: 'Aventurer',  emoji: '🗺️', min: 150,  max: 300 },
+  { nom: 'Expert',     emoji: '🎓', min: 300,  max: 500 },
+  { nom: 'Mestre',     emoji: '🏆', min: 500,  max: 800 },
+  { nom: 'Llegenda',   emoji: '👑', min: 800,  max: Infinity }
+];
+
+function obtenirNivell(punts) {
+  for (const n of NIVELLS) {
+    if (punts >= n.min && punts < n.max) return n;
+  }
+  return NIVELLS[NIVELLS.length - 1];
+}
+
+/* ============================================================
+   ESTAT GLOBAL
+   ============================================================ */
+let punts = 0;
+let nivellActual = NIVELLS[0];
+let estadistiques = {
+  encerts: 0,
+  errors: 0,
+  jocsJugats: {},
+  inici: new Date().toISOString()
+};
+
+/* ============================================================
+   UTILITATS
+   ============================================================ */
+function mesclar(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function agafarAleatoris(arr, n) { return mesclar(arr).slice(0, n); }
+
+function setFeedback(id, missatge, tipus) {
+  const el = document.getElementById(id);
+  el.textContent = missatge;
+  el.classList.remove('bo', 'dolent');
+  if (tipus === 'bo') el.classList.add('bo');
+  if (tipus === 'dolent') el.classList.add('dolent');
+}
+
+function actualitzarMarcador() {
+  document.getElementById('punts').textContent = punts;
+
+  // Actualitzar nivell
+  const nouNivell = obtenirNivell(punts);
+  if (nouNivell.nom !== nivellActual.nom) {
+    nivellActual = nouNivell;
+    mostrarPopupNivell(nouNivell);
+  }
+  document.getElementById('nivell-nom').textContent = nivellActual.nom;
+  document.querySelector('.nivell-badge').firstChild.textContent = nivellActual.emoji + ' ';
+
+  // Barra de progrés
+  const next = NIVELLS.find(n => n.min > punts);
+  const barra = document.getElementById('barra-inner');
+  const text = document.getElementById('progres-text');
+  if (next) {
+    const inici = nivellActual.min;
+    const fi = next.min;
+    const pct = Math.min(100, Math.max(0, ((punts - inici) / (fi - inici)) * 100));
+    barra.style.width = pct + '%';
+    text.textContent = `Proper nivell: ${next.nom} ${next.emoji} a ${next.min} punts (falten ${next.min - punts})`;
+  } else {
+    barra.style.width = '100%';
+    text.textContent = '👑 Has arribat al nivell MÀXIM: Llegenda!';
+  }
+}
+
+function sumarPunts(n) {
+  punts += n;
+  if (n > 0) estadistiques.encerts++;
+  actualitzarMarcador();
+}
+function restarPunts(n) {
+  punts = Math.max(0, punts - n);
+  estadistiques.errors++;
+  actualitzarMarcador();
+}
+
+function mostrarPopupNivell(nivell) {
+  const popup = document.getElementById('nivell-popup');
+  popup.textContent = `${nivell.emoji} Has pujat al nivell: ${nivell.nom}! ${nivell.emoji}`;
+  popup.classList.add('actiu');
+  setTimeout(() => popup.classList.remove('actiu'), 3000);
+}
+
+/* ============================================================
+   NAVEGACIÓ amb confirmació de guardat
+   ============================================================ */
+const selectorJoc = document.getElementById('selector-joc');
+const selectorIdioma = document.getElementById('selector-idioma');
+let jocActual = 'memory';
+let canviPendent = null;
+
+selectorJoc.addEventListener('change', () => {
+  const nouJoc = selectorJoc.value;
+  if (nouJoc === jocActual) return;
+  // Demanar si vol guardar
+  canviPendent = () => {
+    document.querySelectorAll('.joc').forEach(j => j.classList.remove('actiu'));
+    document.getElementById('joc-' + nouJoc).classList.add('actiu');
+    jocActual = nouJoc;
+    iniciarJoc(nouJoc);
+  };
+  obrirGuardar();
+});
+
+selectorIdioma.addEventListener('change', () => iniciarJoc(jocActual));
+
+function iniciarJoc(nom) {
+  if (nom === 'memory') iniciarMemory();
+  if (nom === 'quiz') novaPreguntaQuiz();
+  if (nom === 'drag') iniciarDrag();
+  if (nom === 'flash') { flashIndex = 0; mostrarFlash(); }
+  if (nom === 'sopa') iniciarSopa();
+  if (nom === 'traductor') novaPreguntaTraductor();
+  if (nom === 'bingo') iniciarBingo();
+  if (nom === 'penjat') iniciarPenjat();
+  if (nom === 'intrus') novaIntrus();
+  if (nom === 'parelles') iniciarParelles();
+  if (nom === 'classificacio') iniciarClassificacio();
+  if (nom === 'frases') iniciarFrasesBoges();
+}
+
+/* ============================================================
+   1. MEMORY  (+10 encert, -3 error)
+   ============================================================ */
+let memoryPrimera = null, memoryBloquejat = false, memoryEncerts = 0, memoryTotal = 0;
+function iniciarMemory() {
+  const graella = document.getElementById('graella-memory');
+  graella.innerHTML = '';
+  memoryPrimera = null; memoryBloquejat = false; memoryEncerts = 0;
+  const idioma = selectorIdioma.value;
+  const parelles = agafarAleatoris(DADES, 4);
+  memoryTotal = parelles.length;
+  document.getElementById('sub-memory').textContent =
+    idioma === 'eng' ? 'Match English word ↔ opposite' :
+    idioma === 'mix' ? 'Empareja CAT↔CAT i ENG↔ENG' : 'Empareja paraula ↔ antònim';
+  const cartes = [];
+  parelles.forEach((p, idx) => {
+    if (idioma === 'cat' || idioma === 'mix') {
+      cartes.push({ text: p.cat, parella: idx, tipus: 'cat' });
+      cartes.push({ text: p.ant, parella: idx, tipus: 'antcat' });
+    }
+    if (idioma === 'eng' || idioma === 'mix') {
+      cartes.push({ text: p.eng, parella: idx, tipus: 'eng' });
+      cartes.push({ text: p.engAnt, parella: idx, tipus: 'anteng' });
+    }
+  });
+  mesclar(cartes).forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'carta';
+    div.dataset.parella = c.parella;
+    div.dataset.tipus = c.tipus;
+    div.dataset.text = c.text;
+    div.textContent = '?';
+    div.onclick = () => girarCarta(div);
+    graella.appendChild(div);
+  });
+  setFeedback('feedback-memory', '');
+}
+function girarCarta(div) {
+  if (memoryBloquejat || div.classList.contains('girada') || div.classList.contains('encertada')) return;
+  div.classList.add('girada');
+  div.textContent = div.dataset.text;
+  if (!memoryPrimera) { memoryPrimera = div; return; }
+  const a = memoryPrimera.dataset.tipus, b = div.dataset.tipus;
+  const mateixIdioma = (a==='cat'&&b==='antcat')||(a==='antcat'&&b==='cat')||(a==='eng'&&b==='anteng')||(a==='anteng'&&b==='eng');
+  if (memoryPrimera.dataset.parella === div.dataset.parella && mateixIdioma) {
+    memoryPrimera.classList.add('encertada'); div.classList.add('encertada');
+    memoryPrimera = null; memoryEncerts++; sumarPunts(10);
+    setFeedback('feedback-memory', '✅ +10 punts', 'bo');
+    if (memoryEncerts === memoryTotal) setFeedback('feedback-memory', '🎉 Completat!', 'bo');
+  } else {
+    memoryBloquejat = true;
+    const primera = memoryPrimera;
+    restarPunts(3);
+    setFeedback('feedback-memory', '❌ -3 punts', 'dolent');
+    setTimeout(() => {
+      primera.classList.remove('girada'); primera.textContent = '?';
+      div.classList.remove('girada'); div.textContent = '?';
+      memoryPrimera = null; memoryBloquejat = false;
+    }, 900);
+  }
+}
+
+/* ============================================================
+   2. QUIZ  (+15 encert, -5 error)
+   ============================================================ */
+let quizResposta = null, quizRespost = false;
+function novaPreguntaQuiz() {
+  quizRespost = false;
+  document.getElementById('btn-seguent-quiz').style.display = 'none';
+  setFeedback('feedback-quiz', '');
+  const d = DADES[Math.floor(Math.random() * DADES.length)];
+  const idioma = selectorIdioma.value;
+  let pregunta, correcta, distractors;
+  if (idioma === 'eng') {
+    pregunta = `What is the opposite of "${d.eng}"?`;
+    correcta = d.engAnt;
+    distractors = agafarAleatoris(DADES.filter(x => x.engAnt !== d.engAnt), 3).map(x => x.engAnt);
+  } else {
+    pregunta = `Quin és l'antònim de "${d.cat}"?`;
+    correcta = d.ant;
+    distractors = agafarAleatoris(DADES.filter(x => x.ant !== d.ant), 3).map(x => x.ant);
+  }
+  quizResposta = correcta;
+  document.getElementById('pregunta-quiz').innerHTML = pregunta;
+  const cont = document.getElementById('opcions-quiz');
+  cont.innerHTML = '';
+  mesclar([correcta, ...distractors]).forEach(op => {
+    const b = document.createElement('button');
+    b.textContent = op;
+    b.onclick = () => respondreQuiz(b, op === correcta);
+    cont.appendChild(b);
+  });
+}
+function respondreQuiz(btn, correcte) {
+  if (quizRespost) return;
+  quizRespost = true;
+  if (correcte) {
+    btn.classList.add('correcte'); sumarPunts(15);
+    setFeedback('feedback-quiz', '✅ +15 punts', 'bo');
+  } else {
+    btn.classList.add('incorrecte');
+    document.querySelectorAll('#opcions-quiz button').forEach(b => {
+      if (b.textContent === quizResposta) b.classList.add('correcte');
+    });
+    restarPunts(5);
+    setFeedback('feedback-quiz', `❌ -5 punts. Era: ${quizResposta}`, 'dolent');
+  }
+  document.getElementById('btn-seguent-quiz').style.display = 'block';
+}
+
+/* ============================================================
+   3. DRAG  (+10 encert, -3 error)
+   ============================================================ */
+function iniciarDrag() {
+  const idioma = selectorIdioma.value;
+  const parelles = agafarAleatoris(DADES, 5);
+  setFeedback('feedback-drag', '');
+  document.getElementById('capçalera-drag-esq').textContent = idioma === 'eng' ? 'English words' : 'Paraules';
+  document.getElementById('capçalera-drag-dret').textContent = idioma === 'eng' ? 'Opposites' : (idioma === 'mix' ? 'English opposites' : 'Antònims');
+  const textEsq = p => idioma === 'eng' ? p.eng : p.cat;
+  const textDret = p => idioma === 'eng' ? p.engAnt : (idioma === 'mix' ? p.engAnt : p.ant);
+  const contP = document.getElementById('drag-paraules');
+  const contA = document.getElementById('drag-antonims');
+  contP.innerHTML = ''; contA.innerHTML = '';
+  parelles.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'item destí';
+    div.dataset.resposta = textDret(p);
+    div.textContent = textEsq(p);
+    div.ondragover = e => e.preventDefault();
+    div.ondrop = e => {
+      e.preventDefault();
+      const text = e.dataTransfer.getData('text');
+      if (div.classList.contains('omplert')) return;
+      if (text === div.dataset.resposta) {
+        div.classList.add('omplert');
+        div.textContent = textEsq(p) + ' → ' + text;
+        sumarPunts(10);
+        setFeedback('feedback-drag', '✅ +10 punts', 'bo');
+      } else {
+        div.classList.add('error');
+        restarPunts(3);
+        setFeedback('feedback-drag', '❌ -3 punts', 'dolent');
+        setTimeout(() => div.classList.remove('error'), 700);
+      }
+    };
+    contP.appendChild(div);
+  });
+  mesclar(parelles).forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'item arrossegable';
+    div.draggable = true;
+    div.textContent = textDret(p);
+    div.ondragstart = e => e.dataTransfer.setData('text', textDret(p));
+    contA.appendChild(div);
+  });
+}
+
+/* ============================================================
+   4. FLASHCARDS  (+2 girar)
+   ============================================================ */
+let flashIndex = 0, flashGirada = false;
+function mostrarFlash() {
+  flashGirada = false;
+  document.getElementById('flashcard').classList.remove('girada');
+  const d = DADES[flashIndex];
+  document.getElementById('flash-davant').textContent = d.cat;
+  document.getElementById('flash-davant-eng').textContent = d.eng;
+  document.getElementById('flash-darrere').textContent = d.ant;
+  document.getElementById('flash-darrere-eng').textContent = d.engAnt;
+  setFeedback('feedback-flash', `${flashIndex + 1} / ${DADES.length}`);
+}
+function girarFlash() {
+  document.getElementById('flashcard').classList.toggle('girada');
+  if (!flashGirada) { sumarPunts(2); flashGirada = true; }
+}
+function flashSeguent() { flashIndex = (flashIndex + 1) % DADES.length; mostrarFlash(); }
+function flashAnterior() { flashIndex = (flashIndex - 1 + DADES.length) % DADES.length; mostrarFlash(); }
+
+/* ============================================================
+   5. SOPA  (+20 encert, -2 error)
+   ============================================================ */
+let sopaParaules = [];
+let sopaSeleccio = [];
+function iniciarSopa() {
+  const MIDA = 10;
+  const paraulesTriades = agafarAleatoris(DADES, 4);
+  sopaParaules = paraulesTriades.map(d => ({ cat: d.cat, ant: d.ant, trobat: false }));
+  sopaSeleccio = [];
+  const graella = [];
+  for (let i = 0; i < MIDA; i++) graella.push(Array(MIDA).fill(''));
+  const files = mesclar([...Array(MIDA).keys()]);
+  const col·locades = [];
+  sopaParaules.forEach((p) => {
+    const paraula = p.cat.replace(/[^A-ZÀÈÉÍÏÒÓÚÜÇ]/g, '');
+    if (paraula.length > MIDA) return;
+    const fila = files.pop();
+    const colInici = Math.floor(Math.random() * (MIDA - paraula.length + 1));
+    let ok = true;
+    for (let j = 0; j < paraula.length; j++) {
+      const c = graella[fila][colInici + j];
+      if (c !== '' && c !== paraula[j]) { ok = false; break; }
+    }
+    if (!ok) return;
+    for (let j = 0; j < paraula.length; j++) graella[fila][colInici + j] = paraula[j];
+    col·locades.push({ ...p, fila, colInici, paraula });
+  });
+  sopaParaules = col·locades;
+  const alfabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for (let i = 0; i < MIDA; i++) for (let j = 0; j < MIDA; j++) if (graella[i][j] === '') graella[i][j] = alfabet[Math.floor(Math.random() * 26)];
+  const cont = document.getElementById('sopa-graella');
+  cont.style.gridTemplateColumns = `repeat(${MIDA}, 1fr)`;
+  cont.innerHTML = '';
+  for (let i = 0; i < MIDA; i++) for (let j = 0; j < MIDA; j++) {
+    const c = document.createElement('div');
+    c.className = 'sopa-cella';
+    c.textContent = graella[i][j];
+    c.onclick = () => clicarCellaSopa(c);
+    cont.appendChild(c);
+  }
+  const llista = document.getElementById('sopa-llista');
+  llista.innerHTML = '';
+  sopaParaules.forEach((p, idx) => {
+    const t = document.createElement('div');
+    t.className = 'sopa-objectiu';
+    t.dataset.idx = idx;
+    t.textContent = p.cat;
+    llista.appendChild(t);
+  });
+  document.getElementById('sopa-objectiu-actual').textContent = 'Selecciona les lletres';
+  setFeedback('feedback-sopa', '');
+}
+function clicarCellaSopa(cella) {
+  if (cella.classList.contains('trobada')) return;
+  if (cella.classList.contains('seleccionada')) {
+    cella.classList.remove('seleccionada');
+    sopaSeleccio = sopaSeleccio.filter(c => c !== cella);
+  } else {
+    cella.classList.add('seleccionada');
+    sopaSeleccio.push(cella);
+  }
+  const text = sopaSeleccio.map(c => c.textContent).join('');
+  const trobada = sopaParaules.find(p => p.paraula === text && !p.trobat);
+  if (trobada) {
+    trobada.trobat = true;
+    sopaSeleccio.forEach(c => { c.classList.remove('seleccionada'); c.classList.add('trobada'); });
+    sopaSeleccio = [];
+    sumarPunts(20);
+    setFeedback('feedback-sopa', `✅ +20 punts! "${trobada.cat}" ↔ "${trobada.ant}"`, 'bo');
+    document.querySelector(`.sopa-objectiu[data-idx="${sopaParaules.indexOf(trobada)}"]`).classList.add('trobat');
+  } else if (text.length >= 3) {
+    const algunaPotencial = sopaParaules.some(p => !p.trobat && p.paraula.startsWith(text));
+    if (!algunaPotencial) {
+      sopaSeleccio.forEach(c => c.classList.remove('seleccionada'));
+      sopaSeleccio = [];
+      restarPunts(2);
+      setFeedback('feedback-sopa', '❌ -2 punts', 'dolent');
+    }
+  }
+}
+
+/* ============================================================
+   6. TRADUCTOR  (+12 encert, -4 error)
+   ============================================================ */
+let tradResposta = null, tradRespost = false;
+function novaPreguntaTraductor() {
+  tradRespost = false;
+  document.getElementById('btn-seguent-traductor').style.display = 'none';
+  setFeedback('feedback-traductor', '');
+  const d = DADES[Math.floor(Math.random() * DADES.length)];
+  const idioma = selectorIdioma.value;
+  const preguntaCAT = idioma === 'cat' ? true : idioma === 'eng' ? false : Math.random() < 0.5;
+  let pregunta, resposta, distractors;
+  if (preguntaCAT) {
+    pregunta = `Com es diu "${d.cat}" en anglès?`;
+    resposta = d.eng;
+    distractors = agafarAleatoris(DADES.filter(x => x.eng !== d.eng), 3).map(x => x.eng);
+    document.getElementById('info-traductor').textContent = '🇦🇩 Català → 🇬🇧 English';
+  } else {
+    pregunta = `How do you say "${d.eng}" in Catalan?`;
+    resposta = d.cat;
+    distractors = agafarAleatoris(DADES.filter(x => x.cat !== d.cat), 3).map(x => x.cat);
+    document.getElementById('info-traductor').textContent = '🇬🇧 English → 🇦🇩 Català';
+  }
+  tradResposta = resposta;
+  document.getElementById('pregunta-traductor').innerHTML = pregunta;
+  const cont = document.getElementById('opcions-traductor');
+  cont.innerHTML = '';
+  mesclar([resposta, ...distractors]).forEach(op => {
+    const b = document.createElement('button');
+    b.textContent = op;
+    b.onclick = () => {
+      if (tradRespost) return;
+      tradRespost = true;
+      if (op === resposta) { b.classList.add('correcte'); sumarPunts(12); setFeedback('feedback-traductor', '✅ +12 punts', 'bo'); }
+      else {
+        b.classList.add('incorrecte');
+        document.querySelectorAll('#opcions-traductor button').forEach(x => { if (x.textContent === resposta) x.classList.add('correcte'); });
+        restarPunts(4);
+        setFeedback('feedback-traductor', `❌ -4 punts. Era: ${resposta}`, 'dolent');
+      }
+      document.getElementById('btn-seguent-traductor').style.display = 'block';
+    };
+    cont.appendChild(b);
+  });
+}
+
+/* ============================================================
+   7. BINGO  (+5 encert, +30 línia, -2 error)
+   ============================================================ */
+let bingoCartro = [];
+let bingoParaulesCantades = [];
+let bingoAcabat = false;
+function iniciarBingo() {
+  bingoAcabat = false;
+  bingoParaulesCantades = [];
+  const parelles = agafarAleatoris(DADES, 9);
+  bingoCartro = parelles.map(p => ({ text: p.ant, cat: p.cat, marcada: false }));
+  document.getElementById('bingo-anunci').textContent = 'Clica "Cantar paraula" per començar';
+  setFeedback('feedback-bingo', '');
+  const cont = document.getElementById('bingo-cartro');
+  cont.innerHTML = '';
+  bingoCartro.forEach((c, idx) => {
+    const d = document.createElement('div');
+    d.className = 'bingo-cella';
+    d.textContent = c.text;
+    d.dataset.idx = idx;
+    d.onclick = () => marcarBingo(d, idx);
+    cont.appendChild(d);
+  });
+}
+function cantarBingo() {
+  if (bingoAcabat) return;
+  const disponibles = bingoCartro.filter(c => !bingoParaulesCantades.includes(c.cat));
+  if (disponibles.length === 0) { document.getElementById('bingo-anunci').textContent = '🎉 Totes cantades!'; return; }
+  const triada = disponibles[Math.floor(Math.random() * disponibles.length)];
+  bingoParaulesCantades.push(triada.cat);
+  document.getElementById('bingo-anunci').textContent = `📢 Paraula: "${triada.cat}" — Marca el seu antònim!`;
+}
+function marcarBingo(cella, idx) {
+  if (bingoAcabat) return;
+  const c = bingoCartro[idx];
+  if (c.marcada) return;
+  const ultimaCantada = bingoParaulesCantades[bingoParaulesCantades.length - 1];
+  if (ultimaCantada === c.cat) {
+    c.marcada = true;
+    cella.classList.add('marcada');
+    sumarPunts(5);
+    setFeedback('feedback-bingo', '✅ +5 punts', 'bo');
+    comprovarBingo();
+  } else {
+    cella.style.background = '#ff6b6b';
+    setTimeout(() => cella.style.background = '', 500);
+    restarPunts(2);
+    setFeedback('feedback-bingo', '❌ -2 punts', 'dolent');
+  }
+}
+function comprovarBingo() {
+  const m = bingoCartro.map(c => c.marcada);
+  const linies = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  for (const linia of linies) {
+    if (linia.every(i => m[i])) {
+      bingoAcabat = true;
+      linia.forEach(i => document.querySelector(`.bingo-cella[data-idx="${i}"]`).classList.add('guanyadora'));
+      setFeedback('feedback-bingo', '🎉 BINGO! +30 punts!', 'bo');
+      sumarPunts(30);
+      return;
+    }
+  }
+}
+
+/* ============================================================
+   8. PENJAT  (+20 encert, -5 perdre)
+   ============================================================ */
+let penjatActual = null, penjatLletres = [], penjatErrors = 0;
+const MAX_ERRORS = 6;
+function iniciarPenjat() {
+  penjatActual = DADES[Math.floor(Math.random() * DADES.length)];
+  penjatLletres = [];
+  penjatErrors = 0;
+  setFeedback('feedback-penjat', '');
+  const idioma = selectorIdioma.value;
+  const pista = idioma === 'eng' ? `${penjatActual.engAnt} → ?` : `${penjatActual.ant} → ?`;
+  document.getElementById('penjat-info').textContent = `Pista (antònim): ${pista}`;
+  renderitzarPenjat();
+  renderitzarTeclatPenjat();
+}
+function renderitzarPenjat() {
+  const paraula = penjatActual.cat;
+  const cont = document.getElementById('penjat-paraula');
+  cont.innerHTML = '';
+  for (const lletra of paraula) {
+    const d = document.createElement('div');
+    d.className = 'penjat-lletra';
+    if (lletra === ' ' || lletra === '-') d.textContent = lletra;
+    else if (penjatLletres.includes(lletra)) { d.textContent = lletra; d.classList.add('encertada'); }
+    else d.textContent = '_';
+    cont.appendChild(d);
+  }
+}
+function renderitzarTeclatPenjat() {
+  const cont = document.getElementById('penjat-teclat');
+  cont.innerHTML = '';
+  const alfabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÀÈÉÍÏÒÓÚÜÇ';
+  for (const lletra of alfabet) {
+    const b = document.createElement('button');
+    b.textContent = lletra;
+    b.disabled = penjatLletres.includes(lletra);
+    b.onclick = () => clicarLletraPenjat(lletra);
+    cont.appendChild(b);
+  }
+}
+function clicarLletraPenjat(lletra) {
+  if (penjatLletres.includes(lletra)) return;
+  penjatLletres.push(lletra);
+  const paraula = penjatActual.cat;
+  if (!paraula.includes(lletra)) {
+    penjatErrors++;
+    restarPunts(1);
+    setFeedback('feedback-penjat', `❌ -1 punt (${penjatErrors}/${MAX_ERRORS} errors)`, 'dolent');
+  }
+  renderitzarPenjat();
+  renderitzarTeclatPenjat();
+  if (penjatErrors >= MAX_ERRORS) {
+    setFeedback('feedback-penjat', `💀 -5 punts. Era: ${paraula}`, 'dolent');
+    restarPunts(5);
+    document.getElementById('penjat-teclat').querySelectorAll('button').forEach(b => b.disabled = true);
+    return;
+  }
+  if ([...paraula].every(l => l === ' ' || l === '-' || penjatLletres.includes(l))) {
+    sumarPunts(20);
+    setFeedback('feedback-penjat', '✅ +20 punts!', 'bo');
+  }
+}
+
+/* ============================================================
+   9. INTRÚS  (+20 encert, -6 error)
+   ============================================================ */
+const GRUPS = {
+  fisic: ['RUGÓS','AMPLE','DUR','FRED','PESAT','SEC','FOSC','BLANC','NOU','CURT'],
+  personalitat: ['TRAÏDOR','CRUEL','VALENT','MESQUÍ','TREBALLADOR','HONEST','OPTIMISTA','LLEST','FAMÓS','ELEGANT'],
+  estat: ['TANCAT','PLE','COMPLET','ACTIU','PRESENT','FATIGAT','INQUIET','CALLAT','AMABLE','FELIÇ']
+};
+function novaIntrus() {
+  document.getElementById('btn-seguent-intrus').style.display = 'none';
+  setFeedback('feedback-intrus', '');
+  const idioma = selectorIdioma.value;
+  const claus = Object.keys(GRUPS);
+  const grupTriat = claus[Math.floor(Math.random() * claus.length)];
+  const grupIntrus = claus.filter(c => c !== grupTriat)[Math.floor(Math.random() * (claus.length - 1))];
+  const getText = cat => { const d = DADES.find(x => x.cat === cat); return idioma === 'eng' ? d.eng : d.cat; };
+  const triats = agafarAleatoris(GRUPS[grupTriat], 3).map(cat => ({ text: getText(cat), intrus: false }));
+  const catIntrusa = agafarAleatoris(GRUPS[grupIntrus], 1)[0];
+  triats.push({ text: getText(catIntrusa), intrus: true });
+  document.getElementById('pista-intrus').textContent = idioma === 'eng' ? 'Which word does NOT belong to the group?' : 'Quina paraula NO pertany al grup?';
+  const cont = document.getElementById('opcions-intrus');
+  cont.innerHTML = '';
+  mesclar(triats).forEach(op => {
+    const b = document.createElement('button');
+    b.textContent = op.text;
+    b.onclick = () => {
+      if (op.intrus) {
+        b.classList.add('correcte'); sumarPunts(20);
+        setFeedback('feedback-intrus', '✅ +20 punts', 'bo');
+        document.getElementById('btn-seguent-intrus').style.display = 'block';
+      } else {
+        b.classList.add('incorrecte');
+        restarPunts(6);
+        setFeedback('feedback-intrus', '❌ -6 punts. Aquesta sí que hi pertany', 'dolent');
+      }
+    };
+    cont.appendChild(b);
+  });
+}
+
+/* ============================================================
+   10. PARELLES  (+10 encert, -3 error)
+   ============================================================ */
+function iniciarParelles() {
+  const parelles = agafarAleatoris(DADES, 5);
+  setFeedback('feedback-parelles', '');
+  const contCat = document.getElementById('parelles-cat');
+  const contEng = document.getElementById('parelles-eng');
+  contCat.innerHTML = ''; contEng.innerHTML = '';
+  parelles.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'item destí';
+    div.dataset.resposta = p.eng;
+    div.textContent = p.cat;
+    div.ondragover = e => e.preventDefault();
+    div.ondrop = e => {
+      e.preventDefault();
+      const text = e.dataTransfer.getData('text');
+      if (div.classList.contains('omplert')) return;
+      if (text === div.dataset.resposta) {
+        div.classList.add('omplert');
+        div.textContent = p.cat + ' → ' + text;
+        sumarPunts(10);
+        setFeedback('feedback-parelles', '✅ +10 punts', 'bo');
+      } else {
+        div.classList.add('error');
+        restarPunts(3);
+        setFeedback('feedback-parelles', '❌ -3 punts', 'dolent');
+        setTimeout(() => div.classList.remove('error'), 700);
+      }
+    };
+    contCat.appendChild(div);
+  });
+  mesclar(parelles).forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'item arrossegable';
+    div.draggable = true;
+    div.textContent = p.eng;
+    div.ondragstart = e => e.dataTransfer.setData('text', p.eng);
+    contEng.appendChild(div);
+  });
+}
+
+/* ============================================================
+   11. CLASSIFICACIÓ  (+8 encert, -3 error)
+   ============================================================ */
+const POSITIUS = ['BONDADÓS','VALENT','COMPETENT','GENERÓS','TREBALLADOR','HONEST','OPTIMISTA','LLEST','AMABLE','PACIENT','FELIÇ','DIVERTIT','ORDENAT','ELEGANT','AFORTUNAT','COMPASSIU','LLEIAL','NET','BO','TRANQUIL','NATURAL','ACTIU','FORT','RÀPID'];
+const NEGATIUS = ['TRAÏDOR','DESPIETAT','MALVAT','MESQUÍ','GANDUL','MENTIDER','PESSIMISTA','BADOC','DESAGRADABLE','IMPACIENT','TRIST','AVORRIT','DESORDENAT','GROLLER','DESGRACIAT','CRUEL','FURIÓS','INQUIET','COVARD','INEPTE','POBRE'];
+function iniciarClassificacio() {
+  setFeedback('feedback-classificacio', '');
+  document.getElementById('caixa-positiu').innerHTML = '<h4>😊 Positiu</h4>';
+  document.getElementById('caixa-negatiu').innerHTML = '<h4>😟 Negatiu</h4>';
+  const pool = document.getElementById('class-paraules-pool');
+  pool.innerHTML = '';
+  const idioma = selectorIdioma.value;
+  const triades = mesclar([...agafarAleatoris(POSITIUS, 3), ...agafarAleatoris(NEGATIUS, 3)]);
+  triades.forEach(cat => {
+    const d = DADES.find(x => x.cat === cat);
+    const text = idioma === 'eng' ? d.eng : d.cat;
+    const span = document.createElement('span');
+    span.className = 'class-paraula';
+    span.draggable = true;
+    span.textContent = text;
+    span.dataset.cat = cat;
+    span.ondragstart = e => e.dataTransfer.setData('text', cat);
+    pool.appendChild(span);
+  });
+}
+function dropClassificacio(e, caixa) {
+  e.preventDefault();
+  caixa.classList.remove('hover');
+  const cat = e.dataTransfer.getData('text');
+  const esPositiu = POSITIUS.includes(cat);
+  const esNegatiu = NEGATIUS.includes(cat);
+  const correcte = (caixa.dataset.tipus === 'positiu' && esPositiu) || (caixa.dataset.tipus === 'negatiu' && esNegatiu);
+  const span = document.querySelector(`.class-paraula[data-cat="${cat}"]`);
+  if (!span) return;
+  if (correcte) {
+    span.classList.add('col·locada');
+    span.draggable = false;
+    caixa.appendChild(span);
+    sumarPunts(8);
+    setFeedback('feedback-classificacio', '✅ +8 punts', 'bo');
+  } else {
+    span.style.background = '#ff6b6b';
+    setTimeout(() => span.style.background = '', 500);
+    restarPunts(3);
+    setFeedback('feedback-classificacio', '❌ -3 punts. Aquesta no va aquí', 'dolent');
+  }
+}
+
+/* ============================================================
+   12. FRASES  (+5 generar)
+   ============================================================ */
+function iniciarFrasesBoges() {
+  const sel = document.getElementById('frase-paraula');
+  sel.innerHTML = '';
+  DADES.forEach((d, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = d.cat;
+    sel.appendChild(opt);
+  });
+  document.getElementById('llista-frases').innerHTML = '';
+}
+function generarFrase() {
+  const idx = document.getElementById('frase-paraula').value;
+  const d = DADES[idx];
+  const plantilles = [
+    `El/La <span class="cat">${d.cat}</span> es transforma en <span class="ant">${d.ant}</span>.`,
+    `Mentre un és <span class="cat">${d.cat}</span>, l'altre és <span class="ant">${d.ant}</span>.`,
+    `Ahir era <span class="cat">${d.cat}</span>, avui és <span class="ant">${d.ant}</span>.`,
+    `No és <span class="cat">${d.cat}</span>, sinó <span class="ant">${d.ant}</span>!`
+  ];
+  const frase = plantilles[Math.floor(Math.random() * plantilles.length)];
+  const engFrase = `(EN) The <span class="cat">${d.eng}</span> becomes <span class="ant">${d.engAnt}</span>.`;
+  const cont = document.getElementById('frase-generada');
+  cont.style.display = 'block';
+  cont.innerHTML = frase + `<span class="eng">${engFrase}</span>`;
+  sumarPunts(5);
+  setFeedback('feedback-frases', '✨ +5 punts per la frase', 'bo');
+  const nova = document.createElement('div');
+  nova.className = 'frase-generada';
+  nova.innerHTML = frase + `<span class="eng">${engFrase}</span>`;
+  document.getElementById('llista-frases').prepend(nova);
+}
+
+/* ============================================================
+   GUARDAT / RESTAURAR JSON
+   ============================================================ */
+function obrirGuardar() {
+  document.getElementById('modal-guardar').classList.add('actiu');
+}
+function tancarModal(id) {
+  document.getElementById(id).classList.remove('actiu');
+  // Si hi havia un canvi pendent i l'usuari cancel·la, el descartem
+  if (id === 'modal-guardar' && canviPendent) {
+    canviPendent();
+    canviPendent = null;
+    // Restaurar el selector perquè coincideixi amb el joc mostrat
+    selectorJoc.value = jocActual;
+  }
+}
+function guardarJSON() {
+  const dades = {
+    versio: '1.0',
+    data: new Date().toISOString(),
+    punts: punts,
+    nivell: nivellActual.nom,
+    estadistiques: estadistiques
+  };
+  const blob = new Blob([JSON.stringify(dades, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const nomFitxer = `antonims_${new Date().toISOString().slice(0,10)}.json`;
+  a.download = nomFitxer;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  tancarModal('modal-guardar');
+  if (canviPendent) { canviPendent(); canviPendent = null; }
+}
+function obrirRestaurar() {
+  document.getElementById('modal-restaurar').classList.add('actiu');
+}
+function restaurarJSON() {
+  const input = document.getElementById('input-fitxer');
+  if (!input.files || input.files.length === 0) {
+    alert('Selecciona un fitxer JSON primer.');
+    return;
+  }
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const dades = JSON.parse(e.target.result);
+      if (typeof dades.punts !== 'number') throw new Error('Format incorrecte');
+      punts = dades.punts;
+      estadistiques = dades.estadistiques || estadistiques;
+      nivellActual = NIVELLS[0]; // Forcem recalcul
+      actualitzarMarcador();
+      tancarModal('modal-restaurar');
+      setFeedback('feedback-' + jocActual, `📂 Restaurat: ${punts} punts`, 'bo');
+    } catch (err) {
+      alert('Fitxer JSON no vàlid: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+function reiniciarPunts() {
+  if (!confirm('Segur que vols reiniciar tots els punts i estadístiques?')) return;
+  punts = 0;
+  estadistiques = { encerts: 0, errors: 0, jocsJugats: {}, inici: new Date().toISOString() };
+  nivellActual = NIVELLS[0];
+  actualitzarMarcador();
+}
+
+/* ============================================================
+   INICIALITZACIÓ
+   ============================================================ */
+actualitzarMarcador();
+iniciarJoc('memory');
+</script>
+</body>
+</html>
