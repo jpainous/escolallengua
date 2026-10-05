@@ -1,0 +1,2044 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<title>Fitxa de redacció</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@400;600;700&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+<style>
+  * { box-sizing: border-box; }
+
+  /* ============================================================
+     MODE CLAR (per defecte)
+     Fons blanquinós càlid + targetes blanques
+     ============================================================ */
+  :root {
+    --blau:        #2a6df4;
+    --blau-fosc:   #1a3d6d;
+    --groc:        #f5b301;
+    --verd:        #29b473;
+    --lila:        #8b5cf6;
+    --taronja:     #f97316;
+    --rosa:        #ec4899;
+
+    --fons-pagina: #f7f5f0;      /* color pla càlid, gairebé blanc */
+    --fons-card:   #ffffff;      /* targetes blanques */
+    --fons-camp:   #fbfaf7;      /* camps quasi blancs */
+
+    --text:        #2a2825;      /* text principal fosc però càlid */
+    --text-suau:   #6b6660;
+    --text-titols: #1a3d6d;      /* títols en blau fosc */
+    --vora:        #e0dcd3;
+
+    --ombra:       0 4px 16px rgba(60,50,40,0.10);
+    --ombra-forta: 0 8px 28px rgba(60,50,40,0.18);
+
+    --font-cos:   'Nunito', sans-serif;
+    --font-titol: 'Baloo 2', 'Nunito', sans-serif;
+  }
+
+  /* ============================================================
+     MODE FOSC
+     Fons marró fosc + targetes encara més fosques + text clar
+     ============================================================ */
+  [data-tema="fosc"] {
+    --fons-pagina: #1a1814;      /* fons marró molt fosc */
+    --fons-card:   #2b2823;      /* targetes una mica més clares que el fons */
+    --fons-camp:   #fbfaf7;      /* camps blancs per llegir bé el text */
+
+    --text:        #f0ece4;      /* text clar */
+    --text-suau:   #b8b0a0;
+    --text-titols: #e8d9a8;      /* títols beix daurat clar */
+    --vora:        #4a453e;
+
+    --ombra:       0 4px 16px rgba(0,0,0,0.5);
+    --ombra-forta: 0 8px 28px rgba(0,0,0,0.7);
+  }
+
+  html {
+    background-color: var(--fons-pagina);
+    min-height: 100%;
+  }
+
+  body {
+    font-family: var(--font-cos);
+    background-color: var(--fons-pagina);
+    margin: 0;
+    padding: 30px 20px 80px;
+    color: var(--text);
+    line-height: 1.55;
+    min-height: 100vh;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  h1, h2, h3, .seccio-titol, .card-cap, .selector label {
+    font-family: var(--font-titol);
+  }
+
+  .full { max-width: 940px; margin: 0 auto; }
+
+  /* ---------- BOTÓ TEMA ---------- */
+  .btn-tema {
+    position: fixed; top: 20px; right: 20px;
+    width: 48px; height: 48px; border-radius: 50%;
+    border: 2px solid var(--vora);
+    background: var(--fons-card);
+    box-shadow: var(--ombra-forta);
+    font-size: 22px; cursor: pointer; z-index: 200;
+    transition: transform 0.2s, background 0.3s, border 0.3s;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-titols);
+  }
+  .btn-tema:hover { transform: scale(1.1) rotate(15deg); }
+
+  /* ---------- CAPÇALERA ---------- */
+  .capcalera { text-align: center; margin-bottom: 26px; }
+  .capcalera h1 {
+    font-size: 38px; color: var(--text-titols); margin: 0;
+    letter-spacing: -0.5px;
+  }
+  .capcalera .subtitol { color: var(--text-suau); font-size: 15px; margin-top: 4px; }
+
+  /* ---------- SELECTOR D'ESCENA ---------- */
+  .selector-card {
+    background: var(--fons-card);
+    border-radius: 16px;
+    padding: 16px 22px;
+    box-shadow: var(--ombra);
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: 14px; margin-bottom: 22px;
+    border: 1px solid var(--vora);
+    transition: background 0.3s, border 0.3s;
+  }
+  .selector-card .etiqueta {
+    font-family: var(--font-titol); font-size: 17px; font-weight: 700;
+    color: var(--text-titols);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .selector-card .etiqueta .emoji { font-size: 22px; }
+
+  /* Tots els selects amb text fosc sobre fons clar */
+  select {
+    padding: 10px 14px;
+    font-size: 15px;
+    font-family: var(--font-cos);
+    border: 2px solid var(--vora);
+    border-radius: 10px;
+    background: #ffffff;
+    color: #2a2825;
+    cursor: pointer;
+    transition: border 0.15s, box-shadow 0.15s;
+  }
+  select:focus {
+    outline: none;
+    border-color: var(--blau);
+    box-shadow: 0 0 0 4px rgba(42,109,244,0.25);
+  }
+  .selector-card select { flex: 1; min-width: 220px; }
+
+  .selector-tipus {
+    display: flex; align-items: center; gap: 8px; margin-left: auto;
+  }
+  .selector-tipus label {
+    font-size: 13px; font-weight: 700; color: var(--text-suau);
+  }
+  .selector-tipus select {
+    padding: 8px 12px; font-size: 14px;
+  }
+
+  /* ---------- ZONA IMATGE ---------- */
+  #zonaImatge { text-align: center; margin-bottom: 26px; }
+  .imatge {
+    display: block; width: 100%; max-width: 640px; margin: 0 auto;
+    border-radius: 16px; box-shadow: var(--ombra-forta);
+    border: 4px solid var(--fons-card);
+    transition: transform 0.25s;
+  }
+  .imatge:hover { transform: scale(1.01); }
+  .missatge {
+    color: var(--text-suau); font-style: italic; font-size: 15px;
+    padding: 24px;
+    background: var(--fons-card);
+    border-radius: 16px;
+    border: 2px dashed var(--vora);
+    max-width: 640px; margin: 0 auto;
+  }
+
+  /* ---------- TARGETES ---------- */
+  .card {
+    background: var(--fons-card);
+    border-radius: 16px;
+    box-shadow: var(--ombra);
+    margin-bottom: 20px;
+    overflow: hidden;
+    border: 1px solid var(--vora);
+    transition: box-shadow 0.2s, background 0.3s, border 0.3s;
+  }
+  .card:hover { box-shadow: var(--ombra-forta); }
+
+  .card-cap {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 22px; cursor: pointer; user-select: none;
+    font-size: 20px; font-weight: 700; color: #fff;
+    position: relative; transition: filter 0.15s;
+  }
+  .card-cap:hover { filter: brightness(1.06); }
+
+  .card[data-color="blau"]    .card-cap { background: linear-gradient(135deg, #2a6df4, #4b8bff); }
+  .card[data-color="lila"]    .card-cap { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+  .card[data-color="groc"]    .card-cap { background: linear-gradient(135deg, #f5b301, #fbc93d); color: #4a3a00; }
+  .card[data-color="verd"]    .card-cap { background: linear-gradient(135deg, #29b473, #4fd39a); }
+  .card[data-color="taronja"] .card-cap { background: linear-gradient(135deg, #f97316, #fb923c); }
+  .card[data-color="rosa"]    .card-cap { background: linear-gradient(135deg, #ec4899, #f472b6); }
+
+  .card-cap .icona {
+    font-size: 26px; width: 42px; height: 42px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.28); border-radius: 12px; flex-shrink: 0;
+  }
+  .card[data-color="groc"] .card-cap .icona { background: rgba(255,255,255,0.5); }
+
+  .card-cap .text-cap { flex: 1; display: flex; align-items: baseline; gap: 10px; }
+  .card-cap .subtitol-cap {
+    font-family: var(--font-cos); font-weight: 400;
+    font-size: 14px; opacity: 0.9;
+  }
+  .card-cap .fletxa { font-size: 18px; transition: transform 0.3s; font-weight: 800; }
+  .card.tancada .card-cap .fletxa { transform: rotate(-90deg); }
+  .card-cos {
+    padding: 22px 24px 26px;
+    border-top: 1px solid var(--vora);
+    background: var(--fons-card);
+  }
+  .card.tancada .card-cos { display: none; }
+
+  /* ---------- AJUDA ---------- */
+  .ajuda {
+    font-size: 13.5px;
+    color: var(--text-suau);
+    font-style: italic;
+    background: rgba(42,109,244,0.08);
+    border-left: 3px solid var(--blau);
+    padding: 8px 12px;
+    border-radius: 0 8px 8px 0;
+    margin: 0 0 16px;
+  }
+  [data-tema="fosc"] .ajuda {
+    background: rgba(42,109,244,0.20);
+    color: #d5cfc5;
+  }
+
+  /* ---------- SELECTOR TIPUS DE TEXT ---------- */
+  .selector-tipus-text {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(139,92,246,0.10);
+    border-left: 4px solid var(--lila);
+    padding: 12px 16px;
+    border-radius: 0 10px 10px 0;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  [data-tema="fosc"] .selector-tipus-text {
+    background: rgba(139,92,246,0.22);
+  }
+  .selector-tipus-text label {
+    font-family: var(--font-titol);
+    font-weight: 700;
+    color: #6d3fd4;                 /* lila fosc llegible sobre fons clar */
+    font-size: 15px;
+  }
+  [data-tema="fosc"] .selector-tipus-text label {
+    color: #d4b8ff;                 /* lila clar llegible sobre fons fosc */
+  }
+  .selector-tipus-text select {
+    flex: 1; min-width: 200px;
+    padding: 8px 12px; font-size: 14px;
+    border: 2px solid var(--lila);
+  }
+
+  /* ---------- BOTÓ INFO ---------- */
+  .btn-info {
+    width: 38px; height: 38px; border-radius: 50%; border: none;
+    background: linear-gradient(135deg, var(--lila), #a78bfa);
+    color: #fff;
+    font-family: 'Baloo 2', serif; font-weight: 800;
+    font-size: 20px; cursor: pointer; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 3px 10px rgba(139,92,246,0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-info:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 16px rgba(139,92,246,0.55);
+  }
+  .btn-info:active { transform: scale(0.98); }
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10, 20, 40, 0.55);
+    backdrop-filter: blur(3px);
+    display: none;
+    align-items: flex-start; justify-content: center;
+    padding: 40px 20px;
+    z-index: 300;
+    overflow-y: auto;
+    animation: fadeIn 0.2s ease;
+  }
+  .modal-overlay.visible { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: var(--fons-card);
+    border-radius: 18px;
+    max-width: 680px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    overflow: hidden;
+    animation: slideUp 0.25s ease;
+    border: 1px solid var(--vora);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .modal-cap {
+    display: flex; align-items: center; gap: 14px;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, var(--lila), #a78bfa);
+    color: #fff;
+  }
+  .modal-cap .modal-icona {
+    font-size: 28px; width: 46px; height: 46px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.25);
+    border-radius: 12px; flex-shrink: 0;
+  }
+  .modal-cap h2 { margin: 0; font-size: 22px; flex: 1; }
+  .modal-cap .btn-tancar {
+    background: rgba(255,255,255,0.25);
+    border: none; color: #fff;
+    width: 36px; height: 36px; border-radius: 50%;
+    font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .modal-cap .btn-tancar:hover {
+    background: rgba(255,255,255,0.4);
+    transform: rotate(90deg);
+  }
+
+  .modal-cos {
+    padding: 22px 26px 28px;
+    max-height: 70vh; overflow-y: auto;
+    color: var(--text);
+  }
+
+  .modal-seccio { margin-bottom: 20px; }
+  .modal-seccio:last-child { margin-bottom: 0; }
+
+  .modal-seccio-titol {
+    font-family: var(--font-titol);
+    font-size: 16px; font-weight: 700;
+    color: #6d3fd4;                   /* lila fosc sobre clar */
+    display: flex; align-items: center; gap: 8px;
+    margin: 0 0 8px;
+  }
+  [data-tema="fosc"] .modal-seccio-titol { color: #d4b8ff; }  /* lila clar sobre fosc */
+
+  .modal-seccio p {
+    margin: 0 0 8px; font-size: 14.5px; line-height: 1.55;
+  }
+  .modal-seccio ul {
+    margin: 0; padding-left: 22px;
+    font-size: 14.5px; line-height: 1.55;
+  }
+  .modal-seccio ul li { margin-bottom: 4px; }
+
+  .modal-exemple {
+    background: rgba(139,92,246,0.10);
+    border-left: 4px solid var(--lila);
+    padding: 12px 16px; border-radius: 0 8px 8px 0;
+    font-style: italic; font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  [data-tema="fosc"] .modal-exemple {
+    background: rgba(139,92,246,0.25);
+  }
+
+  /* ---------- DADES ALUMNE ---------- */
+  .dades-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .camp { display: flex; flex-direction: column; }
+  .camp label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-titols);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .camp input {
+    padding: 10px 12px;
+    font-size: 15px;
+    font-family: var(--font-cos);
+    border: 2px solid var(--vora);
+    border-radius: 10px;
+    background: var(--fons-camp);
+    color: #2a2825;                    /* text sempre fosc dins els camps */
+    transition: border 0.15s, box-shadow 0.15s;
+  }
+  .camp input:focus {
+    outline: none;
+    border-color: var(--blau);
+    box-shadow: 0 0 0 4px rgba(42,109,244,0.25);
+  }
+
+  /* ---------- ESQUEMA ---------- */
+  .esquema-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  .bloc {
+    border-radius: 12px;
+    padding: 14px 16px;
+    border-left: 5px solid var(--blau);
+    background: rgba(42,109,244,0.06);
+    transition: background 0.2s;
+  }
+  [data-tema="fosc"] .bloc { background: rgba(255,255,255,0.07); }
+  .bloc:nth-child(1) { border-color: var(--blau); }
+  .bloc:nth-child(2) { border-color: var(--groc); }
+  .bloc:nth-child(3) { border-color: var(--rosa); }
+  .bloc:nth-child(4) { border-color: var(--verd); }
+  .bloc:nth-child(5) { border-color: var(--lila); }
+  .bloc:nth-child(6) { border-color: var(--taronja); }
+
+  .bloc-titol {
+    font-family: var(--font-titol);
+    font-weight: 700;
+    color: var(--text-titols);
+    font-size: 16px;
+    margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .bloc-icona { font-size: 20px; }
+  .bloc-ajuda {
+    font-size: 12.5px;
+    color: var(--text-suau);
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+  .bloc textarea {
+    width: 100%; min-height: 64px;
+    padding: 9px 11px;
+    font-size: 14px;
+    font-family: var(--font-cos);
+    line-height: 1.5;
+    border: 2px solid var(--vora);
+    border-radius: 8px;
+    background: var(--fons-camp);
+    color: #2a2825;
+    resize: vertical;
+    transition: border 0.15s, box-shadow 0.15s;
+  }
+  .bloc textarea:focus {
+    outline: none;
+    border-color: var(--blau);
+    box-shadow: 0 0 0 4px rgba(42,109,244,0.20);
+  }
+
+  /* ---------- REDACCIÓ ---------- */
+  .camps-redaccio {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 10px 14px;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .camps-redaccio label {
+    font-family: var(--font-titol);
+    font-weight: 700;
+    color: var(--text-titols);
+    font-size: 16px;
+  }
+  .camps-redaccio input[type="text"] {
+    padding: 11px 14px;
+    font-size: 16px;
+    font-family: var(--font-cos);
+    border: 2px solid var(--vora);
+    border-radius: 10px;
+    background: var(--fons-camp);
+    color: #2a2825;
+  }
+  .camps-redaccio input[type="text"]:focus {
+    outline: none;
+    border-color: var(--blau);
+    box-shadow: 0 0 0 4px rgba(42,109,244,0.25);
+  }
+  textarea.redaccio {
+    width: 100%; min-height: 280px;
+    padding: 14px 16px;
+    font-size: 16px;
+    font-family: var(--font-cos);
+    line-height: 1.6;
+    border: 2px solid var(--vora);
+    border-radius: 10px;
+    background: var(--fons-camp);
+    color: #2a2825;
+    resize: vertical;
+    transition: border 0.15s, box-shadow 0.15s;
+  }
+  textarea.redaccio:focus {
+    outline: none;
+    border-color: var(--blau);
+    box-shadow: 0 0 0 4px rgba(42,109,244,0.25);
+  }
+  .comptador {
+    font-size: 13px;
+    color: var(--text-suau);
+    text-align: right;
+    margin-top: 8px;
+    font-weight: 600;
+  }
+  .comptador span { color: var(--blau); font-weight: 800; }
+  [data-tema="fosc"] .comptador span { color: #7ba6ff; }
+
+  /* ---------- RECORDATORI VOCABULARI ---------- */
+  .recordatori {
+    background: linear-gradient(135deg, #fff8e1, #fff3c4);
+    border: 2px dashed var(--groc);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-top: 14px;
+    font-size: 14px;
+    color: #6b4f00;
+    display: none;
+  }
+  [data-tema="fosc"] .recordatori {
+    background: linear-gradient(135deg, #3a3520, #2e2a18);
+    color: #f5d77a;
+    border-color: #b09030;
+  }
+  .recordatori.visible { display: block; animation: apareix 0.3s ease; }
+  @keyframes apareix {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .recordatori strong {
+    color: #8a6500;
+    display: block; margin-bottom: 8px;
+    font-family: var(--font-titol);
+    font-size: 15px;
+  }
+  [data-tema="fosc"] .recordatori strong { color: #f5d77a; }
+  .recordatori .paraula {
+    display: inline-block;
+    background: #fff;
+    border: 1.5px solid #e6cc70;
+    border-radius: 14px;
+    padding: 3px 12px;
+    margin: 3px 5px 3px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b4f00;
+  }
+  [data-tema="fosc"] .recordatori .paraula {
+    background: #2e2a18;
+    color: #f5d77a;
+    border-color: #8a6500;
+  }
+
+  /* ---------- RÚBRICA ---------- */
+  .rubrica-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .rubrica-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(139,92,246,0.08);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border 0.15s, background 0.15s;
+    color: var(--text);
+  }
+  [data-tema="fosc"] .rubrica-item {
+    background: rgba(139,92,246,0.18);
+  }
+  .rubrica-item:hover { border-color: var(--lila); }
+  .rubrica-item input[type="checkbox"] {
+    width: 22px; height: 22px;
+    margin-top: 1px;
+    accent-color: var(--lila);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .rubrica-item .rubrica-text {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  .rubrica-item .rubrica-text strong {
+    color: #6d3fd4;                /* lila fosc sobre clar */
+  }
+  [data-tema="fosc"] .rubrica-item .rubrica-text strong {
+    color: #d4b8ff;                /* lila clar sobre fosc */
+  }
+  .rubrica-item.checked {
+    background: rgba(139,92,246,0.22);
+    border-color: var(--lila);
+  }
+  [data-tema="fosc"] .rubrica-item.checked {
+    background: rgba(139,92,246,0.35);
+  }
+
+  /* ---------- ACCIONS ---------- */
+  .accions {
+    display: flex; gap: 10px; justify-content: center;
+    flex-wrap: wrap; margin-top: 28px;
+  }
+  .accions button {
+    padding: 12px 22px;
+    font-size: 15px;
+    font-family: var(--font-titol);
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--blau), #4b8bff);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(42,109,244,0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .accions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(42,109,244,0.45);
+  }
+  .accions button.secundari {
+    background: var(--fons-card);
+    color: var(--text-titols);
+    box-shadow: 0 3px 10px rgba(20,40,90,0.12);
+    border: 2px solid var(--vora);
+  }
+  .accions button.secundari:hover { background: rgba(42,109,244,0.10); }
+
+  /* ---------- INDICADOR AUTO-GUARDAT ---------- */
+  .autoguardat {
+    position: fixed; bottom: 20px; right: 20px;
+    background: linear-gradient(135deg, var(--verd), #4fd39a);
+    color: #fff;
+    font-family: var(--font-titol);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px 18px;
+    border-radius: 30px;
+    box-shadow: 0 6px 20px rgba(41,180,115,0.4);
+    opacity: 0; transform: translateY(10px);
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    z-index: 100;
+  }
+  .autoguardat.visible { opacity: 1; transform: translateY(0); }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 700px) {
+    body { padding: 18px 14px 80px; }
+    .capcalera h1 { font-size: 28px; }
+    .dades-grid { grid-template-columns: 1fr; }
+    .camps-redaccio { grid-template-columns: 1fr; }
+    .card-cap { font-size: 17px; padding: 14px 16px; }
+    .card-cos { padding: 18px 16px 22px; }
+    .card-cap .subtitol-cap { display: none; }
+    .selector-tipus { margin-left: 0; width: 100%; }
+    .modal { margin-top: 10px; }
+    .modal-cos { padding: 18px 20px 22px; max-height: 78vh; }
+  }
+
+  /* ---------- IMPRESSIÓ ---------- */
+  @media print {
+    html, body { background: #fff !important; padding: 0; }
+    .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+    .accions, .autoguardat, .selector-card, .card-cap .fletxa,
+    .btn-tema, .selector-tipus-text, .modal-overlay { display: none !important; }
+    .card.tancada .card-cos { display: block !important; }
+    .card-cap { color: #000 !important; background: #eee !important; }
+    textarea, input, select {
+      border: 1px solid #999 !important;
+      background: #fff !important;
+      color: #000 !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<button class="btn-tema" onclick="canviaTema()" title="Canviar tema" id="btnTema">🌙</button>
+
+<div class="full">
+
+  <header class="capcalera">
+    <h1>✏️ Fitxa de redacció</h1>
+    <p class="subtitol">Tria una escena, esquematitza la idea i després redacta-la.</p>
+  </header>
+
+  <div class="selector-card">
+    <span class="etiqueta"><span class="emoji">🖼️</span> Escena:</span>
+    <select id="selectorEscena">
+      <option value="">— Carregant… —</option>
+    </select>
+    <div class="selector-tipus">
+      <label for="selectorFont">🔤 Tipografia:</label>
+      <select id="selectorFont" onchange="canviaFont(this.value)">
+        <option value="Nunito">Nunito (arrodonida)</option>
+        <option value="Poppins">Poppins (moderna)</option>
+        <option value="Lora">Lora (serif elegant)</option>
+        <option value="Roboto Mono">Roboto Mono (monoespaiada)</option>
+        <option value="Baloo 2">Baloo 2 (infantil)</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="zonaImatge">
+    <p class="missatge">Selecciona una escena per començar.</p>
+  </div>
+
+  <section class="card" data-color="lila" data-seccio="rubrica">
+    <div class="card-cap" onclick="toggleSeccio(this)">
+      <span class="icona">✅</span>
+      <span class="text-cap">
+        <span>Rúbrica d'autoavaluació</span>
+        <span class="subtitol-cap">Marca les caselles abans de lliurar</span>
+      </span>
+      <span class="fletxa">▾</span>
+    </div>
+    <div class="card-cos">
+      <p class="ajuda">Repassa la teva redacció i marca cada punt que hagis complert.</p>
+      <div class="rubrica-grid">
+        <label class="rubrica-item">
+          <input type="checkbox" id="rub_1">
+          <span class="rubrica-text"><strong>He posat un títol</strong> que resumeix el contingut.</span>
+        </label>
+        <label class="rubrica-item">
+          <input type="checkbox" id="rub_2">
+          <span class="rubrica-text"><strong>He seguit l'estructura</strong> del tipus de text triat.</span>
+        </label>
+        <label class="rubrica-item">
+          <input type="checkbox" id="rub_3">
+          <span class="rubrica-text"><strong>He fet servir el vocabulari</strong> que havia triat a l'esquema.</span>
+        </label>
+        <label class="rubrica-item">
+          <input type="checkbox" id="rub_4">
+          <span class="rubrica-text"><strong>He revisat l'ortografia</strong> i la gramàtica.</span>
+        </label>
+        <label class="rubrica-item">
+          <input type="checkbox" id="rub_5">
+          <span class="rubrica-text"><strong>He respectat la longitud</strong> demanada i el text és clar i ordenat.</span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" data-color="groc" data-seccio="dades">
+    <div class="card-cap" onclick="toggleSeccio(this)">
+      <span class="icona">🧑‍🎓</span>
+      <span class="text-cap">
+        <span>Dades de l'alumne</span>
+        <span class="subtitol-cap">Nom, curs i data</span>
+      </span>
+      <span class="fletxa">▾</span>
+    </div>
+    <div class="card-cos">
+      <div class="dades-grid">
+        <div class="camp">
+          <label for="nom">Nom i cognoms</label>
+          <input type="text" id="nom" placeholder="Ex: Anna Ferrer Puig">
+        </div>
+        <div class="camp">
+          <label for="curs">Curs / Grup</label>
+          <input type="text" id="curs" placeholder="Ex: 4t B">
+        </div>
+        <div class="camp">
+          <label for="data">Data</label>
+          <input type="date" id="data">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" data-color="lila" data-seccio="esquema">
+    <div class="card-cap" onclick="toggleSeccio(this)">
+      <span class="icona">🧠</span>
+      <span class="text-cap">
+        <span>Esquematitza la redacció</span>
+        <span class="subtitol-cap">Pensa abans d'escriure</span>
+      </span>
+      <span class="fletxa">▾</span>
+    </div>
+    <div class="card-cos">
+      <div class="selector-tipus-text">
+        <label for="selectorTipusText">📋 Tipus de text:</label>
+        <select id="selectorTipusText" onchange="canviaTipusText(this.value)">
+          <option value="narracio">Narració</option>
+          <option value="descripcio">Descripció</option>
+          <option value="argumentacio">Argumentació</option>
+          <option value="dialeg">Diàleg</option>
+          <option value="carta">Carta</option>
+          <option value="noticia">Notícia</option>
+          <option value="resum">Resum</option>
+          <option value="conte">Conte</option>
+          <option value="recepta">Recepta / Instruccions</option>
+          <option value="correu">Correu electrònic</option>
+          <option value="diari">Diari personal</option>
+          <option value="ressenya">Ressenya</option>
+          <option value="opinio">Article d'opinió</option>
+          <option value="poema">Poema</option>
+          <option value="faula">Faula</option>
+        </select>
+        <button class="btn-info" onclick="obreInfo()" title="Informació sobre aquest tipus de text">ℹ</button>
+      </div>
+
+      <p class="ajuda" id="ajudaEsquema">
+        Abans d'escriure, pensa com organitzaràs el text. Omple cada apartat amb idees curtes.
+      </p>
+
+      <div class="esquema-grid" id="esquemaGrid"></div>
+    </div>
+  </section>
+
+  <section class="card" data-color="blau" data-seccio="redaccio">
+    <div class="card-cap" onclick="toggleSeccio(this)">
+      <span class="icona">📝</span>
+      <span class="text-cap">
+        <span>Redacta la teva història</span>
+        <span class="subtitol-cap">El text final</span>
+      </span>
+      <span class="fletxa">▾</span>
+    </div>
+    <div class="card-cos">
+      <p class="ajuda">Ara converteix l'esquema en un text seguit. Recorda seguir l'estructura del tipus de text que has triat.</p>
+      <div class="camps-redaccio">
+        <label for="titol">Títol</label>
+        <input type="text" id="titol" placeholder="Escriu un títol per a la teva redacció">
+      </div>
+      <textarea class="redaccio" id="redaccio" placeholder="Descriu el que veus a la imatge i explica una petita història…"></textarea>
+      <div class="comptador"><span id="comptadorParaules">0</span> paraules</div>
+
+      <div class="recordatori" id="recordatoriVocab">
+        <strong>📚 Recordatori: paraules que has decidit fer servir</strong>
+        <div id="llistaVocab"></div>
+      </div>
+    </div>
+  </section>
+
+<div class="accions">
+  <button class="secundari" onclick="obreTots()">🔽 Obre-ho tot</button>
+  <button class="secundari" onclick="tancaTots()">🔼 Tanca-ho tot</button>
+  <button class="secundari" onclick="esborraTot()">🗑️ Esborra</button>
+  <button class="secundari" onclick="window.print()">🖨️ Imprimeix</button>
+  <button class="secundari" onclick="descarregaHtml()">🌐 Exporta .html</button>
+  <button onclick="descarregaDocx()">📄 Exporta .docx</button>
+</div>
+
+<div class="modal-overlay" id="modalInfo" onclick="tancaInfoSiFora(event)">
+  <div class="modal">
+    <div class="modal-cap">
+      <span class="modal-icona" id="modalIcona">📖</span>
+      <h2 id="modalTitol">Informació</h2>
+      <button class="btn-tancar" onclick="tancaInfo()" title="Tancar (Esc)">✕</button>
+    </div>
+    <div class="modal-cos" id="modalCos"></div>
+  </div>
+</div>
+
+<div class="autoguardat" id="indicadorGuardat">💾 Guardat</div>
+
+<script>
+// ==================== PLANTILLES D'ESQUEMA (15 tipus) ====================
+const PLANTILLES = {
+
+  narracio: {
+    ajuda: "Explica uns fets que passen en un moment i lloc concrets, amb uns personatges.",
+    info: {
+      queEs: "Un text que explica fets reals o inventats que passen en un lloc i un moment concrets, amb uns personatges que hi participen.",
+      quan: "S'utilitza per explicar històries, anècdotes, contes, relats d'experiències, vivències personals...",
+      estructura: [
+        "Introducció: presenta els personatges, el lloc i el moment.",
+        "Desenvolupament: explica què passa, en ordre.",
+        "Detalls: descripcions, emocions, diàlegs...",
+        "Conclusió: com acaba la història."
+      ],
+      consells: [
+        "Fes servir connectors temporals (primer, després, finalment).",
+        "Combina frases curtes i llargues per donar ritme.",
+        "Descriu bé els personatges i el lloc perquè el lector s'ho imagini.",
+        "Escriu en passat (pretèrit perfet o imperfet)."
+      ],
+      exemple: "Dissabte al matí, la Marta i el seu germà van decidir explorar el bosc del darrere de casa. De sobte, van sentir un soroll estrany entre els arbres. Era un eriçó petit i espantat! Amb molta cura, el van ajudar a trobar el camí cap al seu cau."
+    },
+    blocs: [
+      { id: 'esq_intro',     icona: '🔎', titol: 'Introducció — Qui, on, quan', ajuda: 'Presenta els personatges, el lloc i el moment.', ph: "Ex: En Marc i la seva germana són a l'habitació un matí de dissabte…" },
+      { id: 'esq_desenv',    icona: '⚡', titol: 'Desenvolupament — Què passa',  ajuda: 'Explica les accions principals en ordre.', ph: 'Ex: De cop, en Marc entra corrents cridant que ha marcat un gol…' },
+      { id: 'esq_detalls',   icona: '💭', titol: 'Detalls i descripcions',        ajuda: 'Colors, objectes, expressions, sensacions…', ph: 'Ex: La pilota és blanca i negra, la nena porta una samarreta verda…' },
+      { id: 'esq_conclusio', icona: '🎯', titol: 'Conclusió — Com acaba',         ajuda: 'Tanca la història amb un final o una sensació.', ph: 'Ex: Finalment, tots dos van riure i van continuar jugant plegats.' },
+      { id: 'esq_vocab',     icona: '📚', titol: 'Vocabulari que faré servir',    ajuda: 'Anota 4 o 5 paraules separades per comes.', ph: 'Ex: gol, xut, alegria, cridar, esportiu…' }
+    ]
+  },
+
+  descripcio: {
+    ajuda: "Descriu com és una persona, un lloc o un objecte amb tot detall.",
+    info: {
+      queEs: "Un text que explica com és una persona, un animal, un objecte, un lloc o una escena. Pinta amb paraules allò que veiem o imaginem.",
+      quan: "S'utilitza en fitxes, catàlegs, guies, presentacions, retrats literaris, descripcions de paisatges...",
+      estructura: [
+        "Presentació: què o qui es descriu i on és.",
+        "Aspecte general: forma, mida, color, edat...",
+        "Detalls: parts concretes, roba, materials, ambient...",
+        "Impressió personal: què et suggereix o et fa pensar."
+      ],
+      consells: [
+        "Ordena la descripció: de dalt a baix, de fora a dins o del general al detall.",
+        "Fes servir adjectius variats i precisos.",
+        "Inclou sensacions: colors, olors, sons, textures.",
+        "Evita repetir 'molt' o 'maca'; cerca sinònims."
+      ],
+      exemple: "La iaia és petita i menuda, amb els cabells blancs recollits en un monyo. Té els ulls vius i un somriure que il·lumina tota la sala. Porta sempre un davantal florejat i fa olor de canyella."
+    },
+    blocs: [
+      { id: 'esq_intro',     icona: '🎯', titol: 'Què o qui descric',             ajuda: 'Digues què descriuràs i on és.', ph: "Ex: Descriuré l'habitació on juguen els nens." },
+      { id: 'esq_desenv',    icona: '👁️', titol: 'Aspecte físic / Aparença',     ajuda: 'Mida, forma, color, materials…', ph: 'Ex: És una habitació petita, amb parets grogues…' },
+      { id: 'esq_detalls',   icona: '💭', titol: 'Detalls i sensacions',         ajuda: 'Què s\'hi veu, s\'hi sent, s\'hi fa olor…', ph: "Ex: S'hi sent olor de roba neta i s'hi veu una pilota…" },
+      { id: 'esq_conclusio', icona: '✨', titol: 'Impressió personal',           ajuda: 'Què et suggereix o què et fa pensar.', ph: 'Ex: Fa la sensació d\'un lloc on s\'hi està molt bé.' },
+      { id: 'esq_vocab',     icona: '📚', titol: 'Vocabulari que faré servir',    ajuda: 'Adjectius i paraules precises.', ph: 'Ex: acollidor, atapeït, lluminós…' }
+    ]
+  },
+
+  argumentacio: {
+    ajuda: "Defensa una opinió amb arguments i exemples.",
+    info: {
+      queEs: "Un text que defensa una opinió sobre un tema, donant raons i arguments per convèncer el lector.",
+      quan: "S'utilitza en debats, articles d'opinió, cartes al director, assajos, exàmens...",
+      estructura: [
+        "Presentació del tema.",
+        "Tesi: la teva opinió, clara i directa.",
+        "Arguments: 2 o 3 raons que donin suport a la tesi.",
+        "Conclusió: represa de la tesi i tancament."
+      ],
+      consells: [
+        "Comença amb una frase que capti l'atenció.",
+        "Fes servir connectors argumentatius: 'perquè', 'a més', 'en canvi'...",
+        "Dóna exemples concrets i dades si pots.",
+        "Reconeix algun punt en contra i rebat-lo amb respecte."
+      ],
+      exemple: "Penso que els patis de les escoles haurien de tenir més ombra. En primer lloc, perquè a l'estiu fa molta calor i els nens no poden jugar còmodament. A més, un pati amb arbres ajuda a refrescar l'aire i fa l'espai més agradable."
+    },
+    blocs: [
+      { id: 'esq_intro',     icona: '🎯', titol: 'Tema',                          ajuda: 'De què parlaràs?', ph: 'Ex: Sobre si els deures haurien de ser més curts.' },
+      { id: 'esq_desenv',    icona: '💡', titol: 'La meva tesi',                  ajuda: 'Què defenses en una frase clara?', ph: 'Ex: Crec que els deures haurien de ser més curts.' },
+      { id: 'esq_detalls',   icona: '📌', titol: 'Arguments a favor',            ajuda: '2 o 3 raons que donin suport a la tesi.', ph: "Ex: Perquè tenim poc temps lliure i més activitats…" },
+      { id: 'esq_conclusio', icona: '🎯', titol: 'Conclusió',                    ajuda: 'Reprèn la tesi i tanca.', ph: 'Ex: Per tot això, penso que caldria reduir-los.' },
+      { id: 'esq_vocab',     icona: '📚', titol: 'Vocabulari que faré servir',    ajuda: 'Connectors i expressions per argumentar.', ph: 'Ex: per tant, en canvi, a més a més…' }
+    ]
+  },
+
+  dialeg: {
+    ajuda: "Escriu una conversa entre dos o més personatges.",
+    info: {
+      queEs: "Un text que reprodueix una conversa entre dos o més personatges. Poden intervenir-hi narracions breus per indicar qui parla o què fa.",
+      quan: "S'utilitza en contes, obres de teatre, còmics, guions, entrevistes...",
+      estructura: [
+        "Presentació: qui parla, on i en quin moment.",
+        "Inici del diàleg: comença la conversa.",
+        "Intercanvi o conflicte: què es diuen els personatges.",
+        "Resolució: com acaba la conversa."
+      ],
+      consells: [
+        "Fes servir guions llargs (—) per introduir cada intervenció.",
+        "Alterna les veus i evita repetir el nom del personatge cada cop.",
+        "Afegeix gestos o to de veu entre parèntesis (rialla, crida...).",
+        "Mantén les intervencions curtes perquè soni natural."
+      ],
+      exemple: "—On has posat la pilota? —va preguntar en Marc.\n—Jo no l'he tocada! —va respondre la seva germana, una mica molesta.\n—Doncs... mira, allà sota el llit!\n—Tens raó! Anem a jugar!"
+    },
+    blocs: [
+      { id: 'esq_intro',     icona: '🔎', titol: 'Qui parla i on',               ajuda: 'Personatges i lloc.', ph: "Ex: En Marc i la seva germana, a l'habitació." },
+      { id: 'esq_desenv',    icona: '💬', titol: 'Inici del diàleg',             ajuda: 'Com comença la conversa?', ph: 'Ex: —On és la pilota? —La tens tu!' },
+      { id: 'esq_detalls',   icona: '⚡', titol: 'Conflicte o intercanvi',       ajuda: 'Què es diuen? Com reaccionen?', ph: 'Ex: Es discuteixen qui ha perdut la pilota…' },
+      { id: 'esq_conclusio', icona: '🎯', titol: 'Resolució',                    ajuda: 'Com acaba la conversa?', ph: 'Ex: Finalment es posen d\'acord i van a buscar-la.' },
+      { id: 'esq_vocab',     icona: '📚', titol: 'Vocabulari que faré servir',    ajuda: 'Verbs de parlar i expressions.', ph: 'Ex: cridar, xiuxiuejar, preguntar…' }
+    ]
+  },
+
+  carta: {
+    ajuda: "Escriu una carta a algú amb una estructura formal.",
+    info: {
+      queEs: "Un text adreçat a una persona concreta que es pot enviar per correu postal. Pot ser formal (a una institució) o informal (a un amic, familiar...).",
+      quan: "S'utilitza per comunicar-se, felicitar, convidar, agrair, sol·licitar, explicar notícies...",
+      estructura: [
+        "Lloc i data (a dalt a la dreta).",
+        "Salutació inicial.",
+        "Cos de la carta: el missatge.",
+        "Comiat i signatura."
+      ],
+      consells: [
+        "Adapta el to al destinatari (formal o informal).",
+        "Organitza les idees en paràgrafs clars.",
+        "Fes servir fórmules de cortesia.",
+        "Signa al final amb el teu nom."
+      ],
+      exemple: "Barcelona, 5 de maig de 2025\n\nEstimat Pau,\n\nCom estàs? Et volia explicar que dissabte passat vam anar a la muntanya amb la família. Vam veure un cérvol i vam fer una excursió molt bonica.\n\nEspero que vinguis aviat a casa per explicar-t'ho millor.\n\nUna abraçada forta,\nAnna"
+    },
+    blocs: [
+      { id: 'esq_intro',     icona: '📮', titol: 'Destinatari i lloc/data',      ajuda: 'A qui escrius i des d\'on.', ph: 'Ex: A la meva àvia, des de Barcelona, el 5 de maig.' },
+      { id: 'esq_desenv',    icona: '👋', titol: 'Salutació inicial',            ajuda: 'Com comences la carta.', ph: 'Ex: Estimat/da iaia, com estàs?' },
+      { id: 'esq_detalls',   icona: '✍️', titol: 'Cos de la carta',              ajuda: 'Què li vols explicar?', ph: 'Ex: Voleu saber que he aprés a…' },
+      { id: 'esq_conclusio', icona: '💌', titol: 'Comiat i signatura',           ajuda: 'Com acabes i signes.', ph: 'Ex: Una abraçada forta, Anna.' },
+      { id: 'esq_vocab',     icona: '📚', titol: 'Vocabulari que faré servir',    ajuda: 'Fórmules de cortesia.', ph: 'Ex: atentament, ben cordialment…' }
+    ]
+  },
+
+  noticia: {
+    ajuda: "Informa d'un fet recent responent: què, qui, quan, on, com i per què.",
+    info: {
+      queEs: "Un text informatiu que explica un fet recent, real i d'interès públic. Ha de ser objectiu i clar.",
+      quan: "Apareix en diaris, revistes, webs, ràdio i televisió.",
+      estructura: [
+        "Titular: curt i cridaner.",
+        "Entradeta: resum del fet amb les dades essencials.",
+        "Cos: explicació detallada (què, qui, quan, on, com, per què).",
+        "Tancament: conseqüències o properes passes."
+      ],
+      consells: [
+        "Respon a les 5W: què, qui, quan, on, per què.",
+        "Escriu en tercera persona i en passat.",
+        "Comença pel més important (piràmide invertida).",
+        "Sigues objectiu: no donis la teva opinió."
+      ],
+      exemple: "TITULAR: Un gos ajuda a rescatar un nen al parc\n\nAhir a la tarda, un gos va ajudar a trobar un nen que s'havia perdut al parc de la Ciutadella. L'animal va guiar els bombers fins al lloc on era el petit, que es trobava bé."
+    },
+    blocs: [
+      { id: 'esq_intro',     icona: '📰', titol: 'Titular i entradeta',          ajuda: 'Un títol curt i una frase que resumeixi el fet.', ph: 'Ex: "Un gos salva un nen al parc" — Ahir a la tarda...' },
+      { id: 'esq_desenv',    icona: '❓', titol: 'Què ha passat i qui',          ajuda: 'El fet principal i els protagonistes.', ph: 'Ex: Un gos va ajudar un nen a sortir d\'un llac...' },
+      { id: 'esq_detalls',   icona: '📍', titol: 'On i quan',                    ajuda: 'Lloc i moment exactes.', ph: 'Ex: Al parc de la Ciutadella, dimarts a les 17h.' },
+      { id: 'esq_conclusio', icona: '📅', titol: 'Com acaba / Què passarà',     ajuda: 'Conseqüències o properes passes.', ph: 'Ex: El nen es troba bé i el gos rebrà un premi.' },
+      { id: 'esq_vocab',     icona: '📚', titol: 'Vocabulari específic',         ajuda: 'Paraules pròpies de les notícies.', ph: 'Ex: segons fonts, testimonis, succés…' }
+    ]
+  },
+
+  resum: {
+    ajuda: "Sintetitza les idees principals d'un text o d'un tema.",
+    info: {
+      queEs: "Un text breu que recull les idees més importants d'un text més llarg o d'un tema, sense afegir-hi opinions personals.",
+      quan: "S'utilitza per estudiar, per preparar exposicions, per demostrar que s'ha entès un text...",
+      estructura: [
+        "Tema general del text.",
+        "Idees principals, en ordre.",
+        "Relació entre les idees.",
+        "Conclusió de l'autor."
+      ],
+      consells: [
+        "Llegeix el text un parell de vegades abans de resumir.",
+        "Subratlla les idees principals i descarta els exemples.",
+        "Fes servir les teves pròpies paraules.",
+        "No hi posis la teva opinió."
+      ],
+      exemple: "El text parla de la importància del reciclatge. Explica que cada persona genera molts residus i que separar-los correctament ajuda a reduir la contaminació. També assenyala que les administracions han de facilitar contenidors adequats i campanyes de sensibilització."
+    },
+    blocs: [
+      { id: 'esq_intro',     icona: '📖', titol: 'Tema del text',                ajuda: 'De què tracta? Una frase.', ph: 'Ex: El text parla de la importància de reciclar.' },
+      { id: 'esq_desenv',    icona: '🔑', titol: 'Idees principals',             ajuda: 'Les 3 o 4 idees clau, en ordre.', ph: 'Ex: 1) Cada persona genera molts residus. 2) Separar-los ajuda...' },
+      { id: 'esq_detalls',   icona: '🔗', titol: 'Com es relacionen',            ajuda: 'Com connecten les idees entre elles.', ph: 'Ex: Primer es descriu el problema, després les solucions...' },
+      { id: 'esq_conclusio', icona: '🎯', titol: 'Conclusió de l\'autor',        ajuda: 'Què vol transmetre?', ph: 'Ex: L\'autor defensa que tots hi podem col·laborar.' },
+      { id: 'esq_vocab',     icona: '📚', titol: 'Paraules clau',                ajuda: 'Termes imprescindibles.', ph: 'Ex: reciclatge, residus, medi ambient…' }
+    ]
+  },
+
+  conte: {
+    ajuda: "Narració curta amb plantejament, nus i desenllaç. Pot tenir elements fantàstics.",
+    info: {
+      queEs: "Una narració curta, sovint amb elements fantàstics o meravellosos, que acaba amb una ensenyança o un final sorprenent.",
+      quan: "S'utilitza per entretenir, ensenyar valors, treballar la imaginació...",
+      estructura: [
+        "Plantejament: 'Hi havia una vegada...'",
+        "Nus: apareix un problema o repte.",
+        "Moments clau: els fets més importants.",
+        "Desenllaç: com es resol la història."
+      ],
+      consells: [
+        "Comença amb una fórmula tradicional ('Hi havia una vegada...').",
+        "Fes servir personatges amb trets clars (un drac poruc, una fada despistada...).",
+        "Introdueix un conflicte que calgui resoldre.",
+        "Acaba amb un final rodó, si pot ser amb ensenyança."
+      ],
+      exemple: "Hi havia una vegada un drac petit que no podia llançar foc. Tots els seus amics se'n reien. Un dia, però, va descobrir que podia fer surgir flors amb el seu alè. Des d'aleshores, el seu jardí va ser el més bonic del regne."
+    },
+    blocs: [
+      { id: 'esq_intro',     icona: '🏰', titol: 'Plantejament — "Hi havia una vegada..."', ajuda: 'Presenta personatges, lloc i situació inicial.', ph: 'Ex: Hi havia una vegada un drac que vivia en una cova...' },
+      { id: 'esq_desenv',    icona: '⚔️', titol: 'Nus — El conflicte',            ajuda: 'Apareix un problema o repte.', ph: 'Ex: Un dia va arribar un cavaller que volia robar-li el tresor...' },
+      { id: 'esq_detalls',   icona: '✨', titol: 'Moments clau',                  ajuda: 'Els moments més importants de la història.', ph: 'Ex: El drac va rugir tan fort que les muntanyes van tremolar...' },
+      { id: 'esq_conclusio', icona: '🎉', titol: 'Desenllaç',                    ajuda: 'Com es resol? Amb què acaba?', ph: 'Ex: Van fer les paus i van compartir el tresor.' },
+      { id: 'esq_vocab',     icona: '📚', titol: 'Vocabulari fantàstic',         ajuda: 'Paraules màgiques o expressives.', ph: 'Ex: encanteri, bosc encantat, heroi, llegenda…' }
+    ]
+  },
+
+  recepta: {
+    ajuda: "Escriu els passos ordenats per fer una cosa: una recepta, un joc, un experiment…",
+    info: {
+      queEs: "Un text que explica, pas a pas, com fer alguna cosa: cuinar, muntar un objecte, jugar, fer un experiment...",
+      quan: "S'utilitza en llibres de cuina, manuals, tutorials, jocs, experiments científics...",
+      estructura: [
+        "Títol i destinataris.",
+        "Ingredients o materials.",
+        "Passos ordenats.",
+        "Consells i presentació final."
+      ],
+      consells: [
+        "Escriu els passos en imperatiu (barreja, afegeix, posa...).",
+        "Numera cada pas per ordre.",
+        "Indica les quantitats exactes.",
+        "Afegeix consells o advertències al final."
+      ],
+      exemple: "COQUES DE SANT JOAN (per a 6 persones)\n\nIngredients: 500 g de farina, 200 g de sucre, 1 ou, 100 ml d'oli, pela de llimona.\n\n1) Barreja la farina amb el sucre.\n2) Afegeix-hi l'ou i l'oli.\n3) Amassa-ho tot fins que quedi una massa llisa.\n4) Forma les coques i enforna-les 20 min a 180 °C."
+    },
+    blocs: [
+      { id: 'esq_intro',     icona: '🎯', titol: 'Què farem i per a quants',     ajuda: 'Títol i destinataris.', ph: 'Ex: Coques de Sant Joan per a 6 persones.' },
+      { id: 'esq_desenv',    icona: '🧺', titol: 'Ingredients / Materials',      ajuda: 'Llista amb quantitats o eines.', ph: 'Ex: 500 g de farina, 200 g de sucre, 1 ou…' },
+      { id: 'esq_detalls',   icona: '👩‍🍳', titol: 'Passos a seguir',              ajuda: 'Ordenats i en imperatiu.', ph: 'Ex: 1) Barreja la farina amb el sucre. 2) Afegeix-hi l\'ou…' },
+      { id: 'esq_conclusio', icona: '⏱️', titol: 'Consells i presentació',       ajuda: 'Temps, dificultat, com servir-ho.', ph: 'Ex: Cou-ho 20 min a 180 °C. Serveix-ho tebi.' },
+      { id: 'esq_vocab',     icona: '📚', titol: 'Vocabulari específic',         ajuda: 'Verbs i mots tècnics.', ph: 'Ex: barrejar, escalfar, daurar, tamisar…' }
+    ]
+  },
+
+  correu: {
+    ajuda: "Missatge digital amb estructura formal o informal.",
+    info: {
+      queEs: "Un text que s'envia per correu electrònic. Té una estructura específica (assumpte, salutació, cos, comiat) i pot ser formal o informal.",
+      quan: "S'utilitza per comunicar-se amb l'escola, amb amics, amb empreses, per fer consultes, enviar documents...",
+      estructura: [
+        "Assumpte: curt i clar.",
+        "Salutació i presentació.",
+        "Cos del missatge.",
+        "Comiat i signatura."
+      ],
+      consells: [
+        "Posa un assumpte clar perquè el destinatari sàpiga de què va.",
+        "Comença amb una salutació adequada (Bon dia, Hola...).",
+        "Sigues breu i clar; ves al gra.",
+        "Revisa l'ortografia abans d'enviar-lo."
+      ],
+      exemple: "Assumpte: Reunió de pares de 4t B\n\nBon dia,\n\nEm dic Anna i soc la delegada de 4t B. Us escric per recordar-vos que la reunió de pares serà dijous a les 17h a l'aula 12.\n\nSi teniu cap dubte, no dubteu a contestar aquest correu.\n\nGràcies per la vostra atenció,\nAnna Ferrer"
+    },
+    blocs: [
+      { id: 'esq_intro',     icona: '📧', titol: 'Assumpte i destinatari',       ajuda: 'Un assumpte clar i a qui va adreçat.', ph: 'Ex: Assumpte: "Reunió de pares". A: families@escola.cat' },
+      { id: 'esq_desenv',    icona: '👋', titol: 'Salutació i presentació',      ajuda: 'Com comences i qui ets.', ph: 'Ex: Bon dia, em dic Anna i soc la delegada de 4t B...' },
+      { id: 'esq_detalls',   icona: '✍️', titol: 'Missatge principal',           ajuda: 'Què vols comunicar? Sigues breu i clar.', ph: 'Ex: Us escric per recordar-vos la reunió de dijous...' },
+      { id: 'esq_conclusio', icona: '💌', titol: 'Comiat i signatura',           ajuda: 'Comiat i el teu nom.', ph: 'Ex: Gràcies per la vostra atenció. Anna Ferrer.' },
+      { id: 'esq_vocab',     icona: '📚', titol: 'Vocabulari i connectors',      ajuda: 'Fórmules de cortesia digitals.', ph: 'Ex: adjunto, us informo, quedo a la disposició…' }
+    ]
+  },
+
+  diari: {
+    ajuda: "Narra el teu dia a dia en primera persona. És un text íntim i espontani.",
+    info: {
+      queEs: "Un text personal en què expliques el que t'ha passat, com t'has sentit i què penses. S'escriu en primera persona i en passat.",
+      quan: "S'utilitza com a eina personal, en tallers d'escriptura, per treballar les emocions...",
+      estructura: [
+        "Data i moment del dia.",
+        "Què ha passat.",
+        "Com t'has sentit.",
+        "Reflexió final."
+      ],
+      consells: [
+        "Escriu amb naturalitat, com si parlessis amb tu mateix.",
+        "Combina fets i emocions.",
+        "Pots començar amb la data ('Dilluns, 5 de maig...').",
+        "No cal ser formal; sigues sincer."
+      ],
+      exemple: "Dilluns, 5 de maig, després de sopar\n\nAvui ha estat un dia molt intens. Al matí hem tingut examen de mates i crec que m'ha anat bé! A la tarda he anat a entrenar i hem guanyat el partit. Estic content i cansat alhora. Espero que demà sigui igual de bo."
+    },
+    blocs: [
+      { id: 'esq_intro',     icona: '📅', titol: 'Data i moment del dia',        ajuda: 'Quan escrius i com et sents.', ph: 'Ex: Dilluns 5 de maig, després de sopar. Avui estic cansat...' },
+      { id: 'esq_desenv',    icona: '⚡', titol: 'Què ha passat avui',            ajuda: 'Els fets més importants del dia.', ph: 'Ex: Al matí hem tingut examen de mates i després...' },
+      { id: 'esq_detalls',   icona: '💭', titol: 'Com m\'he sentit',             ajuda: 'Emocions, pensaments, reaccions.', ph: 'Ex: M\'he sentit nerviós abans de l\'examen, però després...' },
+      { id: 'esq_conclusio', icona: '🌙', titol: 'Reflexió final',               ajuda: 'Què en treus del dia? Què esperes per demà?', ph: 'Ex: Avui he après que... Espero que demà sigui millor.' },
+      { id: 'esq_vocab',     icona: '📚', titol: 'Paraules del dia',             ajuda: 'Paraules noves o expressions.', ph: 'Ex: emocionant, decebut, il·lusionat...' }
+    ]
+  },
+
+  ressenya: {
+    ajuda: "Comenta i valora un llibre, una pel·lícula, una exposició o un joc.",
+    info: {
+      queEs: "Un text que explica què és una obra (llibre, pel·lícula, exposició...) i en fa una valoració personal, amb arguments.",
+      quan: "S'utilitza en revistes culturals, blogs, diaris, xarxes socials, treballs escolars...",
+      estructura: [
+        "Presentació de l'obra: títol, autor, any.",
+        "Argument breu (sense espòilers).",
+        "Valoració: punts forts i febles.",
+        "Recomanació final."
+      ],
+      consells: [
+        "Situa l'obra: qui l'ha feta, quan, de quin gènere és.",
+        "No expliquis el final (espòilers!).",
+        "Justifica sempre la teva opinió amb exemples.",
+        "Acaba amb una recomanació clara."
+      ],
+      exemple: "El llibre 'Wonder' de R.J. Palacio (2012) explica la història d'Auggie, un nen amb una malformació facial que comença l'escola. M'ha agradat molt perquè mostra el punt de vista de diversos personatges. El recomano a qui gaudeixi amb històries emotives."
+    },
+    blocs: [
+      { id: 'esq_intro',     icona: '🎬', titol: 'Què ressenyo',                 ajuda: 'Títol, autor/director, any.', ph: 'Ex: El llibre "Wonder" de R.J. Palacio (2012).' },
+      { id: 'esq_desenv',    icona: '📖', titol: 'Argument breu',                ajuda: 'De què va, sense espòilers.', ph: 'Ex: Explica la història d\'un nen amb una malformació facial...' },
+      { id: 'esq_detalls',   icona: '⭐', titol: 'Què m\'ha agradat i què no',    ajuda: 'Punts forts i febles.', ph: 'Ex: M\'ha agradat molt el punt de vista... No m\'ha convençut el final...' },
+      { id: 'esq_conclusio', icona: '🎯', titol: 'Valoració final i recomanació', ajuda: 'Puntuació i a qui la recomanes.', ph: 'Ex: Li posaria un 8/10. La recomano a qui gaudeixi de...' },
+      { id: 'esq_vocab',     icona: '📚', titol: 'Vocabulari crític',            ajuda: 'Adjectius i termes de valoració.', ph: 'Ex: emocionant, fluix, original, tòpic…' }
+    ]
+  },
+
+  opinio: {
+    ajuda: "Text periodístic on defenses la teva opinió sobre un tema d'actualitat.",
+    info: {
+      queEs: "Un text breu, publicat en un mitjà, en què l'autor dóna la seva opinió personal sobre un tema d'actualitat i la justifica amb arguments.",
+      quan: "Apareix en diaris, revistes, blogs, xarxes socials, revistes escolars...",
+      estructura: [
+        "Titular atractiu.",
+        "Presentació del tema.",
+        "Opinió personal (tesi).",
+        "Arguments i exemples.",
+        "Tancament amb pregunta o repte."
+      ],
+      consells: [
+        "Comença amb una pregunta, una dada o una anècdota per captar l'atenció.",
+        "Deixa clar quina és la teva opinió des del principi.",
+        "Dóna arguments i exemples reals.",
+        "Acaba amb una idea que faci pensar el lector."
+      ],
+      exemple: "PER QUÈ CAL MÉS OMBRA ALS PATIS\n\nCada estiu, milers d'alumnes passen l'estona del pati sota un sol de justícia. Penso que totes les escoles haurien de tenir zones d'ombra als patis. No només per comoditat, sinó també per salut: les cremades i cops de calor són un risc real. Plantar arbres o instal·lar tendals és una inversió petita amb un benefici enorme."
+    },
+    blocs: [
+      { id: 'esq_intro',     icona: '📰', titol: 'Tema i titular atractiu',      ajuda: 'Presenta el tema i capta l\'atenció.', ph: 'Ex: "Per què hauríem de prohibir els mòbils a classe"' },
+      { id: 'esq_desenv',    icona: '💡', titol: 'La meva opinió',               ajuda: 'Digues clarament què penses.', ph: 'Ex: Penso que els mòbils distreuen massa i...' },
+      { id: 'esq_detalls',   icona: '📌', titol: 'Arguments i exemples',         ajuda: 'Dades, exemples, vivències...', ph: 'Ex: Segons un estudi, els alumnes que no fan servir...' },
+      { id: 'esq_conclusio', icona: '🎯', titol: 'Tancament',                    ajuda: 'Reprèn la idea i deixa una pregunta o repte.', ph: 'Ex: Potser ha arribat el moment de plantejar-nos...' },
+      { id: 'esq_vocab',     icona: '📚', titol: 'Vocabulari i connectors',      ajuda: 'Per argumentar i matisar.', ph: 'Ex: en canvi, d\'altra banda, sens dubte, caldria…' }
+    ]
+  },
+
+  poema: {
+    ajuda: "Text en vers amb ritme, rima i imatges poètiques.",
+    info: {
+      queEs: "Un text escrit en vers que expressa sentiments, emocions o idees amb un llenguatge especial, sovint amb ritme i rima.",
+      quan: "S'utilitza en llibres de poesia, cançons, treballs creatius, felicitacions...",
+      estructura: [
+        "Tema o sentiment central.",
+        "Imatges i metàfores.",
+        "Versos amb ritme (i de vegades rima).",
+        "Tancament."
+      ],
+      consells: [
+        "Fes servir imatges sensorials (colors, sons, olors...).",
+        "Juga amb les comparacions i les metàfores.",
+        "No cal que tot rimi; el ritme és més important.",
+        "Llegeix-ho en veu alta per comprovar com sona."
+      ],
+      exemple: "A la vora del mar\nhi tinc el meu cantar.\n\nLa lluna és un llum petit\nque m'acompanya a dormir.\n\nI el vent, que tot ho mou,\nem duu records d'un estiu."
+    },
+    blocs: [
+      { id: 'esq_intro',     icona: '💫', titol: 'Tema o sentiment',             ajuda: 'De què parlarà? Quin sentiment vols transmetre?', ph: 'Ex: La nostàlgia de l\'estiu / L\'alegria del mar…' },
+      { id: 'esq_desenv',    icona: '🎨', titol: 'Imatges i metàfores',          ajuda: 'Comparacions, colors, sensacions.', ph: 'Ex: El sol és un diamant daurat / La lluna, un llum petit…' },
+      { id: 'esq_detalls',   icona: '🎵', titol: 'Versos i rima',                ajuda: 'Escriu algun vers que t\'agradi i mira si rima.', ph: 'Ex: A la vora del mar / hi tinc el meu cantar…' },
+      { id: 'esq_conclusio', icona: '🌅', titol: 'Tancament',                    ajuda: 'Un últim vers que resumeixi el poema.', ph: 'Ex: I el cor em demana tornar-hi un altre cop.' },
+      { id: 'esq_vocab',     icona: '📚', titol: 'Paraules boniques',            ajuda: 'Mots sonors o expressius.', ph: 'Ex: lluminós, xiuxiueig, dolçor, blau…' }
+    ]
+  },
+
+  faula: {
+    ajuda: "Conte breu amb animals que parlen i una moralitat final.",
+    info: {
+      queEs: "Una narració curta, generalment amb animals com a protagonistes, que acaba amb una ensenyança o moralitat.",
+      quan: "S'utilitza per ensenyar valors, com a exemple en xerrades, en treballs escolars...",
+      estructura: [
+        "Personatges (sovint animals) i lloc.",
+        "Situació i conflicte.",
+        "Diàlegs i reaccions.",
+        "Moralitat final."
+      ],
+      consells: [
+        "Els animals solen representar trets humans (la formiga treballadora, la cigala mandrosa...).",
+        "La història ha de ser breu i clara.",
+        "El diàleg ajuda a donar vida als personatges.",
+        "Acaba amb una frase que resumeixi la lliçó."
+      ],
+      exemple: "Una formiga treballava tot l'estiu per guardar menjar, mentre una cigala cantava i jugava. Quan va arribar l'hivern, la cigala no tenia res per menjar i va haver de demanar ajuda. Moralitat: cal preveure el futur i no deixar-ho tot per demà."
+    },
+    blocs: [
+      { id: 'esq_intro',     icona: '🦊', titol: 'Personatges i lloc',           ajuda: 'Quins animals hi surten? On són?', ph: 'Ex: Una formiga molt treballadora i una cigala mandrosa, en un prat.' },
+      { id: 'esq_desenv',    icona: '⚡', titol: 'Situació i conflicte',         ajuda: 'Què passa entre ells?', ph: 'Ex: Mentre la formiga guardava menjar, la cigala cantava tot el dia...' },
+      { id: 'esq_detalls',   icona: '💬', titol: 'Diàlegs i reaccions',          ajuda: 'Què es diuen? Com actuen?', ph: 'Ex: —Per què treballes tant? —Perquè arribarà l\'hivern...' },
+      { id: 'esq_conclusio', icona: '📖', titol: 'Moralitat',                    ajuda: 'Quina lliçó en traiem?', ph: 'Ex: Moralitat: cal preveure el futur i no deixar-ho tot per demà.' },
+      { id: 'esq_vocab',     icona: '📚', titol: 'Vocabulari',                   ajuda: 'Paraules per descriure els animals i la situació.', ph: 'Ex: diligent, mandrós, previsor, lleuger…' }
+    ]
+  }
+};
+
+// ==================== REFERÈNCIES ====================
+const selectorEscena  = document.getElementById('selectorEscena');
+const selectorFont    = document.getElementById('selectorFont');
+const selectorTipusTx = document.getElementById('selectorTipusText');
+const ajudaEsquema    = document.getElementById('ajudaEsquema');
+const esquemaGrid     = document.getElementById('esquemaGrid');
+const zonaImatge      = document.getElementById('zonaImatge');
+const titolEl         = document.getElementById('titol');
+const redaccioEl      = document.getElementById('redaccio');
+const comptadorEl     = document.getElementById('comptadorParaules');
+const indicador       = document.getElementById('indicadorGuardat');
+const recordatoriEl   = document.getElementById('recordatoriVocab');
+const llistaVocabEl   = document.getElementById('llistaVocab');
+const btnTema         = document.getElementById('btnTema');
+const modalInfo       = document.getElementById('modalInfo');
+const modalIcona      = document.getElementById('modalIcona');
+const modalTitol      = document.getElementById('modalTitol');
+const modalCos        = document.getElementById('modalCos');
+
+const campsFixos = {
+  nom:  document.getElementById('nom'),
+  curs: document.getElementById('curs'),
+  data: document.getElementById('data'),
+  titol: titolEl,
+  redaccio: redaccioEl
+};
+
+const rubrica = ['rub_1', 'rub_2', 'rub_3', 'rub_4', 'rub_5'].map(id => document.getElementById(id));
+
+let llistaImatges = [];
+let timeoutIndicador = null;
+
+// ==================== MODAL INFO ====================
+function obreInfo() {
+  const tipus = selectorTipusTx.value;
+  const plantilla = PLANTILLES[tipus];
+  if (!plantilla || !plantilla.info) return;
+
+  const info = plantilla.info;
+  const nomTipus = selectorTipusTx.options[selectorTipusTx.selectedIndex].text;
+
+  modalIcona.textContent = '📖';
+  modalTitol.textContent = nomTipus;
+
+  const llistes = (arr) => arr.map(item => `<li>${item}</li>`).join('');
+
+  modalCos.innerHTML = `
+    <div class="modal-seccio">
+      <h3 class="modal-seccio-titol"><span>📖</span> Què és</h3>
+      <p>${info.queEs}</p>
+    </div>
+    <div class="modal-seccio">
+      <h3 class="modal-seccio-titol"><span>🎯</span> Quan es fa servir</h3>
+      <p>${info.quan}</p>
+    </div>
+    <div class="modal-seccio">
+      <h3 class="modal-seccio-titol"><span>🧩</span> Estructura habitual</h3>
+      <ul>${llistes(info.estructura)}</ul>
+    </div>
+    <div class="modal-seccio">
+      <h3 class="modal-seccio-titol"><span>💡</span> Consells per escriure'l bé</h3>
+      <ul>${llistes(info.consells)}</ul>
+    </div>
+    <div class="modal-seccio">
+      <h3 class="modal-seccio-titol"><span>✍️</span> Exemple breu</h3>
+      <div class="modal-exemple">${info.exemple.replace(/\n/g, '<br>')}</div>
+    </div>
+  `;
+
+  modalInfo.classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+
+function tancaInfo() {
+  modalInfo.classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+function tancaInfoSiFora(event) {
+  if (event.target === modalInfo) tancaInfo();
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && modalInfo.classList.contains('visible')) {
+    tancaInfo();
+  }
+});
+
+// ==================== TEMA FOSC ====================
+function canviaTema() {
+  const actual = document.documentElement.getAttribute('data-tema');
+  const nou = actual === 'fosc' ? 'clar' : 'fosc';
+  document.documentElement.setAttribute('data-tema', nou);
+  btnTema.textContent = nou === 'fosc' ? '☀️' : '🌙';
+  try { localStorage.setItem('fitxa_redaccio_tema', nou); } catch(e) {}
+}
+function carregaTema() {
+  try {
+    const tema = localStorage.getItem('fitxa_redaccio_tema') || 'clar';
+    document.documentElement.setAttribute('data-tema', tema);
+    btnTema.textContent = tema === 'fosc' ? '☀️' : '🌙';
+  } catch(e) {}
+}
+
+// ==================== TIPOGRAFIA ====================
+function canviaFont(font) {
+  document.body.style.fontFamily = `'${font}', sans-serif`;
+  try { localStorage.setItem('fitxa_redaccio_font', font); } catch(e) {}
+}
+function carregaFont() {
+  try {
+    const font = localStorage.getItem('fitxa_redaccio_font') || 'Nunito';
+    selectorFont.value = font;
+    document.body.style.fontFamily = `'${font}', sans-serif`;
+  } catch(e) {}
+}
+
+// ==================== PLANTILLES D'ESQUEMA ====================
+function aplicaPlantilla(tipus) {
+  const plantilla = PLANTILLES[tipus];
+  if (!plantilla) return;
+
+  const valorsActuals = {};
+  esquemaGrid.querySelectorAll('textarea').forEach(t => { valorsActuals[t.id] = t.value; });
+
+  ajudaEsquema.textContent = plantilla.ajuda;
+  esquemaGrid.innerHTML = plantilla.blocs.map(b => `
+    <div class="bloc">
+      <div class="bloc-titol"><span class="bloc-icona">${b.icona}</span> ${b.titol}</div>
+      <div class="bloc-ajuda">${b.ajuda}</div>
+      <textarea id="${b.id}" placeholder="${b.ph}"></textarea>
+    </div>
+  `).join('');
+
+  esquemaGrid.querySelectorAll('textarea').forEach(t => {
+    if (valorsActuals[t.id] !== undefined) t.value = valorsActuals[t.id];
+    t.addEventListener('input', guardaLocal);
+    t.addEventListener('input', actualitzaRecordatori);
+  });
+
+  try { localStorage.setItem('fitxa_redaccio_tipus', tipus); } catch(e) {}
+}
+
+function canviaTipusText(tipus) {
+  aplicaPlantilla(tipus);
+  actualitzaRecordatori();
+  guardaLocal();
+}
+
+function carregaTipusText() {
+  try {
+    const tipus = localStorage.getItem('fitxa_redaccio_tipus') || 'narracio';
+    selectorTipusTx.value = tipus;
+    aplicaPlantilla(tipus);
+  } catch(e) {
+    selectorTipusTx.value = 'narracio';
+    aplicaPlantilla('narracio');
+  }
+}
+
+// ==================== EXPANDIR / COL·LAPSAR ====================
+function toggleSeccio(capEl) {
+  const card = capEl.closest('.card');
+  card.classList.toggle('tancada');
+  guardaEstatSeccions();
+}
+function guardaEstatSeccions() {
+  const estat = {};
+  document.querySelectorAll('.card').forEach(c => {
+    estat[c.dataset.seccio] = c.classList.contains('tancada') ? 'tancada' : 'oberta';
+  });
+  try { localStorage.setItem('fitxa_redaccio_seccions', JSON.stringify(estat)); } catch(e) {}
+}
+function carregaEstatSeccions() {
+  try {
+    const raw = localStorage.getItem('fitxa_redaccio_seccions');
+    if (!raw) return;
+    const estat = JSON.parse(raw);
+    document.querySelectorAll('.card').forEach(c => {
+      const s = estat[c.dataset.seccio];
+      if (s === 'tancada') c.classList.add('tancada');
+      else if (s === 'oberta') c.classList.remove('tancada');
+    });
+  } catch(e) {}
+}
+function obreTots() {
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('tancada'));
+  guardaEstatSeccions();
+}
+function tancaTots() {
+  document.querySelectorAll('.card').forEach(c => c.classList.add('tancada'));
+  guardaEstatSeccions();
+}
+
+// ==================== LLISTA D'IMATGES ====================
+async function carregaLlista() {
+  try {
+    const resp = await fetch('llista.json');
+    if (!resp.ok) throw new Error('No s\'ha trobat llista.json');
+    const dades = await resp.json();
+    llistaImatges = dades.imatges || [];
+    ompleSelector();
+  } catch (err) {
+    selectorEscena.innerHTML = '<option value="">— No s\'ha pogut carregar llista.json —</option>';
+    console.error(err);
+  }
+}
+function ompleSelector() {
+  selectorEscena.innerHTML = '<option value="">— Tria una escena —</option>';
+  llistaImatges.forEach((item, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = item.titol || item.fitxer;
+    selectorEscena.appendChild(opt);
+  });
+}
+selectorEscena.addEventListener('change', () => {
+  const idx = selectorEscena.value;
+  if (idx === '') {
+    zonaImatge.innerHTML = '<p class="missatge">Selecciona una escena per començar.</p>';
+  } else {
+    const item = llistaImatges[idx];
+    zonaImatge.innerHTML = `<img class="imatge" src="${item.fitxer}" alt="${item.titol}">`;
+  }
+  guardaLocal();
+});
+
+// ==================== COMPTADOR ====================
+redaccioEl.addEventListener('input', () => {
+  const text = redaccioEl.value.trim();
+  const n = text === '' ? 0 : text.split(/\s+/).length;
+  comptadorEl.textContent = n;
+});
+
+// ==================== RÚBRICA ====================
+rubrica.forEach(cb => {
+  cb.addEventListener('change', () => {
+    cb.closest('.rubrica-item').classList.toggle('checked', cb.checked);
+    guardaLocal();
+  });
+});
+
+// ==================== RECORDATORI VOCABULARI ====================
+function actualitzaRecordatori() {
+  const el = document.getElementById('esq_vocab');
+  if (!el) { recordatoriEl.classList.remove('visible'); return; }
+  const paraules = el.value.split(/[,\n;]+/).map(p => p.trim()).filter(p => p.length > 0);
+
+  if (paraules.length === 0) {
+    recordatoriEl.classList.remove('visible');
+    return;
+  }
+  llistaVocabEl.innerHTML = paraules.map(p => `<span class="paraula">${escapeHtml(p)}</span>`).join('');
+  recordatoriEl.classList.add('visible');
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  })[c]);
+}
+
+// ==================== AUTO-GUARDAT ====================
+const CLAU = 'fitxa_redaccio_v7';
+
+function guardaLocal() {
+  const dades = {
+    escena: selectorEscena.value,
+    tipus:  selectorTipusTx.value
+  };
+  Object.entries(campsFixos).forEach(([id, el]) => { dades[id] = el.value; });
+  esquemaGrid.querySelectorAll('textarea').forEach(t => { dades[t.id] = t.value; });
+  rubrica.forEach((cb, i) => { dades[`rub_${i+1}`] = cb.checked; });
+
+  try {
+    localStorage.setItem(CLAU, JSON.stringify(dades));
+    mostraIndicador();
+  } catch (e) { console.warn('No s\'ha pogut guardar:', e); }
+}
+
+function carregaLocal() {
+  try {
+    const raw = localStorage.getItem(CLAU);
+    if (!raw) return;
+    const dades = JSON.parse(raw);
+
+    Object.entries(campsFixos).forEach(([id, el]) => {
+      if (dades[id] !== undefined) el.value = dades[id];
+    });
+    rubrica.forEach((cb, i) => {
+      if (dades[`rub_${i+1}`] !== undefined) {
+        cb.checked = dades[`rub_${i+1}`];
+        cb.closest('.rubrica-item').classList.toggle('checked', cb.checked);
+      }
+    });
+    if (dades.escena !== undefined) {
+      selectorEscena.value = dades.escena;
+      if (dades.escena !== '' && llistaImatges[dades.escena]) {
+        const item = llistaImatges[dades.escena];
+        zonaImatge.innerHTML = `<img class="imatge" src="${item.fitxer}" alt="${item.titol}">`;
+      }
+    }
+    esquemaGrid.querySelectorAll('textarea').forEach(t => {
+      if (dades[t.id] !== undefined) t.value = dades[t.id];
+    });
+
+    redaccioEl.dispatchEvent(new Event('input'));
+    actualitzaRecordatori();
+  } catch (e) { console.warn('No s\'ha pogut carregar:', e); }
+}
+
+function mostraIndicador() {
+  indicador.classList.add('visible');
+  clearTimeout(timeoutIndicador);
+  timeoutIndicador = setTimeout(() => indicador.classList.remove('visible'), 1200);
+}
+
+Object.values(campsFixos).forEach(el => {
+  el.addEventListener('input', guardaLocal);
+  el.addEventListener('change', guardaLocal);
+});
+
+// ==================== ESBORRAR ====================
+function esborraTot() {
+  if (!confirm('Segur que vols esborrar tot el contingut?')) return;
+  Object.values(campsFixos).forEach(el => el.value = '');
+  esquemaGrid.querySelectorAll('textarea').forEach(t => t.value = '');
+  rubrica.forEach(cb => { cb.checked = false; cb.closest('.rubrica-item').classList.remove('checked'); });
+  selectorEscena.value = '';
+  zonaImatge.innerHTML = '<p class="missatge">Selecciona una escena per començar.</p>';
+  comptadorEl.textContent = '0';
+  recordatoriEl.classList.remove('visible');
+  localStorage.removeItem(CLAU);
+}
+// ==================== NOM DEL FITXER AMB DATA ====================
+// Genera noms com: Anna_Ferrer_El_gol_20261005.docx
+function construeixNomFitxer(nom, titol, extensio) {
+  const avui = new Date();
+  const yyyy = avui.getFullYear();
+  const mm   = String(avui.getMonth() + 1).padStart(2, '0');
+  const dd   = String(avui.getDate()).padStart(2, '0');
+  const data = `${yyyy}${mm}${dd}`;
+
+  const neteja = (s) => (s || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')   // treu accents
+    .replace(/[^\w\-]+/g, '_')                           // espais i símbols → _
+    .replace(/^_+|_+$/g, '')                             // treu _ inicials i finals
+    .slice(0, 40);                                       // limita a 40 caràcters
+
+  const nomNet   = neteja(nom);
+  const titolNet = neteja(titol) || 'Redaccio';
+
+  const prefix = (nomNet && nomNet !== 'sense_nom') ? nomNet + '_' : '';
+  return `${prefix}${titolNet}_${data}.${extensio}`;
+}
+
+// ==================== DESCARREGAR .HTML AUTOCONTINGUT ====================
+
+async function descarregaHtml() {
+  const titol = titolEl.value.trim() || 'Redaccio';
+
+  const escena = selectorEscena.value !== ''
+    ? llistaImatges[selectorEscena.value]
+    : null;
+  const nomEscena = escena ? escena.titol : '(cap escena seleccionada)';
+
+  const nom  = campsFixos.nom.value.trim()  || '(sense nom)';
+  const curs = campsFixos.curs.value.trim() || '(sense curs)';
+  const data = campsFixos.data.value
+    ? new Date(campsFixos.data.value).toLocaleDateString('ca-ES')
+    : new Date().toLocaleDateString('ca-ES');
+
+  const tipusText = selectorTipusTx.options[selectorTipusTx.selectedIndex].text;
+
+  // Recollim l'esquema
+  const esquema = [];
+  esquemaGrid.querySelectorAll('.bloc').forEach(b => {
+    const titolBloc = b.querySelector('.bloc-titol').textContent.trim();
+    const valor = b.querySelector('textarea').value.trim();
+    esquema.push({ titol: titolBloc, valor: valor });
+  });
+
+  // Rúbrica
+  const textosRubrica = [
+    'He posat un títol',
+    "He seguit l'estructura del tipus de text",
+    'He fet servir el vocabulari',
+    "He revisat l'ortografia",
+    'He respectat la longitud'
+  ];
+  const rubricaEstat = rubrica.map((cb, i) => ({
+    text: textosRubrica[i],
+    marcat: cb.checked
+  }));
+
+  // Imatge en base64 (si n'hi ha)
+  let imatgeBase64 = null;
+  let imatgeMime = 'image/jpeg';
+  if (escena) {
+    try {
+      const resp = await fetch(escena.fitxer);
+      const blob = await resp.blob();
+      imatgeMime = blob.type || 'image/jpeg';
+      imatgeBase64 = await blobToBase64(blob);
+    } catch (e) {
+      console.warn('No s\'ha pogut incrustar la imatge:', e);
+    }
+  }
+
+  // Escapem el text per evitar injecció d'HTML
+  const esc = (s) => String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+  // Construïm l'HTML autocontingut
+  const html = `<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<title>${esc(titol)}</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #f4f1ea;
+    color: #2a2825;
+    margin: 0;
+    padding: 30px 20px 60px;
+    line-height: 1.6;
+  }
+  .full {
+    max-width: 780px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 6px 24px rgba(60,50,40,0.12);
+    padding: 40px 46px 50px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    color: #1a3d6d;
+    margin: 0 0 6px;
+  }
+  .subtitol {
+    text-align: center;
+    color: #6b6660;
+    font-size: 14px;
+    margin-bottom: 30px;
+  }
+  .imatge {
+    display: block;
+    max-width: 100%;
+    margin: 0 auto 30px;
+    border-radius: 10px;
+    border: 1px solid #e0dcd3;
+  }
+  table.dades {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 26px;
+  }
+  table.dades td {
+    border: 1px solid #e0dcd3;
+    padding: 9px 12px;
+    font-size: 14.5px;
+  }
+  table.dades td:first-child {
+    background: #f8f5ee;
+    font-weight: 700;
+    width: 180px;
+    color: #1a3d6d;
+  }
+  h2 {
+    font-size: 18px;
+    color: #6d3fd4;
+    margin: 30px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #e6e0f0;
+  }
+  ul.rubrica {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  ul.rubrica li {
+    padding: 7px 10px;
+    font-size: 14.5px;
+    background: #f8f5fe;
+    border-radius: 8px;
+    margin-bottom: 6px;
+  }
+  .bloc {
+    border-left: 4px solid #8b5cf6;
+    background: #f8f5fe;
+    padding: 10px 14px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 10px;
+  }
+  .bloc-titol {
+    font-weight: 700;
+    color: #6d3fd4;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .bloc-cos {
+    font-size: 14.5px;
+    white-space: pre-wrap;
+    color: #2a2825;
+  }
+  .redaccio {
+    white-space: pre-wrap;
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: #2a2825;
+    background: #fbfaf7;
+    padding: 16px 18px;
+    border-radius: 10px;
+    border: 1px solid #e8e4db;
+  }
+  .peu {
+    text-align: center;
+    color: #a09a90;
+    font-size: 12px;
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid #e8e4db;
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .full { box-shadow: none; padding: 0; border-radius: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="full">
+
+  <h1>✏️ ${esc(titol)}</h1>
+  <p class="subtitol">Fitxa de redacció</p>
+
+  ${imatgeBase64 ? `<img class="imatge" src="${imatgeBase64}" alt="${esc(nomEscena)}">` : ''}
+
+  <table class="dades">
+    <tr><td>Alumne/a</td><td>${esc(nom)}</td></tr>
+    <tr><td>Curs</td><td>${esc(curs)}</td></tr>
+    <tr><td>Data</td><td>${esc(data)}</td></tr>
+    <tr><td>Escena</td><td>${esc(nomEscena)}</td></tr>
+    <tr><td>Tipus de text</td><td>${esc(tipusText)}</td></tr>
+  </table>
+
+  <h2>✅ Rúbrica d'autoavaluació</h2>
+  <ul class="rubrica">
+    ${rubricaEstat.map(r => `<li>${r.marcat ? '☑' : '☐'} ${esc(r.text)}</li>`).join('')}
+  </ul>
+
+  <h2>🧠 Esquema</h2>
+  ${esquema.map(b => `
+    <div class="bloc">
+      <div class="bloc-titol">${esc(b.titol)}</div>
+      <div class="bloc-cos">${esc(b.valor || '(buit)')}</div>
+    </div>
+  `).join('')}
+
+  <h2>📝 Redacció</h2>
+  <div class="redaccio">${esc(redaccioEl.value || '(sense text)')}</div>
+
+  <div class="peu">
+    Exportat el ${new Date().toLocaleString('ca-ES')}
+  </div>
+
+</div>
+</body>
+</html>`;
+
+  // Descarreguem
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = construeixNomFitxer(nom, titol, 'html');
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// Converteix un blob a data URI (base64)
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+// ==================== DESCARREGAR .DOCX ====================
+
+async function descarregaDocx() {
+  const titol = titolEl.value.trim() || 'Redaccio';
+  const escena = selectorEscena.value !== ''
+    ? llistaImatges[selectorEscena.value]
+    : null;
+  const nomEscena = escena ? escena.titol : '(cap escena seleccionada)';
+
+  const nom  = campsFixos.nom.value.trim()  || '(sense nom)';
+  const curs = campsFixos.curs.value.trim() || '(sense curs)';
+  const data = campsFixos.data.value
+    ? new Date(campsFixos.data.value).toLocaleDateString('ca-ES')
+    : new Date().toLocaleDateString('ca-ES');
+
+  const tipusText = selectorTipusTx.options[selectorTipusTx.selectedIndex].text;
+
+  const {
+    Document, Packer, Paragraph, TextRun, HeadingLevel,
+    AlignmentType, Table, TableRow, TableCell, BorderStyle, ImageRun
+  } = docx;
+
+  const border = { style: BorderStyle.SINGLE, size: 4, color: '2a6df4' };
+
+  let imatgeDocx = null;
+  if (escena) {
+    try {
+      const resp = await fetch(escena.fitxer);
+      const blob = await resp.blob();
+      const buffer = await blob.arrayBuffer();
+      const extensio = (escena.fitxer.split('.').pop() || 'jpg').toLowerCase();
+      const tipus = extensio === 'png' ? 'png' : 'jpg';
+      imatgeDocx = { buffer, tipus };
+    } catch (e) {
+      console.warn('No s\'ha pogut carregar la imatge per al .docx:', e);
+    }
+  }
+
+  const fills = [];
+
+  fills.push(new Paragraph({
+    alignment: AlignmentType.CENTER,
+    children: [new TextRun({ text: '✏️ FITXA DE REDACCIÓ', bold: true, size: 36, color: '1a3d6d' })]
+  }));
+  fills.push(new Paragraph({ text: '' }));
+
+  if (imatgeDocx) {
+    try {
+      fills.push(new Paragraph({
+        alignment: AlignmentType.CENTER,
+        children: [new ImageRun({
+          data: imatgeDocx.buffer,
+          transformation: { width: 450, height: 320 },
+          type: imatgeDocx.tipus
+        })]
+      }));
+      fills.push(new Paragraph({ text: '' }));
+    } catch (e) {
+      console.warn('Error incrustant la imatge al .docx:', e);
+    }
+  }
+
+  fills.push(new Table({
+    columnWidths: [3000, 6000],
+    rows: [
+      filaTaula('Alumne/a', nom, border),
+      filaTaula('Curs', curs, border),
+      filaTaula('Data', data, border),
+      filaTaula('Escena', nomEscena, border),
+      filaTaula('Tipus de text', tipusText, border),
+      filaTaula('Títol', titol, border)
+    ]
+  }));
+
+  fills.push(new Paragraph({ text: '' }));
+
+  fills.push(new Paragraph({
+    heading: HeadingLevel.HEADING_2,
+    children: [new TextRun({ text: "✅ Rúbrica d'autoavaluació", color: '8b5cf6' })]
+  }));
+  const textosRubrica = [
+    'He posat un títol',
+    "He seguit l'estructura del tipus de text",
+    'He fet servir el vocabulari',
+    "He revisat l'ortografia",
+    'He respectat la longitud'
+  ];
+  rubrica.forEach((cb, i) => {
+    fills.push(new Paragraph({
+      children: [new TextRun({ text: `${cb.checked ? '☑' : '☐'} ${textosRubrica[i]}` })]
+    }));
+  });
+
+  fills.push(new Paragraph({ text: '' }));
+
+  fills.push(new Paragraph({
+    heading: HeadingLevel.HEADING_2,
+    children: [new TextRun({ text: '🧠 Esquema', color: '8b5cf6' })]
+  }));
+  esquemaGrid.querySelectorAll('textarea').forEach(t => {
+    const titolBloc = t.closest('.bloc').querySelector('.bloc-titol').textContent.trim();
+    fills.push(new Paragraph({ children: [new TextRun({ text: titolBloc + ':', bold: true })] }));
+    fills.push(new Paragraph(t.value || '(buit)'));
+  });
+
+  fills.push(new Paragraph({ text: '' }));
+
+  fills.push(new Paragraph({
+    heading: HeadingLevel.HEADING_2,
+    children: [new TextRun({ text: '📝 Redacció', color: '2a6df4' })]
+  }));
+  redaccioEl.value.split('\n').forEach(linia => {
+    fills.push(new Paragraph(linia || ' '));
+  });
+
+  const doc = new Document({
+    sections: [{
+      properties: {
+        page: { margin: { top: 1080, bottom: 1080, left: 1080, right: 1080 } }
+      },
+      children: fills
+    }]
+  });
+
+  Packer.toBlob(doc).then(blob => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (nom !== '(sense nom)' ? nom.replace(/[^\w\-]+/g,'_') + '_' : '') +
+                 titol.replace(/[^\w\-]+/g, '_') + '.docx';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+}
+
+function filaTaula(etiqueta, valor, border) {
+  const { TableRow, TableCell, Paragraph, TextRun } = docx;
+  const b = { top: border, bottom: border, left: border, right: border };
+  return new TableRow({
+    children: [
+      new TableCell({
+        borders: b,
+        children: [new Paragraph({ children: [new TextRun({ text: etiqueta, bold: true })] })]
+      }),
+      new TableCell({
+        borders: b,
+        children: [new Paragraph(String(valor || ''))]
+      })
+    ]
+  });
+}
+
+// ==================== INICI ====================
+async function init() {
+  carregaTema();
+  carregaFont();
+  carregaTipusText();
+  await carregaLlista();
+  if (!campsFixos.data.value) {
+    campsFixos.data.value = new Date().toISOString().slice(0, 10);
+  }
+  carregaLocal();
+  carregaEstatSeccions();
+}
+init();
+</script>
+
+</body>
+</html>

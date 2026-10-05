@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<title>Manual — Fitxa de redacció</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+
+  :root {
+    --blau:      #2a6df4;
+    --blau-fosc: #1a3d6d;
+    --lila:      #8b5cf6;
+    --verd:      #29b473;
+    --groc:      #f5b301;
+    --rosa:      #ec4899;
+    --fons:      #f7f5f0;
+    --card:      #ffffff;
+    --text:      #2a2825;
+    --text-suau: #6b6660;
+    --vora:      #e0dcd3;
+    --ombra:     0 4px 16px rgba(60,50,40,0.10);
+    --ombra-forta:0 8px 28px rgba(60,50,40,0.18);
+  }
+
+  html { background: var(--fons); min-height: 100%; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--fons);
+    color: var(--text);
+    margin: 0;
+    padding: 30px 20px 100px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3 { font-family: 'Baloo 2', sans-serif; }
+
+  .manual {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  /* ---------- CAPÇALERA ---------- */
+  .capcalera {
+    text-align: center;
+    margin-bottom: 26px;
+  }
+  .capcalera h1 {
+    font-size: 34px;
+    color: var(--blau-fosc);
+    margin: 0;
+    letter-spacing: -0.5px;
+  }
+  .capcalera .subtitol {
+    color: var(--text-suau);
+    font-size: 15px;
+    margin-top: 4px;
+  }
+
+  /* ---------- INDICADOR DE PANTALLA ---------- */
+  .indicador {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  .punt {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #cfc9be;
+    transition: background 0.2s, transform 0.2s;
+    cursor: pointer;
+  }
+  .punt.actiu {
+    background: var(--blau);
+    transform: scale(1.3);
+  }
+
+  /* ---------- PANTALLES ---------- */
+  .pantalla {
+    display: none;
+    background: var(--card);
+    border-radius: 16px;
+    box-shadow: var(--ombra);
+    border: 1px solid var(--vora);
+    padding: 30px 34px 34px;
+    animation: entra 0.3s ease;
+  }
+  .pantalla.activa { display: block; }
+
+  @keyframes entra {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .pantalla h2 {
+    font-size: 24px;
+    color: var(--blau-fosc);
+    margin: 0 0 6px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .pantalla h2 .numero {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--blau), #4b8bff);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 17px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .pantalla .descripcio {
+    color: var(--text-suau);
+    font-size: 15px;
+    margin: 0 0 22px;
+  }
+
+  /* ---------- BLOCS ---------- */
+  .bloc {
+    border-left: 4px solid var(--blau);
+    background: #f4f7ff;
+    padding: 12px 16px;
+    border-radius: 0 10px 10px 0;
+    margin-bottom: 14px;
+  }
+  .bloc.lila    { border-color: var(--lila);    background: #f6f1fe; }
+  .bloc.verd    { border-color: var(--verd);    background: #eafaf3; }
+  .bloc.groc    { border-color: var(--groc);    background: #fff8e8; }
+  .bloc.rosa    { border-color: var(--rosa);    background: #fdeef6; }
+
+  .bloc .titol {
+    font-weight: 700;
+    color: var(--blau-fosc);
+    font-size: 15px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .bloc p {
+    margin: 0;
+    font-size: 14.5px;
+    color: var(--text);
+  }
+  .bloc ul {
+    margin: 6px 0 0;
+    padding-left: 20px;
+    font-size: 14.5px;
+  }
+  .bloc ul li { margin-bottom: 3px; }
+
+  /* ---------- TAULA ---------- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 4px;
+    font-size: 14.5px;
+  }
+  table th, table td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--vora);
+  }
+  table th {
+    background: #f8f5ee;
+    color: var(--blau-fosc);
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  table tr:last-child td { border-bottom: none; }
+
+  /* ---------- EXEMPLE VISUAL ---------- */
+  .exemple {
+    background: #fafaf5;
+    border: 1px dashed var(--vora);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 13.5px;
+    color: #3a3530;
+    margin-top: 10px;
+    white-space: pre-wrap;
+    line-height: 1.5;
+  }
+
+  /* ---------- CONSELL ---------- */
+  .consell {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: linear-gradient(135deg, #fff8e1, #fff3c4);
+    border: 1px solid #f0d77c;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: #6b4f00;
+    margin-top: 14px;
+  }
+  .consell strong { color: #8a6500; }
+
+  /* ---------- NAVEGACIÓ ---------- */
+  .navegacio {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 26px;
+    flex-wrap: wrap;
+  }
+
+  .navegacio button {
+    padding: 11px 22px;
+    font-size: 15px;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--blau), #4b8bff);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(42,109,244,0.35);
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .navegacio button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(42,109,244,0.45);
+  }
+  .navegacio button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  .navegacio .comptador {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    color: var(--text-suau);
+    font-size: 14px;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 600px) {
+    body { padding: 20px 14px 90px; }
+    .capcalera h1 { font-size: 26px; }
+    .pantalla { padding: 22px 20px 26px; }
+    .pantalla h2 { font-size: 20px; }
+    .navegacio button { padding: 10px 16px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="manual">
+
+  <header class="capcalera">
+    <h1>📘 Manual d'ús</h1>
+    <p class="subtitol">Fitxa de redacció — guia ràpida</p>
+  </header>
+
+  <div class="indicador" id="indicador">
+    <span class="punt actiu" onclick="vesA(0)"></span>
+    <span class="punt" onclick="vesA(1)"></span>
+    <span class="punt" onclick="vesA(2)"></span>
+    <span class="punt" onclick="vesA(3)"></span>
+  </div>
+
+  <!-- ============================================================
+       PANTALLA 1 — QUÈ ÉS I COM COMENÇAR
+       ============================================================ -->
+  <section class="pantalla activa" data-pantalla="0">
+    <h2><span class="numero">1</span> Què és i com començar</h2>
+    <p class="descripcio">La fitxa serveix perquè l'alumne esquematitzi i redacti un text a partir d'una imatge.</p>
+
+    <div class="bloc">
+      <div class="titol">🖼️ 1. Tria una escena</div>
+      <p>Al desplegable de dalt, selecciona la imatge que vols descriure. Apareixerà a sota.</p>
+    </div>
+
+    <div class="bloc lila">
+      <div class="titol">🧠 2. Esquematitza</div>
+      <p>Tria el <strong>tipus de text</strong> (narració, poema, notícia…) i omple els blocs amb idees curtes. Tens un botó <strong>ℹ️</strong> al costat per veure com funciona aquell tipus.</p>
+    </div>
+
+    <div class="bloc verd">
+      <div class="titol">📝 3. Redacta</div>
+      <p>Escriu el text final. El comptador de paraules s'actualitza sol. El <strong>vocabulari</strong> que hagis triat a l'esquema et surt recordat a sota.</p>
+    </div>
+
+    <div class="consell">
+      <span>💾</span>
+      <div><strong>Tot es guarda sol.</strong> Si tanques la pàgina i la tornes a obrir, el text segueix allà. Veuràs un avís verd "Guardat" a baix a la dreta cada cop que es desa.</div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PANTALLA 2 — LES SECCIONS
+       ============================================================ -->
+  <section class="pantalla" data-pantalla="1">
+    <h2><span class="numero">2</span> Les seccions de la fitxa</h2>
+    <p class="descripcio">Cada secció es pot obrir o tancar clicant la seva capçalera de color.</p>
+
+    <table>
+      <tr>
+        <th>Secció</th>
+        <th>Per a què serveix</th>
+      </tr>
+      <tr>
+        <td>✅ Rúbrica</td>
+        <td>Repassar que el text compleix els requisits abans de lliurar-lo.</td>
+      </tr>
+      <tr>
+        <td>🧑‍🎓 Dades de l'alumne</td>
+        <td>Nom, curs i data. Sortiran al document final.</td>
+      </tr>
+      <tr>
+        <td>🧠 Esquematitza</td>
+        <td>Organitzar les idees abans d'escriure.</td>
+      </tr>
+      <tr>
+        <td>📝 Redacta</td>
+        <td>Escriure el text definitiu.</td>
+      </tr>
+    </table>
+
+    <div class="consell">
+      <span>🔽</span>
+      <div>Si vols <strong>veure-ho tot alhora</strong>, clica <strong>Obre-ho tot</strong> a baix. Si vols centrar-te en una secció, clica'n la capçalera per tancar les altres.</div>
+    </div>
+
+    <div class="consell">
+      <span>🌙</span>
+      <div>A dalt a la dreta tens un botó per canviar entre <strong>mode clar</strong> i <strong>mode fosc</strong>. Tria el que et vagi millor per llegir.</div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PANTALLA 3 — EXPORTAR I IMPRIMIR
+       ============================================================ -->
+  <section class="pantalla" data-pantalla="2">
+    <h2><span class="numero">3</span> Exportar i imprimir</h2>
+    <p class="descripcio">Tres maneres de conservar la feina feta.</p>
+
+    <div class="bloc">
+      <div class="titol">🖨️ Imprimeix</div>
+      <p>Obre el diàleg d'impressió del navegador. Les capçaleres surten en color si la impressora és a color. També pots triar <strong>"Desa com a PDF"</strong> per tenir una còpia digital.</p>
+    </div>
+
+    <div class="bloc lila">
+      <div class="titol">📄 Exporta .docx</div>
+      <p>Crea un fitxer Word editable amb la imatge incrustada, l'esquema, la rúbrica i la redacció. Es pot obrir amb Word, Google Docs o LibreOffice.</p>
+    </div>
+
+    <div class="bloc verd">
+      <div class="titol">🌐 Exporta .html</div>
+      <p>Crea un fitxer web <strong>autocontingut</strong>: conté el text i la imatge dins del mateix fitxer. Ideal per enviar per correu o arxivar. S'obre amb qualsevol navegador.</p>
+    </div>
+
+    <div class="consell">
+      <span>📅</span>
+      <div>Els fitxers porten la data al nom: <span style="font-family: 'Courier New', monospace;">Anna_Ferrer_El_gol_20261005.docx</span></div>
+    </div>
+
+    <div class="exemple">Carpeta d'exemple:
+📁 La meva carpeta
+   ├── redaccio.html
+   ├── llista.json
+   ├── red_01.jpg
+   ├── Anna_El_gol_20261005.docx
+   └── Anna_El_gol_20261005.html</div>
+  </section>
+
+  <!-- ============================================================
+       PANTALLA 4 — PROBLEMES COMUNS
+       ============================================================ -->
+  <section class="pantalla" data-pantalla="3">
+    <h2><span class="numero">4</span> Problemes comuns</h2>
+    <p class="descripcio">Què fer si alguna cosa no funciona.</p>
+
+    <div class="bloc rosa">
+      <div class="titol">❓ No apareix cap escena al desplegable</div>
+      <ul>
+        <li>Comprova que el fitxer <code>llista.json</code> és a la mateixa carpeta que l'HTML.</li>
+        <li>Si obres l'HTML amb doble clic (file://), el navegador pot bloquejar-lo. Obre'l amb <strong>Live Server</strong> o un servidor local.</li>
+      </ul>
+    </div>
+
+    <div class="bloc rosa">
+      <div class="titol">❓ La imatge no surt al fitxer exportat</div>
+      <ul>
+        <li>Passa quan obres l'HTML amb doble clic per seguretat del navegador.</li>
+        <li>Solució: obre l'HTML amb <strong>Live Server</strong> (VS Code) o amb <code>python -m http.server</code>.</li>
+      </ul>
+    </div>
+
+    <div class="bloc rosa">
+      <div class="titol">❓ He canviat de tema i no es veu bé</div>
+      <ul>
+        <li>Refresca la pàgina amb <strong>Ctrl + F5</strong> per assegurar que es carrega la versió nova.</li>
+      </ul>
+    </div>
+
+    <div class="consell">
+      <span>🔧</span>
+      <div>Si alguna cosa falla, obre la consola del navegador amb <strong>F12</strong> i mira si hi ha cap missatge vermell. Sovint el mateix missatge ja diu què passa.</div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       NAVEGACIÓ
+       ============================================================ -->
+  <div class="navegacio">
+    <button id="btnAnterior" onclick="pantallaAnterior()">← Anterior</button>
+    <span class="comptador" id="comptador">1 / 4</span>
+    <button id="btnSeguent" onclick="pantallaSeguent()">Següent →</button>
+  </div>
+
+</div>
+
+<script>
+  let actual = 0;
+  const total = 4;
+
+  function mostra(n) {
+    if (n < 0 || n >= total) return;
+    actual = n;
+
+    document.querySelectorAll('.pantalla').forEach((p, i) => {
+      p.classList.toggle('activa', i === n);
+    });
+    document.querySelectorAll('.punt').forEach((p, i) => {
+      p.classList.toggle('actiu', i === n);
+    });
+
+    document.getElementById('comptador').textContent = `${n + 1} / ${total}`;
+    document.getElementById('btnAnterior').disabled = (n === 0);
+    document.getElementById('btnSeguent').disabled = (n === total - 1);
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function pantallaSeguent() { mostra(actual + 1); }
+  function pantallaAnterior() { mostra(actual - 1); }
+  function vesA(n) { mostra(n); }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') pantallaSeguent();
+    if (e.key === 'ArrowLeft')  pantallaAnterior();
+  });
+
+  mostra(0);
+</script>
+
+</body>
+</html>
